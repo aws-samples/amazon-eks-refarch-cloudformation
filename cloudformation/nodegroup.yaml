@@ -136,7 +136,7 @@ Parameters:
 
   SpotPrice:
     Type: Number
-    Description: spot price for spot instances
+    Description: Set your max price (per instance/hour)
     Default: 0  
 
   SpotFleetInstancesType:
@@ -149,6 +149,7 @@ Parameters:
 
 Conditions:
   # SpotOnlyCond: !Not [ !Equals [ !Ref SpotPrice, 0 ] ]
+  IsSetSpotPrice: !Not [ !Equals [ !Ref SpotPrice, 0 ] ]
   SpotWithASG: !Equals [ !Ref OnDemandOrSpotWithASG , "Spot" ]
   SpotFleetCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
   EnableASGCond: !Equals [ !Ref AsgOrSpotFleet, "AutoscalingGroup" ]
@@ -387,6 +388,11 @@ Resources:
       SpotFleetRequestConfigData:
         AllocationStrategy: diversified
         # SpotPrice: '0.02'
+        SpotPrice: 
+          !If 
+            - IsSetSpotPrice
+            - !Ref SpotPrice
+            - !Ref AWS::NoValue  
         IamFleetRole: !GetAtt IAMFleetRole.Arn
         TargetCapacity: !Ref NodeAutoScalingGroupMaxSize
         LaunchSpecifications:
