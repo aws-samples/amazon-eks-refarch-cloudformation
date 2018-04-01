@@ -321,7 +321,7 @@ Resources:
         PropagateAtLaunch: 'true'
     UpdatePolicy:
       AutoScalingRollingUpdate:
-        MinInstancesInService: '1'
+        MinInstancesInService: '0'
         MaxBatchSize: '1'
 
   # TODO: Make disk configurable
@@ -356,6 +356,9 @@ Resources:
               "sed -i s,INTERNAL_IP,$INTERNAL_IP,g /etc/systemd/system/kube-proxy.service", "\n",
               "systemctl daemon-reload", "\n",
               "systemctl restart kubelet kube-proxy", "\n",
+              "echo 'start' > /tmp/userdata.log", "\n",
+              "restart_if_fail() { sleep 10; journalctl -u kubelet --since '10 seconds ago' -r -n1 | egrep '[E|W]0401' >> /tmp/userdata.log && echo 'got failure, restarting kubelet and kube-proxy now' | tee -a /tmp/userdata.log && systemctl restart kubelet kube-proxy; }", "\n",
+              "for i in 1 2 3 4 5; do restart_if_fail; done", "\n",
             ]
           ]
 
