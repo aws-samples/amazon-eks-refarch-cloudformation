@@ -35,6 +35,7 @@ Metadata:
         Parameters: 
           - SpotPrice
           - SpotFleetInstancesType
+          - SpotFleetAllocationStrategy
 
     # ParameterLabels: 
     #   VPCID: 
@@ -143,6 +144,15 @@ Parameters:
     Type: CommaDelimitedList
     Description: "instance types in Spot Fleet(specify 3 instance types)"
     Default: "t2.small,t2.medium, m3.medium"
+
+  SpotFleetAllocationStrategy:
+    Type: String
+    Description: "spot fleet allocation strategy"
+    AllowedValues:
+      - "diversified"
+      - "lowestPrice"
+    Default: "diversified"
+
 
 
 
@@ -389,7 +399,7 @@ Resources:
     Type: AWS::EC2::SpotFleet
     Properties:
       SpotFleetRequestConfigData:
-        AllocationStrategy: diversified
+        AllocationStrategy: !Ref SpotFleetAllocationStrategy
         # SpotPrice: '0.02'
         SpotPrice: 
           !If 
@@ -448,6 +458,10 @@ Resources:
                   "sed -i s,INTERNAL_IP,$INTERNAL_IP,g /etc/systemd/system/kube-proxy.service", "\n",
                   "systemctl daemon-reload", "\n",
                   "systemctl restart kubelet kube-proxy", "\n",
+                  "echo 'start' > /tmp/userdata.log", "\n",
+                  "restart_if_fail() { sleep 10; journalctl -u kubelet --since '10 seconds ago' -r -n1 | egrep '[E|W]0401' >> /tmp/userdata.log && echo 'got failure, restarting kubelet and kube-proxy now' | tee -a /tmp/userdata.log && systemctl restart kubelet kube-proxy; }", "\n",
+                  "for i in 1 2 3 4 5; do restart_if_fail; done", "\n",                  
+
                 ]
               ]
         - EbsOptimized: 'false'
@@ -499,6 +513,9 @@ Resources:
                   "sed -i s,INTERNAL_IP,$INTERNAL_IP,g /etc/systemd/system/kube-proxy.service", "\n",
                   "systemctl daemon-reload", "\n",
                   "systemctl restart kubelet kube-proxy", "\n",
+                  "echo 'start' > /tmp/userdata.log", "\n",
+                  "restart_if_fail() { sleep 10; journalctl -u kubelet --since '10 seconds ago' -r -n1 | egrep '[E|W]0401' >> /tmp/userdata.log && echo 'got failure, restarting kubelet and kube-proxy now' | tee -a /tmp/userdata.log && systemctl restart kubelet kube-proxy; }", "\n",
+                  "for i in 1 2 3 4 5; do restart_if_fail; done", "\n",                     
                 ]
               ]
         - EbsOptimized: 'false'
@@ -550,6 +567,9 @@ Resources:
                   "sed -i s,INTERNAL_IP,$INTERNAL_IP,g /etc/systemd/system/kube-proxy.service", "\n",
                   "systemctl daemon-reload", "\n",
                   "systemctl restart kubelet kube-proxy", "\n",
+                  "echo 'start' > /tmp/userdata.log", "\n",
+                  "restart_if_fail() { sleep 10; journalctl -u kubelet --since '10 seconds ago' -r -n1 | egrep '[E|W]0401' >> /tmp/userdata.log && echo 'got failure, restarting kubelet and kube-proxy now' | tee -a /tmp/userdata.log && systemctl restart kubelet kube-proxy; }", "\n",
+                  "for i in 1 2 3 4 5; do restart_if_fail; done", "\n",                   
                 ]
               ]
         - EbsOptimized: 'false'
@@ -601,6 +621,9 @@ Resources:
                   "sed -i s,INTERNAL_IP,$INTERNAL_IP,g /etc/systemd/system/kube-proxy.service", "\n",
                   "systemctl daemon-reload", "\n",
                   "systemctl restart kubelet kube-proxy", "\n",
+                  "echo 'start' > /tmp/userdata.log", "\n",
+                  "restart_if_fail() { sleep 10; journalctl -u kubelet --since '10 seconds ago' -r -n1 | egrep '[E|W]0401' >> /tmp/userdata.log && echo 'got failure, restarting kubelet and kube-proxy now' | tee -a /tmp/userdata.log && systemctl restart kubelet kube-proxy; }", "\n",
+                  "for i in 1 2 3 4 5; do restart_if_fail; done", "\n",                   
                 ]
               ]
         - EbsOptimized: 'false'
@@ -652,6 +675,9 @@ Resources:
                   "sed -i s,INTERNAL_IP,$INTERNAL_IP,g /etc/systemd/system/kube-proxy.service", "\n",
                   "systemctl daemon-reload", "\n",
                   "systemctl restart kubelet kube-proxy", "\n",
+                  "echo 'start' > /tmp/userdata.log", "\n",
+                  "restart_if_fail() { sleep 10; journalctl -u kubelet --since '10 seconds ago' -r -n1 | egrep '[E|W]0401' >> /tmp/userdata.log && echo 'got failure, restarting kubelet and kube-proxy now' | tee -a /tmp/userdata.log && systemctl restart kubelet kube-proxy; }", "\n",
+                  "for i in 1 2 3 4 5; do restart_if_fail; done", "\n",   
                 ]
               ]
         - EbsOptimized: 'false'
@@ -703,6 +729,9 @@ Resources:
                   "sed -i s,INTERNAL_IP,$INTERNAL_IP,g /etc/systemd/system/kube-proxy.service", "\n",
                   "systemctl daemon-reload", "\n",
                   "systemctl restart kubelet kube-proxy", "\n",
+                  "echo 'start' > /tmp/userdata.log", "\n",
+                  "restart_if_fail() { sleep 10; journalctl -u kubelet --since '10 seconds ago' -r -n1 | egrep '[E|W]0401' >> /tmp/userdata.log && echo 'got failure, restarting kubelet and kube-proxy now' | tee -a /tmp/userdata.log && systemctl restart kubelet kube-proxy; }", "\n",
+                  "for i in 1 2 3 4 5; do restart_if_fail; done", "\n",                   
                 ]
               ]
 
