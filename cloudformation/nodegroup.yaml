@@ -401,7 +401,7 @@ Resources:
       AssociatePublicIpAddress: 'true'
       IamInstanceProfile: !Ref NodeInstanceProfile
       #ImageId: !Ref NodeImageId
-      ImageId: !FindInMap [AMIMap, us-west-2, ami ]
+      ImageId: !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
       InstanceType: !Ref NodeInstanceType
       KeyName: !Ref KeyName
       SecurityGroups:
