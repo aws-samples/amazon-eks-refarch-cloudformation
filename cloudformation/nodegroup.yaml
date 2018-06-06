@@ -575,7 +575,7 @@ Resources:
             SubnetId: !Select [0, !Ref Subnets]
             Groups: 
               - !Ref NodeSecurityGroup
-        ImageId: !FindInMap [AMIMap, us-west-2, ami ]
+        ImageId: !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
         InstanceType: !Ref NodeInstanceType
         # RamDiskId: String
         # Monitoring: Monitoring
