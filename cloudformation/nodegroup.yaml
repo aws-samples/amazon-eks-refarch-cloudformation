@@ -314,47 +314,10 @@ Resources:
           Action:
           - sts:AssumeRole
       Path: "/"
-      Policies:
-      - PolicyName: node
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-          - Effect: Allow
-            Action:
-            - ec2:Describe*
-            - ecr:GetAuthorizationToken
-            - ecr:BatchCheckLayerAvailability
-            - ecr:GetDownloadUrlForLayer
-            - ecr:GetRepositoryPolicy
-            - ecr:DescribeRepositories
-            - ecr:ListImages
-            - ecr:BatchGetImage
-            Resource: "*"
-      - PolicyName: cni
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-          - Effect: Allow
-            Action:
-            - ec2:DescribeNetworkInterfaces
-            - ec2:DescribeInstances
-            - ec2:CreateNetworkInterface
-            - ec2:AttachNetworkInterface
-            - ec2:DeleteNetworkInterface
-            - ec2:DetachNetworkInterface
-            - ec2:ModifyNetworkInterfaceAttribute
-            - ec2:AssignPrivateIpAddresses
-            - tag:TagResources
-            Resource: "*"
-      - PolicyName: eks
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-          - Effect: Allow
-            Action:
-            - eks:DescribeCluster
-            - eks:*
-            Resource: "*"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
 
   NodeSecurityGroup:
     Type: AWS::EC2::SecurityGroup
