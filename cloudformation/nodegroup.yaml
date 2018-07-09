@@ -165,7 +165,7 @@ Parameters:
     Type: AWS::EC2::VPC::Id
 
   Subnets:
-    Description: The subnets where workers can be created.
+    Description: Select 3 subnets where workers can be created.
     Type: List<AWS::EC2::Subnet::Id>
 
   KeyName:
@@ -637,6 +637,12 @@ Resources:
                 WeightedCapacity: 1
               - 
                 # AvailabilityZone: String
+                InstanceType: !Select [0, !Ref SpotFleetInstancesType]
+                # SpotPrice: String
+                SubnetId: !Select [2, !Ref Subnets]
+                WeightedCapacity: 1
+              - 
+                # AvailabilityZone: String
                 InstanceType: !Select [1, !Ref SpotFleetInstancesType]
                 # SpotPrice: String
                 SubnetId: !Select [0, !Ref Subnets]
@@ -649,6 +655,12 @@ Resources:
                 WeightedCapacity: 1
               - 
                 # AvailabilityZone: String
+                InstanceType: !Select [1, !Ref SpotFleetInstancesType]
+                # SpotPrice: String
+                SubnetId: !Select [2, !Ref Subnets]
+                WeightedCapacity: 1
+              - 
+                # AvailabilityZone: String
                 InstanceType: !Select [2, !Ref SpotFleetInstancesType]
                 # SpotPrice: String
                 SubnetId: !Select [0, !Ref Subnets]
@@ -658,6 +670,12 @@ Resources:
                 InstanceType: !Select [2, !Ref SpotFleetInstancesType]
                 # SpotPrice: String
                 SubnetId: !Select [1, !Ref Subnets]
+                WeightedCapacity: 1
+              - 
+                # AvailabilityZone: String
+                InstanceType: !Select [2, !Ref SpotFleetInstancesType]
+                # SpotPrice: String
+                SubnetId: !Select [2, !Ref Subnets]
                 WeightedCapacity: 1
 
 Outputs:
