@@ -491,7 +491,7 @@ Resources:
   SpotLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
-      LaunchTemplateName: eksLaunchTemplateSpot
+      LaunchTemplateName: !Sub "eksLaunchTemplateSpot-${AWS::StackName}"
       LaunchTemplateData: 
         # SecurityGroupIds: 
         #   - !Ref NodeSecurityGroup
@@ -568,13 +568,13 @@ Resources:
                 - !Ref SpotFleetPrice
                 - !Ref AWS::NoValue  
           MarketType: spot
-        NetworkInterfaces: 
-          - 
-            DeviceIndex: 0
-            AssociatePublicIpAddress: 'true'
-            SubnetId: !Select [0, !Ref Subnets]
-            Groups: 
-              - !Ref NodeSecurityGroup
+        # NetworkInterfaces: 
+        #   - 
+        #     DeviceIndex: 0
+        #     AssociatePublicIpAddress: 'true'
+        #     SubnetId: !Select [0, !Ref Subnets]
+        #     Groups: 
+        #       - !Ref NodeSecurityGroup
         ImageId: !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
         InstanceType: !Ref NodeInstanceType
         # RamDiskId: String
