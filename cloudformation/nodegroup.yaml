@@ -39,7 +39,11 @@ Metadata:
           - SpotFleetInstancesType
           - SpotFleetAllocationStrategy
           - SpotFleetSize
-
+      - 
+        Label: 
+          default: "Advanced"
+        Parameters: 
+          - TargetGroupPort
 
 Mappings:
   AMIMap:
@@ -178,6 +182,13 @@ Parameters:
   KeyName:
     Description: The EC2 Key Pair to allow SSH access to the instances
     Type: AWS::EC2::KeyPair::KeyName
+
+  TargetGroupPort:
+    Description: The port on which the targets receive traffic from TargetGroup
+    Type: String
+    Default: 31742
+
+
 
   # NodeImageId:
   #   Type: AWS::EC2::Image::Id
@@ -414,6 +425,29 @@ Resources:
       ToPort: 443
       FromPort: 443
 
+  TG:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 15
+      HealthCheckPath: /
+      # HealthCheckPort: String
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      # Matcher: Matcher
+      Name: !Sub "${AWS::StackName}-tg"
+      Port: !Ref TargetGroupPort
+      Protocol: HTTP
+      # Tags:
+      #   - Resource Tag
+      # TargetGroupAttributes:
+      #   - TargetGroupAttributes
+      # Targets:
+      #   - TargetDescription
+      TargetType: instance
+      UnhealthyThresholdCount: 2
+      VpcId: !Ref VpcId
+
   NodeGroup:
     # Condition: EnableASGCond
     Type: AWS::AutoScaling::AutoScalingGroup
@@ -422,6 +456,8 @@ Resources:
       LaunchConfigurationName: !Ref NodeLaunchConfig
       MinSize: !Ref NodeAutoScalingGroupMinSize
       MaxSize: !Ref NodeAutoScalingGroupMaxSize
+      TargetGroupARNs: 
+        - !Ref TG
       VPCZoneIdentifier:
         !Ref Subnets
       Tags:
@@ -492,39 +528,6 @@ Resources:
           ]
 
 
-        # Fn::Base64:
-        #   Fn::Join: [
-        #     "",
-        #     [
-        #       "#!/bin/bash -xe\n",
-        #       "CA_CERTIFICATE_DIRECTORY=/etc/kubernetes/pki", "\n",
-        #       "CA_CERTIFICATE_FILE_PATH=$CA_CERTIFICATE_DIRECTORY/ca.crt", "\n",
-        #       "MODEL_DIRECTORY_PATH=~/.aws/eks", "\n",
-        #       "MODEL_FILE_PATH=$MODEL_DIRECTORY_PATH/eks-2017-11-01.normal.json", "\n",
-        #       "mkdir -p $CA_CERTIFICATE_DIRECTORY", "\n",
-        #       "mkdir -p $MODEL_DIRECTORY_PATH", "\n",
-        #       "curl -o $MODEL_FILE_PATH https://s3-us-west-2.amazonaws.com/amazon-eks/2018-04-04/eks-2017-11-01.normal.json", "\n",
-        #       "aws configure add-model --service-model file://$MODEL_FILE_PATH --service-name eks", "\n",
-        #       "aws eks describe-cluster --region=", { Ref: "AWS::Region" }," --cluster-name=", { Ref: ClusterName }," --query 'cluster.{certificateAuthorityData: certificateAuthority.data, masterEndpoint: masterEndpoint}' > /tmp/describe_cluster_result.json", "\n",
-        #       "cat /tmp/describe_cluster_result.json | grep certificateAuthorityData | awk '{print $2}' | sed 's/[,\"]//g' | base64 -d >  $CA_CERTIFICATE_FILE_PATH", "\n",
-        #       "MASTER_ENDPOINT=$(cat /tmp/describe_cluster_result.json | grep masterEndpoint | awk '{print $2}' | sed 's/[,\"]//g')", "\n",
-        #       "INTERNAL_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)", "\n",
-        #       "sed -i s,MASTER_ENDPOINT,$MASTER_ENDPOINT,g /var/lib/kubelet/kubeconfig", "\n",
-        #       "sed -i s,CLUSTER_NAME,", { Ref: ClusterName }, ",g /var/lib/kubelet/kubeconfig", "\n",
-        #       "sed -i s,MASTER_ENDPOINT,$MASTER_ENDPOINT,g /etc/systemd/system/kubelet.service", "\n",
-        #       "sed -i s,MASTER_ENDPOINT,$MASTER_ENDPOINT,g /etc/systemd/system/kube-proxy.service", "\n",
-        #       "sed -i s,INTERNAL_IP,$INTERNAL_IP,g /etc/systemd/system/kubelet.service", "\n",
-        #       "sed -i s,INTERNAL_IP,$INTERNAL_IP,g /etc/systemd/system/kube-proxy.service", "\n",
-        #       "sed -i s,CERTIFICATE_AUTHORITY_FILE,$CA_CERTIFICATE_FILE_PATH,g /var/lib/kubelet/kubeconfig" , "\n",
-        #       "sed -i s,CLIENT_CA_FILE,$CA_CERTIFICATE_FILE_PATH,g  /etc/systemd/system/kubelet.service" , "\n",
-        #       "sed -i '/Service/{n;s/$/  --node-labels=asgnode=true/;}' /etc/systemd/system/kubelet.service", "\n",
-        #       "systemctl daemon-reload", "\n",
-        #       "systemctl restart kubelet kube-proxy", "\n",
-        #       "echo 'start' > /tmp/userdata.log", "\n",
-        #       "restart_if_fail() { sleep 10; journalctl -u kubelet --since '10 seconds ago' -r -n1 | egrep '[E|W]040' >> /tmp/userdata.log && echo 'got failure, restarting kubelet and kube-proxy now' | tee -a /tmp/userdata.log && systemctl restart kubelet kube-proxy; }", "\n",
-        #       "for i in 1 2 3 4 5; do restart_if_fail; done", "\n",
-        #     ]
-        #   ]
 
 #
 # Launch Template
@@ -534,8 +537,8 @@ Resources:
     Properties:
       LaunchTemplateName: !Sub "eksLaunchTemplateSpot-${AWS::StackName}"
       LaunchTemplateData: 
-        # SecurityGroupIds: 
-        #   - !Ref NodeSecurityGroup
+        SecurityGroupIds: 
+          - !Ref NodeSecurityGroup
         TagSpecifications: 
           -
             ResourceType: instance
