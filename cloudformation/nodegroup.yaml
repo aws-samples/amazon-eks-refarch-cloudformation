@@ -48,9 +48,9 @@ Metadata:
 Mappings:
   AMIMap:
     us-west-2:
-      ami: ami-73a6e20b
+      ami: ami-02415125ccd555295
     us-east-1:
-      ami: ami-dea4d5a1
+      ami: ami-048486555686d18a0
   # Mapping is calculated from AWS ENI documentation, with the following modifications:
   # * First IP on each ENI is not used for pods
   # * 2 additional host-networking pods (AWS ENI and kube-proxy) are accounted for
@@ -264,12 +264,12 @@ Parameters:
   NodeAutoScalingGroupDesiredSize:
     Type: Number
     Description: Desired size of Node Group ASG.
-    Default: 3
+    Default: 2
     
   NodeAutoScalingGroupMaxSize:
     Type: Number
     Description: Maximum size of Node Group ASG.
-    Default: 3
+    Default: 5
 
   ClusterName:
     Description: The cluster name provided when the cluster was created.  If it is incorrect, nodes will not be able to join the cluster.
