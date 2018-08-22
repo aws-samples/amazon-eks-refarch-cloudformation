@@ -165,6 +165,22 @@ Mappings:
       MaxPods: 44
     t2.2xlarge:
       MaxPods: 44
+    # tentative configuration for t3.*
+    # will update when the official cfn template configuration is available
+    t3.nano:
+      MaxPods: 4
+    t3.micro:
+      MaxPods: 4
+    t3.small:
+      MaxPods: 8
+    t3.medium:
+      MaxPods: 17
+    t3.large:
+      MaxPods: 35
+    t3.xlarge:
+      MaxPods: 44
+    t3.2xlarge:
+      MaxPods: 44  
     x1.16xlarge:
       MaxPods: 234
     x1.32xlarge:
@@ -197,13 +213,20 @@ Parameters:
   NodeInstanceType:
     Description: EC2 instance type for the node instances.
     Type: String
-    Default: t2.medium
+    Default: t3.small
     AllowedValues:
     - t2.small
     - t2.medium
     - t2.large
     - t2.xlarge
     - t2.2xlarge
+    - t3.nano
+    - t3.micro
+    - t3.small
+    - t3.medium
+    - t3.large
+    - t3.xlarge
+    - t3.2xlarge
     - m3.medium
     - m3.large
     - m3.xlarge
@@ -316,7 +339,7 @@ Parameters:
   SpotFleetInstancesType:
     Type: CommaDelimitedList
     Description: "instance types in Spot Fleet(specify 3 instance types)"
-    Default: "t2.small,t2.medium, m3.medium"
+    Default: "t3.micro,t3.small,t3.medium"
 
   SpotFleetAllocationStrategy:
     Type: String
@@ -481,8 +504,8 @@ Resources:
       ImageId: !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
       InstanceType: !Ref NodeInstanceType
       KeyName: !Ref KeyName
-      SecurityGroups:
-      - !Ref NodeSecurityGroup
+      # SecurityGroups:
+      # - !Ref NodeSecurityGroup
       SpotPrice: 
         !If 
           - SpotWithASG
@@ -537,8 +560,8 @@ Resources:
     Properties:
       LaunchTemplateName: !Sub "eksLaunchTemplateSpot-${AWS::StackName}"
       LaunchTemplateData: 
-        SecurityGroupIds: 
-          - !Ref NodeSecurityGroup
+        # SecurityGroupIds: 
+        #   - !Ref NodeSecurityGroup
         TagSpecifications: 
           -
             ResourceType: instance
@@ -612,13 +635,13 @@ Resources:
                 - !Ref SpotFleetPrice
                 - !Ref AWS::NoValue  
           MarketType: spot
-        # NetworkInterfaces: 
-        #   - 
-        #     DeviceIndex: 0
-        #     AssociatePublicIpAddress: 'true'
-        #     SubnetId: !Select [0, !Ref Subnets]
-        #     Groups: 
-        #       - !Ref NodeSecurityGroup
+        NetworkInterfaces: 
+          - 
+            DeviceIndex: 0
+            AssociatePublicIpAddress: 'true'
+            SubnetId: !Select [0, !Ref Subnets]
+            Groups: 
+              - !Ref NodeSecurityGroup
         ImageId: !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
         InstanceType: !Ref NodeInstanceType
         # RamDiskId: String
