@@ -165,8 +165,6 @@ Mappings:
       MaxPods: 44
     t2.2xlarge:
       MaxPods: 44
-    # tentative configuration for t3.*
-    # will update when the official cfn template configuration is available
     t3.nano:
       MaxPods: 4
     t3.micro:
