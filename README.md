@@ -1,7 +1,3 @@
-
-
-
-
 # eks-templates
 
 
@@ -37,3 +33,19 @@ By default, all the on-demand instances managed by ASG(Autoscaling Group) will h
 Additionally, all the spot instances have a **spotInstance=true:PreferNoSchedule** taint. To deploy your Pod on spot instances, use the node label selector to specify **spotfleet=true**, otherwise the pod will not be scheduled on the spot instances unless it has relevant toleration. ([Taint and Toleration in Kubernetes](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)).
 
 ![](images/02.png)
+
+
+
+
+
+# Dev Version Template
+
+Dev version has some new features and will be moving to stable version. Feel free to test it and feedback to me.
+
+- [x] Latest Amazon EKS AMI with **/etc/eks/bootstrap.sh** support ([#8](https://github.com/pahud/eks-templates/issues/8))
+- [x] Kubelet Extra Arguments support ([#8](https://github.com/pahud/eks-templates/issues/8))
+
+
+
+https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev.yaml
+
