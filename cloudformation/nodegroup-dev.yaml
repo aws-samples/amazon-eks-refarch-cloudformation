@@ -10,7 +10,7 @@ Metadata:
         Parameters: 
           - VpcId
           - KeyName
-          # - NodeImageId
+          - NodeImageId
           - ClusterName
           - BootstrapArgumentsForAsg
           - BootstrapArgumentsForSpotFleet
@@ -204,11 +204,11 @@ Parameters:
     Type: String
     Default: 31742
 
-
-
-  # NodeImageId:
-  #   Type: AWS::EC2::Image::Id
-  #   Description: AMI id for the node instances.
+  NodeImageId:
+    #Type: AWS::EC2::Image::Id
+    Type: String
+    Default: ""
+    Description: Specify AMI id for the node instances. Leave it blank if you preferred the latest EKS-optimized AMI
 
   NodeInstanceType:
     Description: EC2 instance type for the node instances.
@@ -371,6 +371,7 @@ Conditions:
   IsSetSpotFleetPrice: !Not [ !Equals [ !Ref SpotFleetPrice, 0 ] ]
   IsSetSpotASGPrice: !Not [ !Equals [ !Ref SpotASGPrice, 0 ] ]
   SpotWithASG: !Equals [ !Ref OnDemandOrSpotWithASG , "Spot" ]
+  PreferredDefaultAMI: !Equals [ !Ref NodeImageId, "" ]
   # SpotFleetCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
   # EnableASGCond: !Equals [ !Ref AsgOrSpotFleet, "AutoscalingGroup" ]
   # DisableASGCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
@@ -511,7 +512,12 @@ Resources:
       AssociatePublicIpAddress: 'true'
       IamInstanceProfile: !Ref NodeInstanceProfile
       #ImageId: !Ref NodeImageId
-      ImageId: !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
+      ImageId: 
+        !If
+          - PreferredDefaultAMI
+          - !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
+          - !Ref NodeImageId
+      
       InstanceType: !Ref NodeInstanceType
       KeyName: !Ref KeyName
       SecurityGroups:
@@ -604,7 +610,11 @@ Resources:
             SubnetId: !Select [0, !Ref Subnets]
             Groups: 
               - !Ref NodeSecurityGroup
-        ImageId: !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
+        ImageId: 
+          !If
+            - PreferredDefaultAMI
+            - !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
+            - !Ref NodeImageId        
         InstanceType: !Ref NodeInstanceType
         # RamDiskId: String
         # Monitoring: Monitoring
