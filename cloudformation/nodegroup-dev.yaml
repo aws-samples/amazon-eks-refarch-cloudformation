@@ -1,0 +1,713 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Amazon EKS Node Group.'
+Metadata: 
+  AWS::CloudFormation::Interface: 
+    ParameterGroups: 
+      - 
+        Label: 
+          default: "EKS Configuration"
+        Parameters: 
+          - VpcId
+          - KeyName
+          # - NodeImageId
+          - ClusterName
+          - BootstrapArgumentsForAsg
+          - BootstrapArgumentsForSpotFleet
+          - ClusterControlPlaneSecurityGroup
+          - NodeGroupName
+          - MasterEndpoint
+          - Subnets
+      # - 
+      #   Label: 
+      #     default: "Spot or AutoScaling Group"
+      #   Parameters: 
+      #     - AsgOrSpotFleet
+      - 
+        Label: 
+          default: "Auto Scaling Configuration"
+        Parameters: 
+          - OnDemandOrSpotWithASG
+          - SpotASGPrice
+          - NodeAutoScalingGroupMinSize
+          - NodeAutoScalingGroupDesiredSize
+          - NodeAutoScalingGroupMaxSize
+          - NodeInstanceType
+      - 
+        Label: 
+          default: "Spot Configuration"
+        Parameters: 
+          - SpotFleetPrice
+          - SpotFleetInstancesType
+          - SpotFleetAllocationStrategy
+          - SpotFleetSize
+      - 
+        Label: 
+          default: "Advanced"
+        Parameters: 
+          - TargetGroupPort
+
+Mappings:
+  AMIMap:
+    us-west-2:
+      ami: ami-08cab282f9979fc7a	
+    us-east-1:
+      ami: ami-0b2ae3c6bda8b5c06	
+  # Mapping is calculated from AWS ENI documentation, with the following modifications:
+  # * First IP on each ENI is not used for pods
+  # * 2 additional host-networking pods (AWS ENI and kube-proxy) are accounted for
+  #
+  # # of ENI * (# of IPv4 per ENI - 1)  + 2
+  #
+  # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html#AvailableIpPerENI
+  MaxPodsPerNode:
+    c4.large:
+      MaxPods: 29
+    c4.xlarge:
+      MaxPods: 58
+    c4.2xlarge:
+      MaxPods: 58
+    c4.4xlarge:
+      MaxPods: 234
+    c4.8xlarge:
+      MaxPods: 234
+    c5.large:
+      MaxPods: 29
+    c5.xlarge:
+      MaxPods: 58
+    c5.2xlarge:
+      MaxPods: 58
+    c5.4xlarge:
+      MaxPods: 234
+    c5.9xlarge:
+      MaxPods: 234
+    c5.18xlarge:
+      MaxPods: 737
+    i3.large:
+      MaxPods: 29
+    i3.xlarge:
+      MaxPods: 58
+    i3.2xlarge:
+      MaxPods: 58
+    i3.4xlarge:
+      MaxPods: 234
+    i3.8xlarge:
+      MaxPods: 234
+    i3.16xlarge:
+      MaxPods: 737
+    m3.medium:
+      MaxPods: 12
+    m3.large:
+      MaxPods: 29
+    m3.xlarge:
+      MaxPods: 58
+    m3.2xlarge:
+      MaxPods: 118
+    m4.large:
+      MaxPods: 20
+    m4.xlarge:
+      MaxPods: 58
+    m4.2xlarge:
+      MaxPods: 58
+    m4.4xlarge:
+      MaxPods: 234
+    m4.10xlarge:
+      MaxPods: 234
+    m5.large:
+      MaxPods: 29
+    m5.xlarge:
+      MaxPods: 58
+    m5.2xlarge:
+      MaxPods: 58
+    m5.4xlarge:
+      MaxPods: 234
+    m5.12xlarge:
+      MaxPods: 234
+    m5.24xlarge:
+      MaxPods: 737
+    p2.xlarge:
+      MaxPods: 58
+    p2.8xlarge:
+      MaxPods: 234
+    p2.16xlarge:
+      MaxPods: 234
+    p3.2xlarge:
+      MaxPods: 58
+    p3.8xlarge:
+      MaxPods: 234
+    p3.16xlarge:
+      MaxPods: 234
+    r3.xlarge:
+      MaxPods: 58
+    r3.2xlarge:
+      MaxPods: 58
+    r3.4xlarge:
+      MaxPods: 234
+    r3.8xlarge:
+      MaxPods: 234
+    r4.large:
+      MaxPods: 29
+    r4.xlarge:
+      MaxPods: 58
+    r4.2xlarge:
+      MaxPods: 58
+    r4.4xlarge:
+      MaxPods: 234
+    r4.8xlarge:
+      MaxPods: 234
+    r4.16xlarge:
+      MaxPods: 737
+    t2.small:
+      MaxPods: 8
+    t2.medium:
+      MaxPods: 17
+    t2.large:
+      MaxPods: 35
+    t2.xlarge:
+      MaxPods: 44
+    t2.2xlarge:
+      MaxPods: 44
+    t3.nano:
+      MaxPods: 4
+    t3.micro:
+      MaxPods: 4
+    t3.small:
+      MaxPods: 8
+    t3.medium:
+      MaxPods: 17
+    t3.large:
+      MaxPods: 35
+    t3.xlarge:
+      MaxPods: 44
+    t3.2xlarge:
+      MaxPods: 44  
+    x1.16xlarge:
+      MaxPods: 234
+    x1.32xlarge:
+      MaxPods: 234
+
+Parameters:
+  VpcId:
+    Description: The VPC of the worker instances
+    Type: AWS::EC2::VPC::Id
+
+  Subnets:
+    Description: Select 3 subnets where workers can be created.
+    Type: List<AWS::EC2::Subnet::Id>
+
+  KeyName:
+    Description: The EC2 Key Pair to allow SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName
+
+  TargetGroupPort:
+    Description: The port on which the targets receive traffic from TargetGroup
+    Type: String
+    Default: 31742
+
+
+
+  # NodeImageId:
+  #   Type: AWS::EC2::Image::Id
+  #   Description: AMI id for the node instances.
+
+  NodeInstanceType:
+    Description: EC2 instance type for the node instances.
+    Type: String
+    Default: t3.medium
+    AllowedValues:
+    - t2.small
+    - t2.medium
+    - t2.large
+    - t2.xlarge
+    - t2.2xlarge
+    - t3.nano
+    - t3.micro
+    - t3.small
+    - t3.medium
+    - t3.large
+    - t3.xlarge
+    - t3.2xlarge
+    - m3.medium
+    - m3.large
+    - m3.xlarge
+    - m3.2xlarge
+    - m4.large
+    - m4.xlarge
+    - m4.2xlarge
+    - m4.4xlarge
+    - m4.10xlarge
+    - m5.large
+    - m5.xlarge
+    - m5.2xlarge
+    - m5.4xlarge
+    - m5.12xlarge
+    - m5.24xlarge
+    - c4.large
+    - c4.xlarge
+    - c4.2xlarge
+    - c4.4xlarge
+    - c4.8xlarge
+    - c5.large
+    - c5.xlarge
+    - c5.2xlarge
+    - c5.4xlarge
+    - c5.9xlarge
+    - c5.18xlarge
+    - i3.large
+    - i3.xlarge
+    - i3.2xlarge
+    - i3.4xlarge
+    - i3.8xlarge
+    - i3.16xlarge
+    - r3.xlarge
+    - r3.2xlarge
+    - r3.4xlarge
+    - r3.8xlarge
+    - r4.large
+    - r4.xlarge
+    - r4.2xlarge
+    - r4.4xlarge
+    - r4.8xlarge
+    - r4.16xlarge
+    - x1.16xlarge
+    - x1.32xlarge
+    - p2.xlarge
+    - p2.8xlarge
+    - p2.16xlarge
+    - p3.2xlarge
+    - p3.8xlarge
+    - p3.16xlarge
+    ConstraintDescription: must be a valid EC2 instance type.
+
+  NodeAutoScalingGroupMinSize:
+    Type: Number
+    Description: Minimum size of Node Group ASG.
+    Default: 1
+
+  NodeAutoScalingGroupDesiredSize:
+    Type: Number
+    Description: Desired size of Node Group ASG.
+    Default: 2
+    
+  NodeAutoScalingGroupMaxSize:
+    Type: Number
+    Description: Maximum size of Node Group ASG.
+    Default: 5
+
+  ClusterName:
+    Description: The cluster name provided when the cluster was created.  If it is incorrect, nodes will not be able to join the cluster.
+    Type: String
+
+  BootstrapArgumentsForAsg:
+    Description: Arguments to pass to the bootstrap script. See files/bootstrap.sh in https://github.com/awslabs/amazon-eks-ami
+    Default: "--kubelet-extra-args --node-labels=asgnode=true"
+    Type: String
+
+  BootstrapArgumentsForSpotFleet:
+    Description: Arguments to pass to the bootstrap script. See files/bootstrap.sh in https://github.com/awslabs/amazon-eks-ami
+    Default: "--kubelet-extra-args '--node-labels=spotfleet=true --register-with-taints=spotInstance=true:PreferNoSchedule'"
+    Type: String
+
+  ClusterControlPlaneSecurityGroup:
+    Description: The security group of the cluster control plane.
+    Type: AWS::EC2::SecurityGroup::Id
+
+  NodeGroupName:
+    Description: Unique identifier for the Node Group.
+    Type: String
+
+  MasterEndpoint:
+    Description: URL endpoint of the API Server.
+    Type: String
+
+  # AsgOrSpotFleet:
+  #   Type: String
+  #   Default: "AutoscalingGroup"
+  #   Description: "provision the ECS cluster with AutoscalingGroup or SpotFleet"
+  #   AllowedValues:
+  #     - "AutoscalingGroup"
+  #     - "SpotFleet"
+
+  OnDemandOrSpotWithASG:
+    Type: String
+    Default: "On Demand"
+    Description: "on demand or spot instances with AutoScaling Group"
+    AllowedValues:
+      - "On Demand"
+      - "Spot"
+
+  SpotASGPrice:
+    Type: Number
+    Description: Set your max price (per instance/hour) for ASG
+    Default: 0.02  
+
+  SpotFleetPrice:
+    Type: Number
+    Description: Set your max price (per instance/hour) for Spot Fleet
+    Default: 0  
+
+  SpotFleetInstancesType:
+    Type: CommaDelimitedList
+    Description: "instance types in Spot Fleet(specify 3 instance types)"
+    Default: "t3.small,t3.medium,t3.large"
+
+  SpotFleetAllocationStrategy:
+    Type: String
+    Description: "spot fleet allocation strategy"
+    AllowedValues:
+      - "diversified"
+      - "lowestPrice"
+    Default: "diversified"
+
+  SpotFleetSize:
+    Type: Number
+    Description: Set your desired size of Spot Fleet
+    Default: 2  
+
+
+
+
+Conditions:
+  IsSetSpotFleetPrice: !Not [ !Equals [ !Ref SpotFleetPrice, 0 ] ]
+  IsSetSpotASGPrice: !Not [ !Equals [ !Ref SpotASGPrice, 0 ] ]
+  SpotWithASG: !Equals [ !Ref OnDemandOrSpotWithASG , "Spot" ]
+  # SpotFleetCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
+  # EnableASGCond: !Equals [ !Ref AsgOrSpotFleet, "AutoscalingGroup" ]
+  # DisableASGCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
+
+
+Resources:
+
+
+  NodeInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - !Ref NodeInstanceRole
+
+  NodeInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+
+  NodeSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for all nodes in the cluster
+      VpcId:
+        !Ref VpcId
+      Tags:
+      - Key: !Sub "kubernetes.io/cluster/${ClusterName}"
+        Value: 'owned'
+
+  NodeSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    DependsOn: NodeSecurityGroup
+    Properties:
+      Description: Allow node to communicate with each other
+      GroupId: !Ref NodeSecurityGroup
+      SourceSecurityGroupId: !Ref NodeSecurityGroup
+      IpProtocol: '-1'
+      FromPort: 0
+      ToPort: 65535
+
+  NodeSecurityGroupFromControlPlaneIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    DependsOn: NodeSecurityGroup
+    Properties:
+      Description: Allow worker Kubelets and pods to receive communication from the cluster control plane
+      GroupId: !Ref NodeSecurityGroup
+      SourceSecurityGroupId: !Ref ClusterControlPlaneSecurityGroup
+      IpProtocol: tcp
+      FromPort: 1025
+      ToPort: 65535
+
+  ControlPlaneEgressToNodeSecurityGroup:
+    Type: AWS::EC2::SecurityGroupEgress
+    DependsOn: NodeSecurityGroup
+    Properties:
+      Description: Allow the cluster control plane to communicate with worker Kubelet and pods
+      GroupId: !Ref ClusterControlPlaneSecurityGroup
+      DestinationSecurityGroupId: !Ref NodeSecurityGroup
+      IpProtocol: tcp
+      FromPort: 1025
+      ToPort: 65535
+
+  ClusterControlPlaneSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    DependsOn: NodeSecurityGroup
+    Properties:
+      Description: Allow pods to communicate with the cluster API Server
+      GroupId: !Ref ClusterControlPlaneSecurityGroup
+      SourceSecurityGroupId: !Ref NodeSecurityGroup
+      IpProtocol: tcp
+      ToPort: 443
+      FromPort: 443
+
+  TG:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 15
+      HealthCheckPath: /
+      # HealthCheckPort: String
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      # Matcher: Matcher
+      Name: !Sub "${AWS::StackName}-tg"
+      Port: !Ref TargetGroupPort
+      Protocol: HTTP
+      # Tags:
+      #   - Resource Tag
+      # TargetGroupAttributes:
+      #   - TargetGroupAttributes
+      # Targets:
+      #   - TargetDescription
+      TargetType: instance
+      UnhealthyThresholdCount: 2
+      VpcId: !Ref VpcId
+
+  NodeGroup:
+    # Condition: EnableASGCond
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      DesiredCapacity: !Ref NodeAutoScalingGroupDesiredSize
+      LaunchConfigurationName: !Ref NodeLaunchConfig
+      MinSize: !Ref NodeAutoScalingGroupMinSize
+      MaxSize: !Ref NodeAutoScalingGroupMaxSize
+      TargetGroupARNs: 
+        - !Ref TG
+      VPCZoneIdentifier:
+        !Ref Subnets
+      Tags:
+      - Key: Name
+        Value: !Sub "${ClusterName}-${NodeGroupName}-ASG-Node"
+        PropagateAtLaunch: 'true'
+      - Key: !Sub 'kubernetes.io/cluster/${ClusterName}'
+        Value: 'owned'
+        PropagateAtLaunch: 'true'
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MinInstancesInService: '0'
+        MaxBatchSize: '1'
+
+  NodeLaunchConfig:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      AssociatePublicIpAddress: 'true'
+      IamInstanceProfile: !Ref NodeInstanceProfile
+      #ImageId: !Ref NodeImageId
+      ImageId: !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
+      InstanceType: !Ref NodeInstanceType
+      KeyName: !Ref KeyName
+      # SecurityGroups:
+      # - !Ref NodeSecurityGroup
+      SpotPrice: 
+        !If 
+          - SpotWithASG
+          - !Ref SpotASGPrice
+          - !Ref AWS::NoValue    
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash
+            set -o xtrace
+            # temparorily support t3 until this issue being closed
+            # https://github.com/pahud/eks-templates/issues/8
+            cd /etc/eks
+            curl -O https://raw.githubusercontent.com/pahud/eks-templates/master/files/eni-max-pods.txt
+            /etc/eks/bootstrap.sh ${ClusterName} ${BootstrapArgumentsForAsg}
+            /opt/aws/bin/cfn-signal --exit-code $? \
+                     --stack  ${AWS::StackName} \
+                     --resource NodeGroup  \
+                     --region ${AWS::Region}
+
+
+
+#
+# Launch Template
+#
+  SpotLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: !Sub "eksLaunchTemplateSpot-${AWS::StackName}"
+      LaunchTemplateData: 
+        # SecurityGroupIds: 
+        #   - !Ref NodeSecurityGroup
+        TagSpecifications: 
+          -
+            ResourceType: instance
+            Tags:
+              - Key: Name
+                Value: !Sub "${ClusterName}-${NodeGroupName}-SpotFleet-Node"
+              - Key: KubernetesCluster
+                Value: !Ref ClusterName
+              - Key: !Sub 'kubernetes.io/cluster/${ClusterName}'
+                Value: 'owned'
+        UserData: 
+          Fn::Base64:
+            !Sub |
+            #!/bin/bash
+            set -o xtrace
+            # temparorily support t3 until this issue being closed
+            # https://github.com/pahud/eks-templates/issues/8
+            cd /etc/eks
+            curl -O https://raw.githubusercontent.com/pahud/eks-templates/master/files/eni-max-pods.txt
+            /etc/eks/bootstrap.sh ${ClusterName} ${BootstrapArgumentsForSpotFleet}
+            /opt/aws/bin/cfn-signal --exit-code $? \
+                     --stack  ${AWS::StackName} \
+                     --resource NodeGroup  \
+                     --region ${AWS::Region}
+        # InstanceInitiatedShutdownBehavior: String
+        # BlockDeviceMappings: 
+        #   - BlockDeviceMapping
+        IamInstanceProfile: 
+          Arn: !GetAtt NodeInstanceProfile.Arn
+          # Name: 
+        # KernelId: String
+        # SecurityGroupIds: 
+        #   - String
+        # EbsOptimized: 'true'
+        KeyName: !Ref KeyName
+        # DisableApiTermination: Boolean
+        # ElasticGpuSpecifications: 
+        #   - ElasticGpuSpecification
+        # Placement: Placement
+        InstanceMarketOptions: 
+          SpotOptions: 
+            # SpotInstanceType: persistent
+            # InstanceInterruptionBehavior: terminate
+            MaxPrice:
+              !If 
+                - IsSetSpotFleetPrice
+                - !Ref SpotFleetPrice
+                - !Ref AWS::NoValue  
+          MarketType: spot
+        NetworkInterfaces: 
+          - 
+            DeviceIndex: 0
+            AssociatePublicIpAddress: 'true'
+            SubnetId: !Select [0, !Ref Subnets]
+            Groups: 
+              - !Ref NodeSecurityGroup
+        ImageId: !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
+        InstanceType: !Ref NodeInstanceType
+        # RamDiskId: String
+        # Monitoring: Monitoring
+        # CreditSpecification: 
+        #   CpuCredits: unlimited
+
+###################
+# Spot fleet
+###################
+
+  IAMFleetRole:
+    Type: AWS::IAM::Role
+    Properties:
+        AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action: 
+                  - 'sts:AssumeRole'
+                Effect: Allow
+                Principal:
+                  Service:
+                    - spotfleet.amazonaws.com
+        Path: /
+        ManagedPolicyArns:
+            - arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole   
+            - arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole
+
+  SpotFleet:
+    # Condition: SpotFleetCond
+    Type: AWS::EC2::SpotFleet
+    Properties:
+      SpotFleetRequestConfigData:
+        AllocationStrategy: !Ref SpotFleetAllocationStrategy
+        SpotPrice: 
+          !If 
+            - IsSetSpotFleetPrice
+            - !Ref SpotFleetPrice
+            - !Ref AWS::NoValue  
+        IamFleetRole: !GetAtt IAMFleetRole.Arn
+        TargetCapacity: !Ref SpotFleetSize
+        Type: maintain
+        LaunchTemplateConfigs:
+          - LaunchTemplateSpecification:
+              LaunchTemplateId: !Ref SpotLaunchTemplate
+              # LaunchTemplateName: eksLaunchTemplateSpot
+              Version: !GetAtt SpotLaunchTemplate.LatestVersionNumber
+            Overrides:
+              - 
+                # AvailabilityZone: String
+                InstanceType: !Select [0, !Ref SpotFleetInstancesType]
+                # SpotPrice: String
+                SubnetId: !Select [0, !Ref Subnets]
+                WeightedCapacity: 1
+              - 
+                # AvailabilityZone: String
+                InstanceType: !Select [0, !Ref SpotFleetInstancesType]
+                # SpotPrice: String
+                SubnetId: !Select [1, !Ref Subnets]
+                WeightedCapacity: 1
+              - 
+                # AvailabilityZone: String
+                InstanceType: !Select [0, !Ref SpotFleetInstancesType]
+                # SpotPrice: String
+                SubnetId: !Select [2, !Ref Subnets]
+                WeightedCapacity: 1
+              - 
+                # AvailabilityZone: String
+                InstanceType: !Select [1, !Ref SpotFleetInstancesType]
+                # SpotPrice: String
+                SubnetId: !Select [0, !Ref Subnets]
+                WeightedCapacity: 1
+              - 
+                # AvailabilityZone: String
+                InstanceType: !Select [1, !Ref SpotFleetInstancesType]
+                # SpotPrice: String
+                SubnetId: !Select [1, !Ref Subnets]
+                WeightedCapacity: 1
+              - 
+                # AvailabilityZone: String
+                InstanceType: !Select [1, !Ref SpotFleetInstancesType]
+                # SpotPrice: String
+                SubnetId: !Select [2, !Ref Subnets]
+                WeightedCapacity: 1
+              - 
+                # AvailabilityZone: String
+                InstanceType: !Select [2, !Ref SpotFleetInstancesType]
+                # SpotPrice: String
+                SubnetId: !Select [0, !Ref Subnets]
+                WeightedCapacity: 1
+              - 
+                # AvailabilityZone: String
+                InstanceType: !Select [2, !Ref SpotFleetInstancesType]
+                # SpotPrice: String
+                SubnetId: !Select [1, !Ref Subnets]
+                WeightedCapacity: 1
+              - 
+                # AvailabilityZone: String
+                InstanceType: !Select [2, !Ref SpotFleetInstancesType]
+                # SpotPrice: String
+                SubnetId: !Select [2, !Ref Subnets]
+                WeightedCapacity: 1
+
+Outputs:
+  NodeInstanceRole:
+    Description: The node instance role
+    Value: !GetAtt NodeInstanceRole.Arn
