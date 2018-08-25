@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Amazon EKS Node Group.'
+Description: 'Amazon EKS Node Group'
 Metadata: 
   AWS::CloudFormation::Interface: 
     ParameterGroups: 
@@ -514,8 +514,8 @@ Resources:
       ImageId: !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
       InstanceType: !Ref NodeInstanceType
       KeyName: !Ref KeyName
-      # SecurityGroups:
-      # - !Ref NodeSecurityGroup
+      SecurityGroups:
+      - !Ref NodeSecurityGroup
       SpotPrice: 
         !If 
           - SpotWithASG
