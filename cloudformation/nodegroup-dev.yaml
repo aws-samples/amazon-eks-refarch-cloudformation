@@ -82,7 +82,7 @@ Parameters:
   NodeInstanceType:
     Description: EC2 instance type for the node instances.
     Type: String
-    Default: t3.medium
+    Default: t2.large
     AllowedValues:
     - t2.small
     - t2.medium
@@ -208,7 +208,7 @@ Parameters:
   SpotASGPrice:
     Type: Number
     Description: Set your max price (per instance/hour) for ASG
-    Default: 0.02  
+    Default: 0.03
 
   SpotFleetPrice:
     Type: Number
@@ -218,7 +218,7 @@ Parameters:
   SpotFleetInstancesType:
     Type: CommaDelimitedList
     Description: "instance types in Spot Fleet(specify 3 instance types)"
-    Default: "t3.small,t3.medium,t3.large"
+    Default: "t2.small,t2.medium,t2.large"
 
   SpotFleetAllocationStrategy:
     Type: String
