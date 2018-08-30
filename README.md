@@ -50,3 +50,8 @@ Dev version has some new features and will be moving to stable version. Feel fre
 
 https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev.yaml
 
+
+
+# Spot Termination Handling
+
+Worried about the spot instance termination? Check [**pahud/eks-lambda-drainer**](pahud/eks-lambda-drainer) to learn how to handle the spot instance termination 120 seconds before the final execution of the termination and get your all running pods re-scheduled onto another node.
