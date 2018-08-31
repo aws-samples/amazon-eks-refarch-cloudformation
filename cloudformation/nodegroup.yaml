@@ -16,7 +16,7 @@ Metadata:
           - BootstrapArgumentsForSpotFleet
           - ClusterControlPlaneSecurityGroup
           - NodeGroupName
-          - MasterEndpoint
+          # - MasterEndpoint
           - Subnets
       # - 
       #   Label: 
@@ -202,9 +202,9 @@ Parameters:
     Description: Unique identifier for the Node Group.
     Type: String
 
-  MasterEndpoint:
-    Description: URL endpoint of the API Server.
-    Type: String
+  # MasterEndpoint:
+  #   Description: URL endpoint of the API Server.
+  #   Type: String
 
   # AsgOrSpotFleet:
   #   Type: String
@@ -235,7 +235,7 @@ Parameters:
   SpotFleetInstancesType:
     Type: CommaDelimitedList
     Description: "instance types in Spot Fleet(specify 3 instance types)"
-    Default: "t2.small,t2.medium,t2.large"
+    Default: "t2.medium,t2.large,m5.large"
 
   SpotFleetAllocationStrategy:
     Type: String
