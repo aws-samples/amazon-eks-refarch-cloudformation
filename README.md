@@ -45,6 +45,7 @@ Dev version has some new features and will be moving to stable version. Feel fre
 - [x] Latest Amazon EKS AMI with **/etc/eks/bootstrap.sh** support ([#8](https://github.com/pahud/eks-templates/issues/8))
 - [x] Kubelet Extra Arguments support ([#8](https://github.com/pahud/eks-templates/issues/8))
 - [x] Select custom AMI ID or leave it default as the latest EKS-optimized AMI ID([#9](https://github.com/pahud/eks-templates/issues/9))
+- [x] EU Ireland(eu-west-1) AMI support([#11](https://github.com/pahud/eks-templates/issues/11))
 
 
 
