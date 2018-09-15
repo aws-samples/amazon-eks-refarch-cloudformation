@@ -49,12 +49,16 @@ Metadata:
 
 Mappings:
   AMIMap:
-    us-west-2:
-      ami: ami-08cab282f9979fc7a	
-    us-east-1:
-      ami: ami-0b2ae3c6bda8b5c06	
-    eu-west-1:
-      ami: ami-066110c1a7466949e
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: s3://pahud-eks-templates/eks-latest-ami.yaml
+    # us-west-2:
+    #   ami: ami-08cab282f9979fc7a	
+    # us-east-1:
+    #   ami: ami-0b2ae3c6bda8b5c06	
+    # eu-west-1:
+    #   ami: ami-066110c1a7466949e
 
 
 Parameters:
@@ -254,8 +258,6 @@ Parameters:
     Default: 2  
 
 
-
-
 Conditions:
   IsSetSpotFleetPrice: !Not [ !Equals [ !Ref SpotFleetPrice, 0 ] ]
   IsSetSpotASGPrice: !Not [ !Equals [ !Ref SpotASGPrice, 0 ] ]
@@ -443,10 +445,6 @@ Resources:
           !Sub |
             #!/bin/bash
             set -o xtrace
-            # temparorily support t3 until this issue being closed
-            # https://github.com/pahud/eks-templates/issues/8
-            cd /etc/eks
-            curl -O https://raw.githubusercontent.com/pahud/eks-templates/master/files/eni-max-pods.txt
             /etc/eks/bootstrap.sh ${ClusterName} ${BootstrapArgumentsForAsg}
             /opt/aws/bin/cfn-signal --exit-code $? \
                      --stack  ${AWS::StackName} \
@@ -480,10 +478,6 @@ Resources:
             !Sub |
             #!/bin/bash
             set -o xtrace
-            # temparorily support t3 until this issue being closed
-            # https://github.com/pahud/eks-templates/issues/8
-            cd /etc/eks
-            curl -O https://raw.githubusercontent.com/pahud/eks-templates/master/files/eni-max-pods.txt
             /etc/eks/bootstrap.sh ${ClusterName} ${BootstrapArgumentsForSpotFleet}
             /opt/aws/bin/cfn-signal --exit-code $? \
                      --stack  ${AWS::StackName} \
