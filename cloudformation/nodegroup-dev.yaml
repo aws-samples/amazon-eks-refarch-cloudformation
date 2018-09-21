@@ -305,6 +305,8 @@ Resources:
       Tags:
       - Key: !Sub "kubernetes.io/cluster/${ClusterName}"
         Value: 'owned'
+      - Key: Name
+        Value: !Sub "${ClusterName}-cluster/NodeSecurityGroup"
 
   NodeSecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
