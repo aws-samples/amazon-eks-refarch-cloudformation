@@ -35,24 +35,6 @@ Additionally, all the spot instances have a **spotInstance=true:PreferNoSchedule
 ![](images/02.png)
 
 
-
-
-
-# Dev Version Template
-
-Dev version has some new features and will be moving to stable version. Feel free to test it and feedback to me.
-
-- [x] Latest Amazon EKS AMI with **/etc/eks/bootstrap.sh** support ([#8](https://github.com/pahud/eks-templates/issues/8))
-- [x] Kubelet Extra Arguments support ([#8](https://github.com/pahud/eks-templates/issues/8))
-- [x] Select custom AMI ID or leave it default as the latest EKS-optimized AMI ID([#9](https://github.com/pahud/eks-templates/issues/9))
-- [x] EU Ireland(eu-west-1) AMI support([#11](https://github.com/pahud/eks-templates/issues/11))
-
-
-
-https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev.yaml
-
-
-
 # Spot Termination Handling
 
 Worried about the spot instance termination? Check [**pahud/eks-lambda-drainer**](https://github.com/pahud/eks-lambda-drainer) to learn how to handle the spot instance termination 120 seconds before the final execution of the termination and get your all running pods re-scheduled onto another node.
