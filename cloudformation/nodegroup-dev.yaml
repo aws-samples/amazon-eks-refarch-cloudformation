@@ -88,7 +88,7 @@ Parameters:
   NodeInstanceType:
     Description: EC2 instance type for the node instances.
     Type: String
-    Default: t2.large
+    Default: t3.large
     AllowedValues:
     - t2.small
     - t2.medium
@@ -242,7 +242,7 @@ Parameters:
   SpotFleetInstancesType:
     Type: CommaDelimitedList
     Description: "instance types in Spot Fleet(specify 3 instance types)"
-    Default: "t2.medium,t2.large,m5.large"
+    Default: "t3.medium,t3.large,m5.large"
 
   SpotFleetAllocationStrategy:
     Type: String
