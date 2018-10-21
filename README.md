@@ -36,7 +36,7 @@ ClusterName=eksdemo \
 KeyName=aws-pahud \
 NodeGroupName=default \
 OnDemandOrSpotWithASG=Spot \
-Subnets=subnet-014a0b4b71d52c131,subnet-0bb8ff0ab066889b3,subnet-0eeb0b7923862c3e3 \
+Subnets=subnet-014a0b4b71d52c131,subnet-0bb8ff0ab066889b3,subnet-0eeb0b7923862c3e3
 ```
 
 
