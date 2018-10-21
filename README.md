@@ -19,6 +19,26 @@
 This template will generate both ASG and Spot Fleet for you. You can optionally let ASG to provision on-demand instances for you while SpotFleet provision diversified spot instances registering into the same Kubernetes cluster.
 
 
+## AWS CLI sample
+
+You may use `aws-cli` to deploy the cloudformation stack as below with your own parameter overrides.
+
+```
+#!/bin/bash
+
+aws cloudformation deploy --template-file cloudformation/nodegroup.yaml  \
+--stack-name eksdemo-ng \
+--capabilities CAPABILITY_IAM \
+--parameter-overrides \
+VpcId=vpc-05ce35780c6cc0d93 \
+ClusterControlPlaneSecurityGroup=sg-03cd819b59679a610 \
+ClusterName=eksdemo \
+KeyName=aws-pahud \
+NodeGroupName=default \
+OnDemandOrSpotWithASG=Spot \
+Subnets=subnet-014a0b4b71d52c131,subnet-0bb8ff0ab066889b3,subnet-0eeb0b7923862c3e3 \
+```
+
 
 ## Node Labels, Taints and Tolerations
 
