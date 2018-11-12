@@ -33,6 +33,7 @@ Metadata:
           - NodeAutoScalingGroupDesiredSize
           - NodeAutoScalingGroupMaxSize
           - NodeInstanceType
+          - ASGAutoAssignPublicIp
       - 
         Label: 
           default: "Spot Configuration"
@@ -41,6 +42,7 @@ Metadata:
           - SpotFleetInstancesType
           - SpotFleetAllocationStrategy
           - SpotFleetSize
+          - SpotAutoAssignPublicIp
       - 
         Label: 
           default: "Advanced"
@@ -187,18 +189,26 @@ Parameters:
     Description: Maximum size of Node Group ASG.
     Default: 5
 
+  ASGAutoAssignPublicIp:
+    Type: String
+    Description: "auto assign public IP address for ASG instances"
+    AllowedValues:
+      - "yes"
+      - "no"
+    Default: "yes"
+
   ClusterName:
     Description: The cluster name provided when the cluster was created.  If it is incorrect, nodes will not be able to join the cluster.
     Type: String
 
   BootstrapArgumentsForAsg:
     Description: Arguments to pass to the bootstrap script. See files/bootstrap.sh in https://github.com/awslabs/amazon-eks-ami
-    Default: "--kubelet-extra-args --node-labels=asgnode=true"
+    Default: "--kubelet-extra-args --node-labels=asgnode=yes"
     Type: String
 
   BootstrapArgumentsForSpotFleet:
     Description: Arguments to pass to the bootstrap script. See files/bootstrap.sh in https://github.com/awslabs/amazon-eks-ami
-    Default: "--kubelet-extra-args '--node-labels=spotfleet=true --register-with-taints=spotInstance=true:PreferNoSchedule'"
+    Default: "--kubelet-extra-args '--node-labels=spotfleet=yes --register-with-taints=spotInstance=true:PreferNoSchedule'"
     Type: String
 
   ClusterControlPlaneSecurityGroup:
@@ -257,12 +267,23 @@ Parameters:
     Description: Set your desired size of Spot Fleet
     Default: 2  
 
+  SpotAutoAssignPublicIp:
+    Type: String
+    Description: "auto assign public IP address for Spot instances"
+    AllowedValues:
+      - "yes"
+      - "no"
+    Default: "yes"
+
 
 Conditions:
   IsSetSpotFleetPrice: !Not [ !Equals [ !Ref SpotFleetPrice, 0 ] ]
   IsSetSpotASGPrice: !Not [ !Equals [ !Ref SpotASGPrice, 0 ] ]
   SpotWithASG: !Equals [ !Ref OnDemandOrSpotWithASG , "Spot" ]
   PreferredDefaultAMI: !Equals [ !Ref NodeImageId, "" ]
+  IsASGAutoAssignPublicIp: !Equals [ !Ref ASGAutoAssignPublicIp , "yes" ]
+  IsSpotAutoAssignPublicIp: !Equals [ !Ref SpotAutoAssignPublicIp , "yes" ]
+ 
   # SpotFleetCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
   # EnableASGCond: !Equals [ !Ref AsgOrSpotFleet, "AutoscalingGroup" ]
   # DisableASGCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
@@ -424,7 +445,11 @@ Resources:
   NodeLaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
-      AssociatePublicIpAddress: 'true'
+      AssociatePublicIpAddress: 
+        !If
+          - IsASGAutoAssignPublicIp
+          - 'true'
+          - 'false'
       IamInstanceProfile: !Ref NodeInstanceProfile
       #ImageId: !Ref NodeImageId
       ImageId: 
@@ -513,7 +538,11 @@ Resources:
         NetworkInterfaces: 
           - 
             DeviceIndex: 0
-            AssociatePublicIpAddress: 'true'
+            AssociatePublicIpAddress:
+              !If
+                - IsSpotAutoAssignPublicIp
+                - 'true'
+                - 'false'
             SubnetId: !Select [0, !Ref Subnets]
             Groups: 
               - !Ref NodeSecurityGroup
