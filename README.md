@@ -42,7 +42,7 @@ Subnets=subnet-014a0b4b71d52c131,subnet-0bb8ff0ab066889b3,subnet-0eeb0b7923862c3
 
 ## Node Labels, Taints and Tolerations
 
-By default, all the on-demand instances managed by ASG(Autoscaling Group) will have the label **asgnode=true** while the spot instances will have **spotfleet=true**. Use the node selector to better schedule your workload
+By default, all the on-demand instances managed by ASG(Autoscaling Group) will have the label **asgnode=yes** while the spot instances will have **spotfleet=yes**. Use the node selector to better schedule your workload
 
 
 
@@ -50,9 +50,7 @@ By default, all the on-demand instances managed by ASG(Autoscaling Group) will h
 
 
 
-Additionally, all the spot instances have a **spotInstance=true:PreferNoSchedule** taint. To deploy your Pod on spot instances, use the node label selector to specify **spotfleet=true**, otherwise the pod will not be scheduled on the spot instances unless it has relevant toleration. ([Taint and Toleration in Kubernetes](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)).
-
-![](images/02.png)
+Additionally, all the spot instances have a **spotInstance=true:PreferNoSchedule** taint. To deploy your Pod on spot instances, use the node label selector to specify **spotfleet=yes**, otherwise the pod will not be scheduled on the spot instances unless it has relevant toleration. ([Taint and Toleration in Kubernetes](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)).
 
 
 # Spot Termination Handling
