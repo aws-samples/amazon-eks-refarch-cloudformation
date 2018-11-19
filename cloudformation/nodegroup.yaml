@@ -16,6 +16,8 @@ Metadata:
           - BootstrapArgumentsForSpotFleet
           - ClusterControlPlaneSecurityGroup
           - NodeGroupName
+          - UseExistingNodeSecurityGroups
+          - ExistingNodeSecurityGroups
           # - MasterEndpoint
           - Subnets
       # - 
@@ -197,18 +199,31 @@ Parameters:
       - "no"
     Default: "yes"
 
+  UseExistingNodeSecurityGroups:
+    Type: String
+    Description: OPTIONAL - select 'yes' if you prefer to attach existing SGs to nodegroup
+    Default: "no"
+    AllowedValues:
+      - "yes"
+      - "no"
+  ExistingNodeSecurityGroups:
+    #Type: List<AWS::EC2::SecurityGroup::Id>
+    Type: String
+    Description: OPTIONAL - attach existing security group ID(s) for your nodegroup
+    Default: ""
+
   ClusterName:
     Description: The cluster name provided when the cluster was created.  If it is incorrect, nodes will not be able to join the cluster.
     Type: String
 
   BootstrapArgumentsForAsg:
     Description: Arguments to pass to the bootstrap script. See files/bootstrap.sh in https://github.com/awslabs/amazon-eks-ami
-    Default: "--kubelet-extra-args --node-labels=asgnode=yes"
+    Default: "--kubelet-extra-args --node-labels=asgnode=true"
     Type: String
 
   BootstrapArgumentsForSpotFleet:
     Description: Arguments to pass to the bootstrap script. See files/bootstrap.sh in https://github.com/awslabs/amazon-eks-ami
-    Default: "--kubelet-extra-args '--node-labels=spotfleet=yes --register-with-taints=spotInstance=true:PreferNoSchedule'"
+    Default: "--kubelet-extra-args '--node-labels=spotfleet=true --register-with-taints=spotInstance=true:PreferNoSchedule'"
     Type: String
 
   ClusterControlPlaneSecurityGroup:
@@ -275,7 +290,6 @@ Parameters:
       - "no"
     Default: "yes"
 
-
 Conditions:
   IsSetSpotFleetPrice: !Not [ !Equals [ !Ref SpotFleetPrice, 0 ] ]
   IsSetSpotASGPrice: !Not [ !Equals [ !Ref SpotASGPrice, 0 ] ]
@@ -283,7 +297,10 @@ Conditions:
   PreferredDefaultAMI: !Equals [ !Ref NodeImageId, "" ]
   IsASGAutoAssignPublicIp: !Equals [ !Ref ASGAutoAssignPublicIp , "yes" ]
   IsSpotAutoAssignPublicIp: !Equals [ !Ref SpotAutoAssignPublicIp , "yes" ]
- 
+  # AttachExistingNodeSG: !Not [ !Equals [ !Join [ "", !Ref ExistingNodeSecurityGroups], "" ] ]
+  # CreateNewNodeSG: !Equals [ !Join [ "", !Ref ExistingNodeSecurityGroups], "" ]
+  AttachExistingNodeSG: !Equals [ !Ref UseExistingNodeSecurityGroups, "yes" ] 
+  CreateNewNodeSG: !Equals [ !Ref UseExistingNodeSecurityGroups, "no" ]
   # SpotFleetCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
   # EnableASGCond: !Equals [ !Ref AsgOrSpotFleet, "AutoscalingGroup" ]
   # DisableASGCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
@@ -318,6 +335,7 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
 
   NodeSecurityGroup:
+    Condition: CreateNewNodeSG
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security group for all nodes in the cluster
@@ -330,6 +348,7 @@ Resources:
         Value: !Sub "${ClusterName}-cluster/NodeSecurityGroup"
 
   NodeSecurityGroupIngress:
+    Condition: CreateNewNodeSG
     Type: AWS::EC2::SecurityGroupIngress
     DependsOn: NodeSecurityGroup
     Properties:
@@ -341,6 +360,7 @@ Resources:
       ToPort: 65535
 
   NodeSecurityGroupFromControlPlaneIngress:
+    Condition: CreateNewNodeSG
     Type: AWS::EC2::SecurityGroupIngress
     DependsOn: NodeSecurityGroup
     Properties:
@@ -352,6 +372,7 @@ Resources:
       ToPort: 65535
 
   ControlPlaneEgressToNodeSecurityGroup:
+    Condition: CreateNewNodeSG
     Type: AWS::EC2::SecurityGroupEgress
     DependsOn: NodeSecurityGroup
     Properties:
@@ -363,6 +384,7 @@ Resources:
       ToPort: 65535
 
   NodeSecurityGroupFromControlPlaneOn443Ingress:
+    Condition: CreateNewNodeSG
     Type: AWS::EC2::SecurityGroupIngress
     DependsOn: NodeSecurityGroup
     Properties:
@@ -374,6 +396,7 @@ Resources:
       ToPort: 443
 
   ControlPlaneEgressToNodeSecurityGroupOn443:
+    Condition: CreateNewNodeSG
     Type: AWS::EC2::SecurityGroupEgress
     DependsOn: NodeSecurityGroup
     Properties:
@@ -385,6 +408,7 @@ Resources:
       ToPort: 443
 
   ClusterControlPlaneSecurityGroupIngress:
+    Condition: CreateNewNodeSG
     Type: AWS::EC2::SecurityGroupIngress
     DependsOn: NodeSecurityGroup
     Properties:
@@ -461,7 +485,11 @@ Resources:
       InstanceType: !Ref NodeInstanceType
       KeyName: !Ref KeyName
       SecurityGroups:
-      - !Ref NodeSecurityGroup
+        !If
+          - CreateNewNodeSG
+          - 
+            - !Ref NodeSecurityGroup
+          - !Split [ ",", !Ref ExistingNodeSecurityGroups ]
       SpotPrice: 
         !If 
           - SpotWithASG
@@ -545,7 +573,11 @@ Resources:
                 - 'false'
             SubnetId: !Select [0, !Ref Subnets]
             Groups: 
-              - !Ref NodeSecurityGroup
+              !If
+                - CreateNewNodeSG
+                - 
+                  - !Ref NodeSecurityGroup
+                - !Split [ ",", !Ref ExistingNodeSecurityGroups ]
         ImageId: 
           !If
             - PreferredDefaultAMI

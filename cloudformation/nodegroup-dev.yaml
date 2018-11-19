@@ -35,6 +35,7 @@ Metadata:
           - NodeAutoScalingGroupDesiredSize
           - NodeAutoScalingGroupMaxSize
           - NodeInstanceType
+          - ASGAutoAssignPublicIp
       - 
         Label: 
           default: "Spot Configuration"
@@ -43,6 +44,7 @@ Metadata:
           - SpotFleetInstancesType
           - SpotFleetAllocationStrategy
           - SpotFleetSize
+          - SpotAutoAssignPublicIp
       - 
         Label: 
           default: "Advanced"
@@ -189,6 +191,14 @@ Parameters:
     Description: Maximum size of Node Group ASG.
     Default: 5
 
+  ASGAutoAssignPublicIp:
+    Type: String
+    Description: "auto assign public IP address for ASG instances"
+    AllowedValues:
+      - "yes"
+      - "no"
+    Default: "yes"
+
   UseExistingNodeSecurityGroups:
     Type: String
     Description: OPTIONAL - select 'yes' if you prefer to attach existing SGs to nodegroup
@@ -272,12 +282,21 @@ Parameters:
     Description: Set your desired size of Spot Fleet
     Default: 2  
 
+  SpotAutoAssignPublicIp:
+    Type: String
+    Description: "auto assign public IP address for Spot instances"
+    AllowedValues:
+      - "yes"
+      - "no"
+    Default: "yes"
 
 Conditions:
   IsSetSpotFleetPrice: !Not [ !Equals [ !Ref SpotFleetPrice, 0 ] ]
   IsSetSpotASGPrice: !Not [ !Equals [ !Ref SpotASGPrice, 0 ] ]
   SpotWithASG: !Equals [ !Ref OnDemandOrSpotWithASG , "Spot" ]
   PreferredDefaultAMI: !Equals [ !Ref NodeImageId, "" ]
+  IsASGAutoAssignPublicIp: !Equals [ !Ref ASGAutoAssignPublicIp , "yes" ]
+  IsSpotAutoAssignPublicIp: !Equals [ !Ref SpotAutoAssignPublicIp , "yes" ]
   # AttachExistingNodeSG: !Not [ !Equals [ !Join [ "", !Ref ExistingNodeSecurityGroups], "" ] ]
   # CreateNewNodeSG: !Equals [ !Join [ "", !Ref ExistingNodeSecurityGroups], "" ]
   AttachExistingNodeSG: !Equals [ !Ref UseExistingNodeSecurityGroups, "yes" ] 
@@ -450,7 +469,11 @@ Resources:
   NodeLaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
-      AssociatePublicIpAddress: 'true'
+      AssociatePublicIpAddress: 
+        !If
+          - IsASGAutoAssignPublicIp
+          - 'true'
+          - 'false'
       IamInstanceProfile: !Ref NodeInstanceProfile
       #ImageId: !Ref NodeImageId
       ImageId: 
@@ -543,7 +566,11 @@ Resources:
         NetworkInterfaces: 
           - 
             DeviceIndex: 0
-            AssociatePublicIpAddress: 'true'
+            AssociatePublicIpAddress:
+              !If
+                - IsSpotAutoAssignPublicIp
+                - 'true'
+                - 'false'
             SubnetId: !Select [0, !Ref Subnets]
             Groups: 
               !If
