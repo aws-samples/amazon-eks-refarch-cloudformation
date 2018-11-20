@@ -12,39 +12,26 @@ Metadata:
           - KeyName
           - NodeImageId
           - ClusterName
-          - BootstrapArgumentsForAsg
+          - BootstrapArgumentsForOnDemand
           - BootstrapArgumentsForSpotFleet
           - ClusterControlPlaneSecurityGroup
           - NodeGroupName
           - UseExistingNodeSecurityGroups
           - ExistingNodeSecurityGroups
-          # - MasterEndpoint
           - Subnets
-      # - 
-      #   Label: 
-      #     default: "Spot or AutoScaling Group"
-      #   Parameters: 
-      #     - AsgOrSpotFleet
       - 
         Label: 
           default: "Auto Scaling Configuration"
         Parameters: 
-          - OnDemandOrSpotWithASG
-          - SpotASGPrice
           - NodeAutoScalingGroupMinSize
           - NodeAutoScalingGroupDesiredSize
           - NodeAutoScalingGroupMaxSize
           - NodeInstanceType
           - ASGAutoAssignPublicIp
-      - 
-        Label: 
-          default: "Spot Configuration"
-        Parameters: 
-          - SpotFleetPrice
-          - SpotFleetInstancesType
-          - SpotFleetAllocationStrategy
-          - SpotFleetSize
-          - SpotAutoAssignPublicIp
+          - OnDemandBaseCapacity
+          - OnDemandPercentageAboveBaseCapacity
+          - SpotInstancePools
+          - InstanceTypesOverride
       - 
         Label: 
           default: "Advanced"
@@ -57,13 +44,6 @@ Mappings:
       Name: 'AWS::Include'
       Parameters:
         Location: s3://pahud-eks-templates/eks-latest-ami.yaml
-    # us-west-2:
-    #   ami: ami-08cab282f9979fc7a	
-    # us-east-1:
-    #   ami: ami-0b2ae3c6bda8b5c06	
-    # eu-west-1:
-    #   ami: ami-066110c1a7466949e
-
 
 Parameters:
   VpcId:
@@ -84,13 +64,12 @@ Parameters:
     Default: 31742
 
   NodeImageId:
-    #Type: AWS::EC2::Image::Id
     Type: String
     Default: ""
     Description: Specify AMI id for the node instances. Leave it blank if you preferred the latest EKS-optimized AMI
 
   NodeInstanceType:
-    Description: EC2 instance type for the node instances.
+    Description: Default EC2 instance type for the node instances.
     Type: String
     Default: t3.large
     AllowedValues:
@@ -199,6 +178,27 @@ Parameters:
       - "no"
     Default: "yes"
 
+
+  OnDemandBaseCapacity:
+    Type: Number
+    Description: "on-demand base capacity"
+    Default: 2
+
+  OnDemandPercentageAboveBaseCapacity:
+    Type: Number
+    Description: "on-demand percentage above base capacity(0-100)"
+    Default: 0
+
+  SpotInstancePools:
+    Type: Number
+    Description: "spot instance pools(1-20)"
+    Default: 2
+
+  InstanceTypesOverride:
+    Type: String
+    Description: "multiple spot instances to override(seperated by comma)"
+    Default: "t3.medium,t3.large,t3.xlarge"
+
   UseExistingNodeSecurityGroups:
     Type: String
     Description: OPTIONAL - select 'yes' if you prefer to attach existing SGs to nodegroup
@@ -207,7 +207,6 @@ Parameters:
       - "yes"
       - "no"
   ExistingNodeSecurityGroups:
-    #Type: List<AWS::EC2::SecurityGroup::Id>
     Type: String
     Description: OPTIONAL - attach existing security group ID(s) for your nodegroup
     Default: ""
@@ -216,14 +215,14 @@ Parameters:
     Description: The cluster name provided when the cluster was created.  If it is incorrect, nodes will not be able to join the cluster.
     Type: String
 
-  BootstrapArgumentsForAsg:
+  BootstrapArgumentsForOnDemand:
     Description: Arguments to pass to the bootstrap script. See files/bootstrap.sh in https://github.com/awslabs/amazon-eks-ami
-    Default: "--kubelet-extra-args --node-labels=asgnode=true"
+    Default: "--kubelet-extra-args --node-labels=ondemand=yes"
     Type: String
 
   BootstrapArgumentsForSpotFleet:
     Description: Arguments to pass to the bootstrap script. See files/bootstrap.sh in https://github.com/awslabs/amazon-eks-ami
-    Default: "--kubelet-extra-args '--node-labels=spotfleet=true --register-with-taints=spotInstance=true:PreferNoSchedule'"
+    Default: "--kubelet-extra-args '--node-labels=spotfleet=yes --register-with-taints=spotInstance=true:PreferNoSchedule'"
     Type: String
 
   ClusterControlPlaneSecurityGroup:
@@ -234,81 +233,14 @@ Parameters:
     Description: Unique identifier for the Node Group.
     Type: String
 
-  # MasterEndpoint:
-  #   Description: URL endpoint of the API Server.
-  #   Type: String
-
-  # AsgOrSpotFleet:
-  #   Type: String
-  #   Default: "AutoscalingGroup"
-  #   Description: "provision the ECS cluster with AutoscalingGroup or SpotFleet"
-  #   AllowedValues:
-  #     - "AutoscalingGroup"
-  #     - "SpotFleet"
-
-  OnDemandOrSpotWithASG:
-    Type: String
-    Default: "On Demand"
-    Description: "on demand or spot instances with AutoScaling Group"
-    AllowedValues:
-      - "On Demand"
-      - "Spot"
-
-  SpotASGPrice:
-    Type: Number
-    Description: Set your max price (per instance/hour) for ASG
-    Default: 0.03
-
-  SpotFleetPrice:
-    Type: Number
-    Description: Set your max price (per instance/hour) for Spot Fleet
-    Default: 0  
-
-  SpotFleetInstancesType:
-    Type: CommaDelimitedList
-    Description: "instance types in Spot Fleet(specify 3 instance types)"
-    Default: "t3.medium,t3.large,m5.large"
-
-  SpotFleetAllocationStrategy:
-    Type: String
-    Description: "spot fleet allocation strategy"
-    AllowedValues:
-      - "diversified"
-      - "lowestPrice"
-    Default: "diversified"
-
-  SpotFleetSize:
-    Type: Number
-    Description: Set your desired size of Spot Fleet
-    Default: 2  
-
-  SpotAutoAssignPublicIp:
-    Type: String
-    Description: "auto assign public IP address for Spot instances"
-    AllowedValues:
-      - "yes"
-      - "no"
-    Default: "yes"
-
 Conditions:
-  IsSetSpotFleetPrice: !Not [ !Equals [ !Ref SpotFleetPrice, 0 ] ]
-  IsSetSpotASGPrice: !Not [ !Equals [ !Ref SpotASGPrice, 0 ] ]
-  SpotWithASG: !Equals [ !Ref OnDemandOrSpotWithASG , "Spot" ]
   PreferredDefaultAMI: !Equals [ !Ref NodeImageId, "" ]
   IsASGAutoAssignPublicIp: !Equals [ !Ref ASGAutoAssignPublicIp , "yes" ]
-  IsSpotAutoAssignPublicIp: !Equals [ !Ref SpotAutoAssignPublicIp , "yes" ]
-  # AttachExistingNodeSG: !Not [ !Equals [ !Join [ "", !Ref ExistingNodeSecurityGroups], "" ] ]
-  # CreateNewNodeSG: !Equals [ !Join [ "", !Ref ExistingNodeSecurityGroups], "" ]
   AttachExistingNodeSG: !Equals [ !Ref UseExistingNodeSecurityGroups, "yes" ] 
   CreateNewNodeSG: !Equals [ !Ref UseExistingNodeSecurityGroups, "no" ]
-  # SpotFleetCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
-  # EnableASGCond: !Equals [ !Ref AsgOrSpotFleet, "AutoscalingGroup" ]
-  # DisableASGCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
 
 
 Resources:
-
-
   NodeInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
@@ -432,22 +364,36 @@ Resources:
       Name: !Sub "${AWS::StackName}-tg"
       Port: !Ref TargetGroupPort
       Protocol: HTTP
-      # Tags:
-      #   - Resource Tag
-      # TargetGroupAttributes:
-      #   - TargetGroupAttributes
-      # Targets:
-      #   - TargetDescription
       TargetType: instance
       UnhealthyThresholdCount: 2
       VpcId: !Ref VpcId
 
   NodeGroup:
-    # Condition: EnableASGCond
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       DesiredCapacity: !Ref NodeAutoScalingGroupDesiredSize
-      LaunchConfigurationName: !Ref NodeLaunchConfig
+      #LaunchConfigurationName: !Ref NodeLaunchConfig
+      # LaunchTemplate: 
+      #   LaunchTemplateId: !Ref MyLaunchTemplate
+      #   Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+      MixedInstancesPolicy:
+        InstancesDistribution:
+          OnDemandAllocationStrategy: prioritized
+          OnDemandBaseCapacity: !Ref OnDemandBaseCapacity
+          OnDemandPercentageAboveBaseCapacity: !Ref OnDemandPercentageAboveBaseCapacity
+          SpotAllocationStrategy: lowest-price
+          SpotInstancePools: !Ref SpotInstancePools
+          # SpotMaxPrice: String
+        LaunchTemplate:
+          LaunchTemplateSpecification: 
+            LaunchTemplateId: !Ref MyLaunchTemplate
+            # LaunchTemplateName: String
+            Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+          Overrides: 
+            - InstanceType: !Select [0, !Split [ ",", !Ref InstanceTypesOverride ] ]
+            - InstanceType: !Select [1, !Split [ ",", !Ref InstanceTypesOverride ] ]
+            - InstanceType: !Select [2, !Split [ ",", !Ref InstanceTypesOverride ] ]
+
       MinSize: !Ref NodeAutoScalingGroupMinSize
       MaxSize: !Ref NodeAutoScalingGroupMaxSize
       TargetGroupARNs: 
@@ -466,55 +412,14 @@ Resources:
         MinInstancesInService: '0'
         MaxBatchSize: '1'
 
-  NodeLaunchConfig:
-    Type: AWS::AutoScaling::LaunchConfiguration
-    Properties:
-      AssociatePublicIpAddress: 
-        !If
-          - IsASGAutoAssignPublicIp
-          - 'true'
-          - 'false'
-      IamInstanceProfile: !Ref NodeInstanceProfile
-      #ImageId: !Ref NodeImageId
-      ImageId: 
-        !If
-          - PreferredDefaultAMI
-          - !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
-          - !Ref NodeImageId
-      
-      InstanceType: !Ref NodeInstanceType
-      KeyName: !Ref KeyName
-      SecurityGroups:
-        !If
-          - CreateNewNodeSG
-          - 
-            - !Ref NodeSecurityGroup
-          - !Split [ ",", !Ref ExistingNodeSecurityGroups ]
-      SpotPrice: 
-        !If 
-          - SpotWithASG
-          - !Ref SpotASGPrice
-          - !Ref AWS::NoValue    
-      UserData:
-        Fn::Base64:
-          !Sub |
-            #!/bin/bash
-            set -o xtrace
-            /etc/eks/bootstrap.sh ${ClusterName} ${BootstrapArgumentsForAsg}
-            /opt/aws/bin/cfn-signal --exit-code $? \
-                     --stack  ${AWS::StackName} \
-                     --resource NodeGroup  \
-                     --region ${AWS::Region}
-
-
 
 #
 # Launch Template
 #
-  SpotLaunchTemplate:
+  MyLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
-      LaunchTemplateName: !Sub "eksLaunchTemplateSpot-${AWS::StackName}"
+      LaunchTemplateName: !Sub "eksLaunchTemplate-${AWS::StackName}"
       LaunchTemplateData: 
         # SecurityGroupIds: 
         #   - !Ref NodeSecurityGroup
@@ -523,7 +428,7 @@ Resources:
             ResourceType: instance
             Tags:
               - Key: Name
-                Value: !Sub "${ClusterName}-${NodeGroupName}-SpotFleet-Node"
+                Value: !Sub "${ClusterName}-${NodeGroupName}-ASG-Node"
               - Key: KubernetesCluster
                 Value: !Ref ClusterName
               - Key: !Sub 'kubernetes.io/cluster/${ClusterName}'
@@ -533,42 +438,28 @@ Resources:
             !Sub |
             #!/bin/bash
             set -o xtrace
-            /etc/eks/bootstrap.sh ${ClusterName} ${BootstrapArgumentsForSpotFleet}
+            iid=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+            export AWS_DEFAULT_REGION=${AWS::Region}
+            ilc=`aws ec2 describe-instances --instance-ids  $iid  --query 'Reservations[0].Instances[0].InstanceLifecycle' --output text`
+            if [ "$ilc" == "spot" ]; then
+              /etc/eks/bootstrap.sh ${ClusterName} ${BootstrapArgumentsForSpotFleet}
+            else
+              /etc/eks/bootstrap.sh ${ClusterName} ${BootstrapArgumentsForOnDemand}
+            fi
+            # /etc/eks/bootstrap.sh ${ClusterName} $BootstrapArgumentsForOnDemand
             /opt/aws/bin/cfn-signal --exit-code $? \
                      --stack  ${AWS::StackName} \
                      --resource NodeGroup  \
                      --region ${AWS::Region}
-        # InstanceInitiatedShutdownBehavior: String
-        # BlockDeviceMappings: 
-        #   - BlockDeviceMapping
         IamInstanceProfile: 
           Arn: !GetAtt NodeInstanceProfile.Arn
-          # Name: 
-        # KernelId: String
-        # SecurityGroupIds: 
-        #   - String
-        # EbsOptimized: 'true'
         KeyName: !Ref KeyName
-        # DisableApiTermination: Boolean
-        # ElasticGpuSpecifications: 
-        #   - ElasticGpuSpecification
-        # Placement: Placement
-        InstanceMarketOptions: 
-          SpotOptions: 
-            # SpotInstanceType: persistent
-            # InstanceInterruptionBehavior: terminate
-            MaxPrice:
-              !If 
-                - IsSetSpotFleetPrice
-                - !Ref SpotFleetPrice
-                - !Ref AWS::NoValue  
-          MarketType: spot
         NetworkInterfaces: 
           - 
             DeviceIndex: 0
             AssociatePublicIpAddress:
               !If
-                - IsSpotAutoAssignPublicIp
+                - IsASGAutoAssignPublicIp
                 - 'true'
                 - 'false'
             SubnetId: !Select [0, !Ref Subnets]
@@ -584,107 +475,6 @@ Resources:
             - !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
             - !Ref NodeImageId        
         InstanceType: !Ref NodeInstanceType
-        # RamDiskId: String
-        # Monitoring: Monitoring
-        # CreditSpecification: 
-        #   CpuCredits: unlimited
-
-###################
-# Spot fleet
-###################
-
-  IAMFleetRole:
-    Type: AWS::IAM::Role
-    Properties:
-        AssumeRolePolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Action: 
-                  - 'sts:AssumeRole'
-                Effect: Allow
-                Principal:
-                  Service:
-                    - spotfleet.amazonaws.com
-        Path: /
-        ManagedPolicyArns:
-            - arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole   
-            - arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole
-
-  SpotFleet:
-    # Condition: SpotFleetCond
-    Type: AWS::EC2::SpotFleet
-    Properties:
-      SpotFleetRequestConfigData:
-        AllocationStrategy: !Ref SpotFleetAllocationStrategy
-        SpotPrice: 
-          !If 
-            - IsSetSpotFleetPrice
-            - !Ref SpotFleetPrice
-            - !Ref AWS::NoValue  
-        IamFleetRole: !GetAtt IAMFleetRole.Arn
-        TargetCapacity: !Ref SpotFleetSize
-        Type: maintain
-        # LaunchSpecifications:
-        LaunchTemplateConfigs:
-          - LaunchTemplateSpecification:
-              LaunchTemplateId: !Ref SpotLaunchTemplate
-              # LaunchTemplateName: eksLaunchTemplateSpot
-              Version: !GetAtt SpotLaunchTemplate.LatestVersionNumber
-            Overrides:
-              - 
-                # AvailabilityZone: String
-                InstanceType: !Select [0, !Ref SpotFleetInstancesType]
-                # SpotPrice: String
-                SubnetId: !Select [0, !Ref Subnets]
-                WeightedCapacity: 1
-              - 
-                # AvailabilityZone: String
-                InstanceType: !Select [0, !Ref SpotFleetInstancesType]
-                # SpotPrice: String
-                SubnetId: !Select [1, !Ref Subnets]
-                WeightedCapacity: 1
-              - 
-                # AvailabilityZone: String
-                InstanceType: !Select [0, !Ref SpotFleetInstancesType]
-                # SpotPrice: String
-                SubnetId: !Select [2, !Ref Subnets]
-                WeightedCapacity: 1
-              - 
-                # AvailabilityZone: String
-                InstanceType: !Select [1, !Ref SpotFleetInstancesType]
-                # SpotPrice: String
-                SubnetId: !Select [0, !Ref Subnets]
-                WeightedCapacity: 1
-              - 
-                # AvailabilityZone: String
-                InstanceType: !Select [1, !Ref SpotFleetInstancesType]
-                # SpotPrice: String
-                SubnetId: !Select [1, !Ref Subnets]
-                WeightedCapacity: 1
-              - 
-                # AvailabilityZone: String
-                InstanceType: !Select [1, !Ref SpotFleetInstancesType]
-                # SpotPrice: String
-                SubnetId: !Select [2, !Ref Subnets]
-                WeightedCapacity: 1
-              - 
-                # AvailabilityZone: String
-                InstanceType: !Select [2, !Ref SpotFleetInstancesType]
-                # SpotPrice: String
-                SubnetId: !Select [0, !Ref Subnets]
-                WeightedCapacity: 1
-              - 
-                # AvailabilityZone: String
-                InstanceType: !Select [2, !Ref SpotFleetInstancesType]
-                # SpotPrice: String
-                SubnetId: !Select [1, !Ref Subnets]
-                WeightedCapacity: 1
-              - 
-                # AvailabilityZone: String
-                InstanceType: !Select [2, !Ref SpotFleetInstancesType]
-                # SpotPrice: String
-                SubnetId: !Select [2, !Ref Subnets]
-                WeightedCapacity: 1
 
 Outputs:
   NodeInstanceRole:
