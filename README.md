@@ -25,8 +25,8 @@ see [New – EC2 Auto Scaling Groups With Multiple Instance Types & Purchase Opt
 
 - [x] Fully support the latest Autoscaling Group features to hybrid on-demand and spot instances
 - [x] No need to create a seperate SpotFleet
-- [x] on-demand instances will have node label **ondemand=true**
-- [x] spot instances will have node label **spotfleet=true** and a **spotInstance=true:PreferNoSchedule** taint
+- [x] on-demand instances will have node label **ondemand=yes**
+- [x] spot instances will have node label **spotfleet=yes** and a **spotInstance=true:PreferNoSchedule** taint
 - [x] support private subnets
 - [x] support non-RFC1918 IP/CIDR VPC subnets
 - [x] support the latest EKS-optimized AMI auto selection
