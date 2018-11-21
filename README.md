@@ -2,9 +2,9 @@
 
 
 
-#### EKS nodeGroup ASG with multiple instance types and purchase options support
+#### Amazon EKS nodeGroup ASG with multiple instance types and purchase options support
 
-*This is an complementary cloudformation template that help you provision a single EC2 autoscaling group that leverages multiple instance types and purchase options*
+*This is a alternative cloudformation template for Amazon EKS nodegroup that helps you provision a single EC2 autoscaling group with multiple instance types and purchase options*
 
 
 
