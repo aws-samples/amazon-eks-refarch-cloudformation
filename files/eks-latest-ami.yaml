@@ -1,10 +1,10 @@
-eu-west-1:
-  ami: ami-03612357ac9da2c7d
-us-east-1:
-  ami: ami-027792c3cc6de7b5b
 us-west-2:
-  ami: ami-036130f4127a367f7
+  ami: ami-094fa4044a2a3cf52
+us-east-1:
+  ami: ami-0b4eb1d8782fc3aea
 us-east-2:
-  ami: ami-07af9511082779ae7
+  ami: ami-053cbe66e0033ebcf	
+eu-west-1:
+  ami: ami-0a9006fb385703b54
 eu-north-1:
-  ami: ami-04b0f84e5a05e0b30
+  ami: ami-082e6cf1c07e60241
