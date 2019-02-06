@@ -1,0 +1,61 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Amazon EKS Node Group'
+
+Parameters:
+  ClusterName:
+    Description: The cluster name provided when the cluster was created.  If it is incorrect, nodes will not be able to join the cluster.
+    Type: String
+
+  ClusterVersion:
+    Description: Cluster Version
+    Type: String
+    Default: "1.11"
+    
+  VpcId:
+    Description: The VPC of the worker instances
+    Type: AWS::EC2::VPC::Id
+    
+  ClusterRoleArn:
+    Description: IAM Role Arn
+    Type: String
+
+  SubnetIds:
+    Description: Select 3 subnets where workers can be created.
+    Type: List<AWS::EC2::Subnet::Id>
+    
+  SecurityGroupIds:
+    Description: The security group of the cluster control plane.
+    Type: List<String>
+
+
+
+
+
+# Conditions:
+#   IsSetSpotFleetPrice: !Not [ !Equals [ !Ref SpotFleetPrice, 0 ] ]
+#   IsSetSpotASGPrice: !Not [ !Equals [ !Ref SpotASGPrice, 0 ] ]
+#   SpotWithASG: !Equals [ !Ref OnDemandOrSpotWithASG , "Spot" ]
+#   PreferredDefaultAMI: !Equals [ !Ref NodeImageId, "" ]
+#   IsASGAutoAssignPublicIp: !Equals [ !Ref ASGAutoAssignPublicIp , "yes" ]
+#   IsSpotAutoAssignPublicIp: !Equals [ !Ref SpotAutoAssignPublicIp , "yes" ]
+ 
+  # SpotFleetCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
+  # EnableASGCond: !Equals [ !Ref AsgOrSpotFleet, "AutoscalingGroup" ]
+  # DisableASGCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
+
+
+Resources:
+  EKSCluster:
+    Type: "AWS::EKS::Cluster"
+    Properties:
+      Name: !Ref ClusterName
+      ResourcesVpcConfig:
+        SecurityGroupIds: !Ref SecurityGroupIds
+        SubnetIds: !Ref SubnetIds
+      RoleArn: !Ref ClusterRoleArn
+      Version: !Ref ClusterVersion
+
+Outputs:
+  VpcId:
+    Value: !Ref VpcId

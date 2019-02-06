@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  ClusterName:
+    Description: The cluster name provided when the cluster was created.  If it is incorrect, nodes will not be able to join the cluster.
+    Type: String
+
+  ClusterVersion:
+    Description: Cluster Version
+    Type: String
+    Default: "1.11"
+    
+  VpcId:
+    Description: The VPC of the worker instances
+    Type: AWS::EC2::VPC::Id
+    
+  ClusterRoleArn:
+    Description: IAM Role Arn
+    Type: String
+
+  SubnetIds:
+    Description: Select 3 subnets where workers can be created.
+    #Type: List<AWS::EC2::Subnet::Id>
+    Type: String
+    
+  SecurityGroupIds:
+    Description: The security group of the cluster control plane.
+    #Type: List<String>
+    Type: String
+    
+  NodeAutoScalingGroupMinSize:
+    Description: ASG min size
+    Type: Number
+    Default: 1
+
+  NodeAutoScalingGroupDesiredSize:
+    Description: ASG desired size
+    Type: Number
+    Default: 4
+    
+  NodeAutoScalingGroupMaxSize:
+    Description: ASG max size
+    Type: Number
+    Default: 5
+    
+  InstanceTypesOverride:
+    Description: Instance Types Overrides
+    Type: String
+    Default: "t3.medium,t3.large,t3.xlarge"
+    
+  ASGAutoAssignPublicIp:
+    Type: String
+    Description: "auto assign public IP address for ASG instances"
+    AllowedValues:
+      - "yes"
+      - "no"
+    Default: "yes"
+    
+  NodeGroupName:
+    Description: Unique identifier for the Node Group.
+    Type: String 
+    Default: "ng1"
+
+  KeyName:
+    Description: The EC2 Key Pair to allow SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName
+    
+Resources:
+  CL:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/cluster.yaml
+      Parameters:
+        VpcId: !Ref VpcId
+        ClusterName: !Ref ClusterName
+        ClusterRoleArn: !Ref ClusterRoleArn
+        SubnetIds: !Ref SubnetIds
+        SecurityGroupIds: !Ref SecurityGroupIds
+  NG:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup.yaml
+      Parameters:
+        VpcId:  !Ref VpcId
+        ClusterControlPlaneSecurityGroup: !Ref SecurityGroupIds
+        ClusterName: !Ref ClusterName
+        KeyName: !Ref KeyName
+        NodeGroupName: !Ref NodeGroupName
+        ASGAutoAssignPublicIp: !Ref ASGAutoAssignPublicIp
+        InstanceTypesOverride: !Ref InstanceTypesOverride
+        NodeAutoScalingGroupMinSize: !Ref NodeAutoScalingGroupMinSize
+        NodeAutoScalingGroupDesiredSize: !Ref NodeAutoScalingGroupDesiredSize
+        NodeAutoScalingGroupMaxSize: !Ref NodeAutoScalingGroupMaxSize
+        Subnets: !Ref SubnetIds
+      

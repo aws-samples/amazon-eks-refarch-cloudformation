@@ -2,9 +2,9 @@
 
 
 
-#### EKS nodeGroup with SpotFleet or ASG w/ spot instance support
+#### Amazon EKS cloudformation templates
 
-*This is an complementary cloudformation template that help you optionally choose spot fleet or ASG w/ spot instances to provision your Amazon EKS node group.*
+*This is an complementary cloudformation template of nested stacks that helps you provision your Amazon EKS cluster and nodegroup with mixed instance types and purchase options*
 
 
 
@@ -12,11 +12,16 @@
 
 ## HOWTO
 
-1. Use **eksctl** to provision your Amazon EKS cluster([walkthrough guide](https://github.com/pahud/amazon-eks-workshop/blob/master/00-getting-started/create-eks-with-eksctl.md))
-2. Use this alternative cloudformation template to update the nodegroup created by **eksctl** - https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup.yaml
+1. You may create this stack with contains the EKS cluster and the `nodegroup`. Simple enter this URL in the cloudformation console: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks.yaml
+or cerate it simply with
 
+```
+$ make create-eks-cluster
+```
+(you need to modify the `Makefile` first)
 
-This template will generate both ASG and Spot Fleet for you. You can optionally let ASG to provision on-demand instances for you while SpotFleet provision diversified spot instances registering into the same Kubernetes cluster.
+2. If you have cready created your cluster with **eksctl**, you may simply update the existing `nodegroup` with this cloudformation template: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup.yaml
+
 
 
 ## AWS CLI sample
@@ -24,20 +29,28 @@ This template will generate both ASG and Spot Fleet for you. You can optionally 
 You may use `aws-cli` to deploy the cloudformation stack as below with your own parameter overrides.
 
 ```
-#!/bin/bash
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+EKS_YAML_URL=https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks.yaml
+CLUSTER_STACK_NAME=eksdemo
+VPC_ID=vpc-e549a281
+SG_ID=sg-064d7e7c3fd058fc0
+CLUSTER_NAME=eksdemo
+CLUSTER_ROLE_ARN=arn:aws:iam::${AWS_ACCOUNT_ID}:role/eksServiceRole
 
-aws cloudformation deploy --template-file cloudformation/nodegroup.yaml  \
---stack-name eksdemo-ng \
---capabilities CAPABILITY_IAM \
---parameter-overrides \
-VpcId=vpc-05ce35780c6cc0d93 \
-ClusterControlPlaneSecurityGroup=sg-03cd819b59679a610 \
-ClusterName=eksdemo \
-KeyName=aws-pahud \
-NodeGroupName=default \
-OnDemandOrSpotWithASG=Spot \
-Subnets=subnet-014a0b4b71d52c131,subnet-0bb8ff0ab066889b3,subnet-0eeb0b7923862c3e3
-```
+aws --region ${REGION} cloudformation create-stack --template-url ${EKS_YAML_URL} \
+--stack-name  ${CLUSTER_STACK_NAME} \
+--capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
+--parameters \
+ParameterKey=VpcId,ParameterValue=${VPC_ID} \
+ParameterKey=SecurityGroupIds,ParameterValue=${SG_ID} \
+ParameterKey=ClusterName,ParameterValue=${CLUSTER_NAME} \
+ParameterKey=ClusterRoleArn,ParameterValue=${CLUSTER_ROLE_ARN} \
+ParameterKey=KeyName,ParameterValue=${SSH_KEY_NAME} \
+ParameterKey=SubnetIds,ParameterValue=subnet-05b643f57a6997deb\\,subnet-09e79eb1dec82b7e2\\,subnet-0c365d97cbc75ceec
+	
+```	
+
+
 
 
 ## Node Labels, Taints and Tolerations
