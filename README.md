@@ -44,7 +44,7 @@ $ make update-eks-cluster
 You can pass the variable in to modify the parameters on-the-fly For example:
 
 ```
-NodeAutoScalingGroupDesiredSize=2 make update-eks-cluster
+$ NodeAutoScalingGroupDesiredSize=2 make update-eks-cluster
 
 ```
 this will update the `NodeGroup` stack and set `NodeAutoScalingGroupDesiredSize` to `2`
