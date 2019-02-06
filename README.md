@@ -34,7 +34,14 @@ $ make create-eks-cluster
 
 2. If you have cready created your cluster with **eksctl**, you may simply update the existing `nodegroup` with this cloudformation template: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup.yaml
 
-3. to clean up and remove all resources from Amazon EKS cluster and nodegroup:
+
+3. To update existing stack:
+
+```
+$ make update-eks-cluster
+```
+
+4. To clean up and remove all resources from Amazon EKS cluster and nodegroup:
 
 ```
 $ make delete-eks-cluster
