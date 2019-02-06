@@ -3,7 +3,9 @@
 
 #### Amazon EKS cloudformation templates
 
-*This is an complementary cloudformation template of nested stacks that helps you provision your Amazon EKS cluster and nodegroup with mixed instance types and purchase options*
+*This is a complementary cloudformation template of nested stacks that helps you provision your Amazon EKS cluster and nodegroup with mixed instance types and purchase options*
+
+![](images/00.png)
 
 ## Features
 
@@ -18,7 +20,7 @@
 - [x] support the latest EKS-optimized AMI auto selection
 
 
-![](images/00.png)
+
 
 ## HOWTO
 
