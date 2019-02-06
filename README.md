@@ -1,11 +1,21 @@
 # eks-templates
 
 
-
 #### Amazon EKS cloudformation templates
 
 *This is an complementary cloudformation template of nested stacks that helps you provision your Amazon EKS cluster and nodegroup with mixed instance types and purchase options*
 
+## Features
+
+- [x] Creates both Amazon EKS cluster and NodeGroup in a single cloudformatoin nested stack template
+- [x] Abstracts away the CLI control in the `Makefile` - simply `make create-eks-cluster` or `make update-eks-cluster`. That's all.
+- [x] Fully support the latest Autoscaling Group features to hybrid on-demand and spot instances
+- [x] No need to create a seperate SpotFleet
+- [x] on-demand instances will have node label **ondemand=yes**
+- [x] spot instances will have node label **spotfleet=yes** and a **spotInstance=true:PreferNoSchedule** taint
+- [x] support private subnets
+- [x] support non-RFC1918 IP/CIDR VPC subnets
+- [x] support the latest EKS-optimized AMI auto selection
 
 
 ![](images/00.png)
@@ -50,18 +60,13 @@ ParameterKey=SubnetIds,ParameterValue=subnet-05b643f57a6997deb\\,subnet-09e79eb1
 	
 ```	
 
-
-
-
 ## Node Labels, Taints and Tolerations
 
-By default, all the on-demand instances managed by ASG(Autoscaling Group) will have the label **asgnode=yes** while the spot instances will have **spotfleet=yes**. Use the node selector to better schedule your workload
+By default, all the on-demand instances will have **asgnode=yes** label while spot instances will have **spotfleet=yes**. Use the node selector to better schedule your workload
 
 
 
 ![](images/01.png)
-
-
 
 Additionally, all the spot instances have a **spotInstance=true:PreferNoSchedule** taint. To deploy your Pod on spot instances, use the node label selector to specify **spotfleet=yes**, otherwise the pod will not be scheduled on the spot instances unless it has relevant toleration. ([Taint and Toleration in Kubernetes](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)).
 
