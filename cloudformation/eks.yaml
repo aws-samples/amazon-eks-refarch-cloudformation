@@ -42,6 +42,11 @@ Parameters:
     Type: Number
     Default: 5
     
+  OnDemandBaseCapacity:
+    Type: Number
+    Description: "on-demand base capacity"
+    Default: 2
+    
   InstanceTypesOverride:
     Description: Instance Types Overrides
     Type: String
@@ -90,5 +95,6 @@ Resources:
         NodeAutoScalingGroupMinSize: !Ref NodeAutoScalingGroupMinSize
         NodeAutoScalingGroupDesiredSize: !Ref NodeAutoScalingGroupDesiredSize
         NodeAutoScalingGroupMaxSize: !Ref NodeAutoScalingGroupMaxSize
+        OnDemandBaseCapacity: !Ref OnDemandBaseCapacity
         Subnets: !Ref SubnetIds
       

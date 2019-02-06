@@ -11,6 +11,11 @@ SSH_KEY_NAME ?= 'aws-pahud'
 VPC_ID ?= vpc-e549a281
 # security group IDs
 SG_ID ?= sg-064d7e7c3fd058fc0
+OnDemandBaseCapacity ?= 0
+NodeAutoScalingGroupMinSize ?= 1
+NodeAutoScalingGroupDesiredSize ?= 4
+NodeAutoScalingGroupMaxSize ?= 5
+
 
 .PHONY: all deploy clean sync update-ami 
 
@@ -41,6 +46,10 @@ create-eks-cluster:
 	ParameterKey=ClusterName,ParameterValue=$(CLUSTER_NAME) \
 	ParameterKey=ClusterRoleArn,ParameterValue=$(CLUSTER_ROLE_ARN) \
 	ParameterKey=KeyName,ParameterValue=$(SSH_KEY_NAME) \
+	ParameterKey=OnDemandBaseCapacity,ParameterValue=$(OnDemandBaseCapacity) \
+	ParameterKey=NodeAutoScalingGroupMinSize,ParameterValue=$(NodeAutoScalingGroupMinSize) \
+	ParameterKey=NodeAutoScalingGroupDesiredSize,ParameterValue=$(NodeAutoScalingGroupDesiredSize) \
+	ParameterKey=NodeAutoScalingGroupMaxSize,ParameterValue=$(NodeAutoScalingGroupMaxSize) \
 	ParameterKey=SubnetIds,ParameterValue=subnet-05b643f57a6997deb\\,subnet-09e79eb1dec82b7e2\\,subnet-0c365d97cbc75ceec
 	
 update-eks-cluster:
@@ -53,6 +62,10 @@ update-eks-cluster:
 	ParameterKey=ClusterName,ParameterValue=$(CLUSTER_NAME) \
 	ParameterKey=ClusterRoleArn,ParameterValue=$(CLUSTER_ROLE_ARN) \
 	ParameterKey=KeyName,ParameterValue=$(SSH_KEY_NAME) \
+	ParameterKey=OnDemandBaseCapacity,ParameterValue=$(OnDemandBaseCapacity) \
+	ParameterKey=NodeAutoScalingGroupMinSize,ParameterValue=$(NodeAutoScalingGroupMinSize) \
+	ParameterKey=NodeAutoScalingGroupDesiredSize,ParameterValue=$(NodeAutoScalingGroupDesiredSize) \
+	ParameterKey=NodeAutoScalingGroupMaxSize,ParameterValue=$(NodeAutoScalingGroupMaxSize) \
 	ParameterKey=SubnetIds,ParameterValue=subnet-05b643f57a6997deb\\,subnet-09e79eb1dec82b7e2\\,subnet-0c365d97cbc75ceec
 	
 delete-eks-cluster:
