@@ -60,6 +60,8 @@ $ make delete-eks-cluster
 You may use `aws-cli` to deploy the cloudformation stack as below with your own parameter overrides.
 
 ```
+#!/bin/bash
+
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
 EKS_YAML_URL=https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks.yaml
 CLUSTER_STACK_NAME=eksdemo
