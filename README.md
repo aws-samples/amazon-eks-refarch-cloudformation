@@ -44,9 +44,9 @@ $ make update-eks-cluster
 You can pass the variable in to modify the parameters on-the-fly. For example:
 
 ```
-$ NodeAutoScalingGroupDesiredSize=2 make update-eks-cluster
+$ NodeAutoScalingGroupMaxSize=10  NodeAutoScalingGroupDesiredSize=8 make update-eks-cluster
 ```
-this will update the `NodeGroup` stack and set `NodeAutoScalingGroupDesiredSize` to `2`
+this will update the `NodeGroup` stack and set `NodeAutoScalingGroupMaxSize` to `10` and `NodeAutoScalingGroupDesiredSize` to `8`
 
 4. To clean up and remove all resources from Amazon EKS cluster and nodegroup:
 
