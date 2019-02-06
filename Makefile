@@ -55,5 +55,5 @@ update-eks-cluster:
 	ParameterKey=KeyName,ParameterValue=$(SSH_KEY_NAME) \
 	ParameterKey=SubnetIds,ParameterValue=subnet-05b643f57a6997deb\\,subnet-09e79eb1dec82b7e2\\,subnet-0c365d97cbc75ceec
 	
-delete-cluster:
+delete-eks-cluster:
 	@aws --region $(REGION) cloudformation delete-stack --stack-name "$(CLUSTER_STACK_NAME)"

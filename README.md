@@ -34,6 +34,11 @@ $ make create-eks-cluster
 
 2. If you have cready created your cluster with **eksctl**, you may simply update the existing `nodegroup` with this cloudformation template: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup.yaml
 
+3. to clean up and remove all resources from Amazon EKS cluster and nodegroup:
+
+```
+$ make delete-eks-cluster
+```
 
 
 ## AWS CLI sample
@@ -61,6 +66,8 @@ ParameterKey=KeyName,ParameterValue=${SSH_KEY_NAME} \
 ParameterKey=SubnetIds,ParameterValue=subnet-05b643f57a6997deb\\,subnet-09e79eb1dec82b7e2\\,subnet-0c365d97cbc75ceec
 	
 ```	
+
+
 
 ## Node Labels, Taints and Tolerations
 
