@@ -24,7 +24,7 @@
 
 ## HOWTO
 
-1. You may create this stack with contains the EKS cluster and the `nodegroup`. Simple enter this URL in the cloudformation console: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks.yaml
+1. You may create this stack which contains the EKS cluster and the `nodegroup`. Simple enter this URL in the cloudformation console: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks.yaml
 or cerate it simply with
 
 ```
