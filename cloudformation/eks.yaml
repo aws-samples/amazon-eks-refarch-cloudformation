@@ -81,6 +81,7 @@ Resources:
         SubnetIds: !Ref SubnetIds
         SecurityGroupIds: !Ref SecurityGroupIds
   NG:
+    DependsOn: CL
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup.yaml

@@ -1,6 +1,7 @@
 ROOT ?= $(shell pwd)
 AWS_ACCOUNT_ID := $(shell aws sts get-caller-identity --query 'Account' --output text)
 EKS_YAML_URL ?= https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks.yaml
+#EKS_YAML_URL ?= file://cloudformation/eks.yaml
 NODEGROUP_YAML ?= https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/cluster.yaml
 CLUSTER_YAML ?= https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/cluster.yaml
 CLUSTER_STACK_NAME ?= eksdemo
@@ -17,7 +18,7 @@ NodeAutoScalingGroupDesiredSize ?= 4
 NodeAutoScalingGroupMaxSize ?= 5
 
 
-.PHONY: all deploy clean sync update-ami 
+.PHONY: all deploy clean sync update-ami update-yaml
 
 all: deploy
 
@@ -26,12 +27,13 @@ sync: deploy
 update-ami:
 	@aws s3 cp files/eks-latest-ami.yaml s3://pahud-eks-templates/eks-latest-ami.yaml --acl public-read
 
-deploy:
+
+update-yaml:
 	#aws --region us-west-2 s3 sync cloudformation s3://pahud-cfn-us-west-2/eks-templates/cloudformation/ --acl public-read
-	@aws --region us-west-2 s3 cp cloudformation/nodegroup-dev.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev.yaml --acl public-read
+	# @aws --region us-west-2 s3 cp cloudformation/nodegroup-dev.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/nodegroup.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup.yaml --acl public-read
-	@aws --region us-west-2 s3 cp cloudformation/nodegroup-dev.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev2.yaml --acl public-read
-	@echo https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev2.yaml
+	@aws --region us-west-2 s3 cp cloudformation/eks.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/eks.yaml --acl public-read
+	@echo https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks.yaml
 
 clean:
 	echo "done"

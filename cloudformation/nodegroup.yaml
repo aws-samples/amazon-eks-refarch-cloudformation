@@ -153,7 +153,7 @@ Parameters:
     - z1d.3xlarge
     - z1d.6xlarge
     - z1d.12xlarge
-    ConstraintDescription: must be a valid EC2 instance type.
+    ConstraintDescription: Must be a valid EC2 instance type
 
   NodeAutoScalingGroupMinSize:
     Type: Number
@@ -409,8 +409,9 @@ Resources:
         PropagateAtLaunch: 'true'
     UpdatePolicy:
       AutoScalingRollingUpdate:
-        MinInstancesInService: '0'
+        MinInstancesInService: !Ref NodeAutoScalingGroupDesiredSize
         MaxBatchSize: '1'
+        PauseTime: 'PT5M'
 
 
 #
