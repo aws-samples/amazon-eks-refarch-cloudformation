@@ -1,20 +1,20 @@
 us-west-2:
-  ami: ami-0a2abab4107669c1b
+  ami: ami-081099ec932b99961	
 us-east-1:
-  ami: ami-0c24db5df6badc35a
+  ami: ami-0c5b63ec54dd3fc38
 us-east-2:
-  ami: ami-0c2e8d28b1f854c68
+  ami: ami-0b10ebfc82e446296
 eu-west-1:
-  ami: ami-01e08d22b9439c15a
+  ami: ami-0b469c0fef0445d29
 eu-north-1:
-  ami: ami-06ee67302ab7cf838
+  ami: ami-0da59d86953d1c266
 eu-central-1:
-  ami: ami-010caa98bae9a09e2
+  ami: ami-05e062a123092066a
 ap-northeast-1:
-  ami: ami-0f0e8066383e7a2cb
+  ami: ami-04ef881404deec134
 ap-northeast-2:
-  ami: ami-0b7baa90de70f683f
+  ami: ami-0d87105164496b94b
 ap-southeast-1:
-  ami: ami-019966ed970c18502
+  ami: ami-030c789a75c8bfbca
 ap-southeast-2:
-  ami: ami-06ade0abbd8eca425
+  ami: ami-0a9b90002a9a1c111
