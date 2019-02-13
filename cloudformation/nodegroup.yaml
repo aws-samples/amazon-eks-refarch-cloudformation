@@ -413,7 +413,15 @@ Resources:
         MaxBatchSize: '1'
         PauseTime: 'PT5M'
 
-
+  LCH:
+    Type: AWS::AutoScaling::LifecycleHook
+    Properties:
+      AutoScalingGroupName: !Ref NodeGroup
+      HeartbeatTimeout: 60
+      DefaultResult: CONTINUE
+      LifecycleHookName: !Sub "${NodeGroupName}-LCH"
+      LifecycleTransition: autoscaling:EC2_INSTANCE_TERMINATING
+  
 #
 # Launch Template
 #
