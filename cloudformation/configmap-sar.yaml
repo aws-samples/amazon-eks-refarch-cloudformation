@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  ClusterName:
+    Type: String
+    Default: default
+  FunctionName:
+    Type: String
+    Default: defaultFunc
+  NodeInstanceRoleArn:
+    Type: String
+  RootStackName:
+    Type: String
+  LambdaRoleArn:
+    Type: String
+  LambdaLayerKubectlArn:
+    Type: String
+  
+
+Transform: AWS::Serverless-2016-10-31
+Description: AWS EKS ConfigMap hook for aws-auth-cm
+Resources:
+  ConfigMapUpdate:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location:
+        # TO FIX - Location does not support Intrinsics yet - https://github.com/awslabs/serverless-application-model/issues/694
+        #ApplicationId: !Sub "arn:aws:serverlessrepo:${AWS::Region}:903779448426:applications/eks-auth-update-hook"
+        ApplicationId: arn:aws:serverlessrepo:ap-northeast-1:903779448426:applications/eks-auth-update-hook
+        SemanticVersion: 1.0.0
+      Parameters:
+        ClusterName: !Ref ClusterName
+        LambdaRoleArn: !Ref LambdaRoleArn
+        LambdaLayerKubectlArn: !Ref LambdaLayerKubectlArn
+        NodeInstanceRoleArn: !Ref NodeInstanceRoleArn
+        FunctionName: !Sub "eks-auth-update-hook-${AWS::StackName}"
+
+  UpdateCM:
+    Type: Custom::UpdateConfigMap
+    Properties:
+      ServiceToken: !GetAtt ConfigMapUpdate.Outputs.LambdaFuncArn	
+      # NodeInstanceRole: xxxxxxxxxxxxxxx
+
+
+Outputs:
+  LambdaFuncArn:
+    Description: Lambda Func ARN
+    Value: !GetAtt ConfigMapUpdate.Outputs.LambdaFuncArn	
+  LambdaFuncName:
+    Description: Lambda Func Name
+    Value: !Ref FunctionName
+  Result:
+    Description: ConfigMap updat result
+    Value: !GetAtt UpdateCM.Result
+    # Export:
+    #   Name: !Sub 'LambdaFuncName-${AWS::StackName}'
+#   LambdaRoleArn:
+#     Description: Lambda Role ARN
+#     #Value: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaEKSAdminRole"
+#     Value: !Ref LambdaRoleArn
+    # Export:
+    #   Name: !Sub 'LambdaRoleArn-${AWS::StackName}'
+  # ResultData:
+  #   Description: response of the custom resource
+  #   Value: !GetAtt UpdateCM.Result
+      
+      

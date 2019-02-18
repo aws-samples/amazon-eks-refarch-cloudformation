@@ -24,9 +24,9 @@ Parameters:
     Description: Select 3 subnets where workers can be created.
     Type: List<AWS::EC2::Subnet::Id>
     
-  SecurityGroupIds:
-    Description: The security group of the cluster control plane.
-    Type: List<String>
+  # SecurityGroupIds:
+  #   Description: The security group of the cluster control plane.
+  #   Type: List<String>
 
 
 
@@ -51,11 +51,21 @@ Resources:
     Properties:
       Name: !Ref ClusterName
       ResourcesVpcConfig:
-        SecurityGroupIds: !Ref SecurityGroupIds
+        SecurityGroupIds: 
+          - !Ref ControlPlaneSecurityGroup
         SubnetIds: !Ref SubnetIds
       RoleArn: !Ref ClusterRoleArn
       Version: !Ref ClusterVersion
+      
+  ControlPlaneSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Cluster communication with worker nodes
+      VpcId: !Ref VpcId
 
 Outputs:
   VpcId:
     Value: !Ref VpcId
+  SecurityGroups:
+    Description: Security group for the cluster control plane communication with worker nodes
+    Value: !Join [ ",", [ !Ref ControlPlaneSecurityGroup ] ]

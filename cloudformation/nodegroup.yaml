@@ -232,6 +232,9 @@ Parameters:
   NodeGroupName:
     Description: Unique identifier for the Node Group.
     Type: String
+    
+  # RootStackName:
+  #   Type: String
 
 Conditions:
   PreferredDefaultAMI: !Equals [ !Ref NodeImageId, "" ]
@@ -486,6 +489,8 @@ Resources:
         InstanceType: !Ref NodeInstanceType
 
 Outputs:
-  NodeInstanceRole:
+  NodeInstanceRoleArn:
     Description: The node instance role
     Value: !GetAtt NodeInstanceRole.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-NodeInstanceRoleArn"

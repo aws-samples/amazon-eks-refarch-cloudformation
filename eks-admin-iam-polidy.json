@@ -1,0 +1,139 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "CFN",
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:CreateUploadBucket",
+                "cloudformation:DeleteStackInstances",
+                "cloudformation:ListExports",
+                "cloudformation:DescribeStackDriftDetectionStatus",
+                "cloudformation:DetectStackDrift",
+                "cloudformation:CancelUpdateStack",
+                "cloudformation:UpdateStackInstances",
+                "cloudformation:ListStackSetOperations",
+                "cloudformation:ListStackInstances",
+                "cloudformation:UpdateTerminationProtection",
+                "cloudformation:DescribeStackResource",
+                "cloudformation:UpdateStackSet",
+                "cloudformation:CreateChangeSet",
+                "cloudformation:CreateStackInstances",
+                "cloudformation:DeleteChangeSet",
+                "cloudformation:ContinueUpdateRollback",
+                "cloudformation:ListStackSetOperationResults",
+                "cloudformation:DetectStackResourceDrift",
+                "cloudformation:EstimateTemplateCost",
+                "cloudformation:DescribeStackEvents",
+                "cloudformation:DescribeStackSetOperation",
+                "cloudformation:UpdateStack",
+                "cloudformation:DescribeAccountLimits",
+                "cloudformation:StopStackSetOperation",
+                "cloudformation:DescribeChangeSet",
+                "cloudformation:CreateStackSet",
+                "cloudformation:ExecuteChangeSet",
+                "cloudformation:ListStackResources",
+                "cloudformation:ListStacks",
+                "cloudformation:ListImports",
+                "cloudformation:DescribeStackInstance",
+                "cloudformation:DescribeStackResources",
+                "cloudformation:SignalResource",
+                "cloudformation:DeleteStackSet",
+                "cloudformation:GetTemplateSummary",
+                "cloudformation:DescribeStacks",
+                "cloudformation:DescribeStackResourceDrifts",
+                "cloudformation:GetStackPolicy",
+                "cloudformation:DescribeStackSet",
+                "cloudformation:ListStackSets",
+                "cloudformation:CreateStack",
+                "cloudformation:GetTemplate",
+                "cloudformation:DeleteStack",
+                "cloudformation:ValidateTemplate",
+                "cloudformation:ListChangeSets"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "EKSFullAccess",
+            "Effect": "Allow",
+            "Action": "eks:*",
+            "Resource": "*"
+        },
+        {
+            "Sid": "IAM",
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateInstanceProfile",
+                "iam:DeleteInstanceProfile",
+                "iam:GetRole",
+                "iam:GetInstanceProfile",
+                "iam:RemoveRoleFromInstanceProfile",
+                "iam:CreateRole",
+                "iam:DeleteRole",
+                "iam:AttachRolePolicy",
+                "iam:PutRolePolicy",
+                "iam:AddRoleToInstanceProfile",
+                "iam:PassRole",
+                "iam:DetachRolePolicy",
+                "iam:DeleteRolePolicy",
+                "iam:GetRolePolicy"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "Lambda",
+            "Effect": "Allow",
+            "Action": [
+                "lambda:CreateFunction",
+                "lambda:TagResource",
+                "lambda:GetLayerVersion",
+                "lambda:PublishLayerVersion",
+                "lambda:InvokeAsync",
+                "lambda:GetAccountSettings",
+                "lambda:GetFunctionConfiguration",
+                "lambda:CreateEventSourceMapping",
+                "lambda:GetLayerVersionPolicy",
+                "lambda:UntagResource",
+                "lambda:PutFunctionConcurrency",
+                "lambda:ListTags",
+                "lambda:DeleteLayerVersion",
+                "lambda:DeleteFunction",
+                "lambda:GetAlias",
+                "lambda:UpdateEventSourceMapping",
+                "lambda:GetEventSourceMapping",
+                "lambda:InvokeFunction",
+                "lambda:GetFunction",
+                "lambda:UpdateFunctionConfiguration",
+                "lambda:UpdateAlias",
+                "lambda:UpdateFunctionCode",
+                "lambda:DeleteAlias",
+                "lambda:PublishVersion",
+                "lambda:DeleteFunctionConcurrency",
+                "lambda:DeleteEventSourceMapping",
+                "lambda:GetPolicy",
+                "lambda:CreateAlias"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "S3",
+            "Effect": "Allow",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::awsserverlessrepo-changesets*/*"
+        },
+        {
+            "Sid": "SAR",
+            "Effect": "Allow",
+            "Action": [
+                "serverlessrepo:GetCloudFormationTemplate",
+                "serverlessrepo:CreateCloudFormationTemplate"
+            ],
+            "Resource": "arn:aws:serverlessrepo:*:903779448426:applications/eks-auth-update-hook"
+        }
+    ]
+}
+
+
+
+
+
