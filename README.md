@@ -5,7 +5,7 @@
 
 **pahud/eks-templates** aims to help you provision a ready-to-use Amazon EKS cluster by simply launching a cloudformation template with nested stacks. Supper easy and hassel-free!
 
-![](images/00.png)
+![](images/arch-overview.png)
 
 ## Features
 
