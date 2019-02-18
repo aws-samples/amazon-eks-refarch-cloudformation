@@ -135,6 +135,7 @@ Parameters:
     - p3.2xlarge
     - p3.8xlarge
     - p3.16xlarge
+    - p3dn.24xlarge
     - r5.large
     - r5.xlarge
     - r5.2xlarge
@@ -494,3 +495,4 @@ Outputs:
     Value: !GetAtt NodeInstanceRole.Arn
     Export:
       Name: !Sub "${AWS::StackName}-NodeInstanceRoleArn"
+
