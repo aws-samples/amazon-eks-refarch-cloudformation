@@ -15,36 +15,11 @@ Parameters:
   VpcId:
     Description: The VPC of the worker instances
     Type: AWS::EC2::VPC::Id
-    
-  ClusterRoleArn:
-    Description: IAM Role Arn
-    Type: String
 
   SubnetIds:
     Description: Select 3 subnets where workers can be created.
     Type: List<AWS::EC2::Subnet::Id>
     
-  # SecurityGroupIds:
-  #   Description: The security group of the cluster control plane.
-  #   Type: List<String>
-
-
-
-
-
-# Conditions:
-#   IsSetSpotFleetPrice: !Not [ !Equals [ !Ref SpotFleetPrice, 0 ] ]
-#   IsSetSpotASGPrice: !Not [ !Equals [ !Ref SpotASGPrice, 0 ] ]
-#   SpotWithASG: !Equals [ !Ref OnDemandOrSpotWithASG , "Spot" ]
-#   PreferredDefaultAMI: !Equals [ !Ref NodeImageId, "" ]
-#   IsASGAutoAssignPublicIp: !Equals [ !Ref ASGAutoAssignPublicIp , "yes" ]
-#   IsSpotAutoAssignPublicIp: !Equals [ !Ref SpotAutoAssignPublicIp , "yes" ]
- 
-  # SpotFleetCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
-  # EnableASGCond: !Equals [ !Ref AsgOrSpotFleet, "AutoscalingGroup" ]
-  # DisableASGCond: !Equals [ !Ref AsgOrSpotFleet, "SpotFleet" ]
-
-
 Resources:
   EKSCluster:
     Type: "AWS::EKS::Cluster"
@@ -54,7 +29,7 @@ Resources:
         SecurityGroupIds: 
           - !Ref ControlPlaneSecurityGroup
         SubnetIds: !Ref SubnetIds
-      RoleArn: !Ref ClusterRoleArn
+      RoleArn: !GetAtt EksServiceRole.Arn
       Version: !Ref ClusterVersion
       
   ControlPlaneSecurityGroup:
@@ -62,6 +37,25 @@ Resources:
     Properties:
       GroupDescription: Cluster communication with worker nodes
       VpcId: !Ref VpcId
+      
+  EksServiceRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "eks.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
+      RoleName: !Sub "EksSvcRole-${AWS::StackName}"
 
 Outputs:
   VpcId:

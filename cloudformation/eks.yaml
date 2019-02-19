@@ -13,9 +13,9 @@ Parameters:
     Description: The VPC of the worker instances
     Type: AWS::EC2::VPC::Id
     
-  ClusterRoleArn:
-    Description: IAM Role Arn
-    Type: String
+  # ClusterRoleArn:
+  #   Description: IAM Role Arn
+  #   Type: String
 
   SubnetIds:
     Description: Select 3 subnets where workers can be created.
@@ -107,7 +107,7 @@ Resources:
       Parameters:
         VpcId: !Ref VpcId
         ClusterName: !Ref ClusterName
-        ClusterRoleArn: !Ref ClusterRoleArn
+        # ClusterRoleArn: !Ref ClusterRoleArn
         SubnetIds: !Ref SubnetIds
         # SecurityGroupIds: !Ref SecurityGroupIds
   NG:

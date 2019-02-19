@@ -4,8 +4,6 @@ EKS_YAML_URL ?= https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templ
 CLUSTER_YAML ?= https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/cluster.yaml
 CLUSTER_STACK_NAME ?= eksdemo
 CLUSTER_NAME ?= $(CLUSTER_STACK_NAME)
-#CLUSTER_NAME ?= eksdemo3
-CLUSTER_ROLE_ARN ?= arn:aws:iam::$(AWS_ACCOUNT_ID):role/eksServiceRole
 EKS_ADMIN_ROLE ?= arn:aws:iam::903779448426:role/LambdaEKSAdminRole
 REGION ?= ap-northeast-1
 SSH_KEY_NAME ?= 'aws-pahud'
@@ -108,11 +106,10 @@ create-eks-cluster:
 	@aws --region $(REGION) cloudformation create-stack --template-url $(EKS_YAML_URL) \
 	--stack-name  $(CLUSTER_STACK_NAME) \
 	--role-arn $(EKS_ADMIN_ROLE) \
-	--capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
+	--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
 	--parameters \
 	ParameterKey=VpcId,ParameterValue=$(VPC_ID) \
 	ParameterKey=ClusterName,ParameterValue=$(CLUSTER_NAME) \
-	ParameterKey=ClusterRoleArn,ParameterValue=$(CLUSTER_ROLE_ARN) \
 	ParameterKey=KeyName,ParameterValue=$(SSH_KEY_NAME) \
 	ParameterKey=LambdaRoleArn,ParameterValue=$(EKS_ADMIN_ROLE) \
 	ParameterKey=OnDemandBaseCapacity,ParameterValue=$(OnDemandBaseCapacity) \
@@ -125,11 +122,10 @@ update-eks-cluster:
 	@aws --region $(REGION) cloudformation update-stack --template-url $(EKS_YAML_URL) \
 	--stack-name  $(CLUSTER_STACK_NAME) \
 	--role-arn  $(EKS_ADMIN_ROLE) \
-	--capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
+	--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
 	--parameters \
 	ParameterKey=VpcId,ParameterValue=$(VPC_ID) \
 	ParameterKey=ClusterName,ParameterValue=$(CLUSTER_NAME) \
-	ParameterKey=ClusterRoleArn,ParameterValue=$(CLUSTER_ROLE_ARN) \
 	ParameterKey=KeyName,ParameterValue=$(SSH_KEY_NAME) \
 	ParameterKey=LambdaRoleArn,ParameterValue=$(EKS_ADMIN_ROLE) \
 	ParameterKey=OnDemandBaseCapacity,ParameterValue=$(OnDemandBaseCapacity) \
