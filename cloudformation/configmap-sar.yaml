@@ -45,22 +45,14 @@ Outputs:
   LambdaFuncArn:
     Description: Lambda Func ARN
     Value: !GetAtt ConfigMapUpdate.Outputs.LambdaFuncArn	
+    
   LambdaFuncName:
     Description: Lambda Func Name
     Value: !Ref FunctionName
+
   Result:
     Description: ConfigMap updat result
     Value: !GetAtt UpdateCM.Result
-    # Export:
-    #   Name: !Sub 'LambdaFuncName-${AWS::StackName}'
-#   LambdaRoleArn:
-#     Description: Lambda Role ARN
-#     #Value: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaEKSAdminRole"
-#     Value: !Ref LambdaRoleArn
-    # Export:
-    #   Name: !Sub 'LambdaRoleArn-${AWS::StackName}'
-  # ResultData:
-  #   Description: response of the custom resource
-  #   Value: !GetAtt UpdateCM.Result
+
       
       
