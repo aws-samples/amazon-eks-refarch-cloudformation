@@ -26,7 +26,7 @@
 
 ## HOWTO
 
-Create a `LambdaEKSAdminRole` IAM Role manually and we will use thie role to 
+Create a `AmazonEKSAdminRole` IAM Role manually and we will use thie role to 
 1) deploy the cloudformaiton stacks
 2) execute the Lambda function as custom resource to help you configure the `aws-auth` ConfigMap so the nodes in the nodegroup can register themselves to the control plane.
 3) `kubecl` will call Amazon EKS control plane as this IAM role for RBAC Auth.
@@ -212,7 +212,7 @@ download the two binaries of latest version.
 run `update-kubeconfig` 
 
 ```
-$ aws --region ap-northeast-1 eks update-kubeconfig --name eksdemo --role-arn arn:aws:iam::903779448426:role/LambdaEKSAdminRole
+$ aws --region ap-northeast-1 eks update-kubeconfig --name eksdemo --role-arn arn:aws:iam::903779448426:role/AmazonEKSAdminRole
 ```
 response
 ```
