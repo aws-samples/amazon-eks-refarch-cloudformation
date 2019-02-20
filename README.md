@@ -112,7 +112,7 @@ $ aws sts get-caller-identity
 ```
 (please note your `Account` and `Arn` string would be different from mine)
 
-Let's edit `assue-role-policy.json` file from the local repo:
+Let's edit `assume-role-policy.json` file from the local repo:
 
 ```
 {
@@ -166,7 +166,7 @@ And of course you can specify multiple IAM users in `Principal`
 OK let's update the assume role policy
 
 ```
-aws iam update-assume-role-policy --role-name AmazonEKSAdminRole --policy-document file://assume-role-policy.jso
+aws iam update-assume-role-policy --role-name AmazonEKSAdminRole --policy-document file://assume-role-policy.json
 ```
 
 Try assume this role with `aws assume-role` like this
