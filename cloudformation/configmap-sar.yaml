@@ -23,9 +23,8 @@ Resources:
     Type: AWS::Serverless::Application
     Properties:
       Location:
-        # TO FIX - Location does not support Intrinsics yet - https://github.com/awslabs/serverless-application-model/issues/694
-        #ApplicationId: !Sub "arn:aws:serverlessrepo:${AWS::Region}:903779448426:applications/eks-auth-update-hook"
-        ApplicationId: arn:aws:serverlessrepo:ap-northeast-1:903779448426:applications/eks-auth-update-hook
+        # serverless app from all regoins should be able to import this ApplicationId from 'us-east-1' across accounts.
+        ApplicationId: arn:aws:serverlessrepo:us-east-1:903779448426:applications/eks-auth-update-hook
         SemanticVersion: 1.0.0
       Parameters:
         ClusterName: !Ref ClusterName
