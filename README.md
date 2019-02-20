@@ -145,7 +145,7 @@ Let's edit `assue-role-policy.json` file from the local repo:
 
 ```
 
-This will allow all IAM `user` from AWS Account ID `123456789012` be able to assume this role. 
+This will allow all IAM `user` from AWS Account ID `903779448426` be able to assume this role. 
 
 If you prefer to restrict to a single IAM user, for example `pahud`:
 
