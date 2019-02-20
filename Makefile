@@ -51,50 +51,51 @@ update-dev-yaml: update-cm-yaml
 	@aws --region us-west-2 s3 cp cloudformation/cluster.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/cluster-dev.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/nodegroup.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/configmap.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-dev.yaml --acl public-read
-	#@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev.yaml --acl public-read
+	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev.yaml --acl public-read
 	@echo https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks-dev.yaml
 
 
-update-cm-yaml: update-cm-yaml-us-west-2 update-cm-yaml-us-east-1 update-cm-yaml-us-east-2 update-cm-yaml-eu-west-1 update-cm-yaml-eu-north-1 update-cm-yaml-eu-central-1 update-cm-yaml-ap-northeast-1 update-cm-yaml-ap-northeast-2 update-cm-yaml-ap-southeast-1 update-cm-yaml-ap-southeast-2
+# update-cm-yaml: update-cm-yaml-us-west-2 update-cm-yaml-us-east-1 update-cm-yaml-us-east-2 update-cm-yaml-eu-west-1 update-cm-yaml-eu-north-1 update-cm-yaml-eu-central-1 update-cm-yaml-ap-northeast-1 update-cm-yaml-ap-northeast-2 update-cm-yaml-ap-southeast-1 update-cm-yaml-ap-southeast-2
 
-update-cm-yaml-us-west-2:
-	@sed 's/ap-northeast-1/us-west-2/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
-	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-us-west-2.yaml --acl public-read
+# update-cm-yaml-us-west-2:
+# 	@sed 's/ap-northeast-1/us-west-2/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
+# 	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-us-west-2.yaml --acl public-read
 
-update-cm-yaml-us-east-1:
-	@sed 's/ap-northeast-1/us-east-1/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
-	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-us-east-1.yaml --acl public-read
+# update-cm-yaml-us-east-1:
+# 	@sed 's/ap-northeast-1/us-east-1/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
+# 	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-us-east-1.yaml --acl public-read
 
-update-cm-yaml-us-east-2:
-	@sed 's/ap-northeast-1/us-east-2/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
-	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-us-east-2.yaml --acl public-read
+# update-cm-yaml-us-east-2:
+# 	@sed 's/ap-northeast-1/us-east-2/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
+# 	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-us-east-2.yaml --acl public-read
 
-update-cm-yaml-eu-west-1:
-	@sed 's/ap-northeast-1/eu-west-1/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
-	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-eu-west-1.yaml --acl public-read
+# update-cm-yaml-eu-west-1:
+# 	@sed 's/ap-northeast-1/eu-west-1/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
+# 	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-eu-west-1.yaml --acl public-read
 
-update-cm-yaml-eu-north-1:
-	@sed 's/ap-northeast-1/eu-north-1/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
-	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-eu-north-1.yaml --acl public-read
+# update-cm-yaml-eu-north-1:
+# 	@sed 's/ap-northeast-1/eu-north-1/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
+# 	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-eu-north-1.yaml --acl public-read
 
-update-cm-yaml-eu-central-1:
-	@sed 's/ap-northeast-1/eu-central-1/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
-	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-eu-central-1.yaml --acl public-read
+# update-cm-yaml-eu-central-1:
+# 	@sed 's/ap-northeast-1/eu-central-1/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
+# 	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-eu-central-1.yaml --acl public-read
 
-update-cm-yaml-ap-northeast-1:
-	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-ap-northeast-1.yaml --acl public-read
+# update-cm-yaml-ap-northeast-1:
+# 	@sed 's/ap-northeast-1/us-east-1/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
+# 	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-ap-northeast-1.yaml --acl public-read
 
-update-cm-yaml-ap-northeast-2:
-	@sed 's/ap-northeast-1/ap-northeast-2/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
-	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-ap-northeast-2.yaml --acl public-read
+# update-cm-yaml-ap-northeast-2:
+# 	@sed 's/ap-northeast-1/ap-northeast-2/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
+# 	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-ap-northeast-2.yaml --acl public-read
 
-update-cm-yaml-ap-southeast-1:
-	@sed 's/ap-northeast-1/ap-southeast-1/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
-	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-ap-southeast-1.yaml --acl public-read
+# update-cm-yaml-ap-southeast-1:
+# 	@sed 's/ap-northeast-1/us-east-1/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
+# 	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-ap-southeast-1.yaml --acl public-read
 
-update-cm-yaml-ap-southeast-2:
-	@sed 's/ap-northeast-1/ap-southeast-2/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
-	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-ap-southeast-2.yaml --acl public-read
+# update-cm-yaml-ap-southeast-2:
+# 	@sed 's/ap-northeast-1/ap-southeast-2/g' cloudformation/configmap-sar.yaml > cloudformation/configmap-sar.yaml.tmp
+# 	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml.tmp s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-ap-southeast-2.yaml --acl public-read
 
 	
 

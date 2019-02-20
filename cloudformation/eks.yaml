@@ -134,7 +134,7 @@ Resources:
     DependsOn: NG
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev-${AWS::Region}.yaml"
+      TemplateURL: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev.yaml
       Parameters:
         RootStackName: !Sub "${AWS::StackName}"
         ClusterName: !Ref ClusterName
