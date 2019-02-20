@@ -207,16 +207,9 @@ $ sudo mv kubectl /usr/local/bin/
 check Amazon EKS document about [install kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html#install-kubectl-linux) and [getting started](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) and 
 download the two binaries of latest version.
 
-<<<<<<< HEAD
-
 # generate or update kubeconfig
 
 run `update-kubeconfig` 
-=======
-# generate or update kubeconfig
-
-`update-kubeconfig` as the following command
->>>>>>> 8fc2a68... minor
 
 ```
 $ aws --region ap-northeast-1 eks update-kubeconfig --name eksdemo --role-arn arn:aws:iam::903779448426:role/LambdaEKSAdminRole
