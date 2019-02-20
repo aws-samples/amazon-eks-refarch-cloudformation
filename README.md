@@ -93,13 +93,132 @@ Behind the scene, a cloudformation stack with `4` nested stacks will be created:
 
 # Test and Validate
 
-On cloudformation stack complete
+Now cloudformation stack is created. The Amazon EKS cluster will only be able to administratered via `kubectl` as `AmazonEKSAdminRole` IAM role. However, according to our 
+[assume-role-policy.json](./assume-role-policy.json), only the following identities are allowed to assume to this role:
+
+1. **Lambda service**(`lambda.amazonaws.com`)
+2. **Cloudformation service**(`cloudformation.amazonaws.com`)
+
+We need to grant our current IAM identity to assume this role(i.e. `AmazonEKSAdminRole`)
+
+Let's check our current identity
+```
+$ aws sts get-caller-identity
+{
+    "Account": "903779448426", 
+    "UserId": "AIDAJQENSMB5TSS54VEB2", 
+    "Arn": "arn:aws:iam::903779448426:user/pahud"
+}
+```
+(please note your `Account` and `Arn` string would be different from mine)
+
+Let's edit `assue-role-policy.json` file from the local repo:
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    },
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "cloudformation.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    },
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::903779448426:root"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+
+```
+
+This will allow all IAM `user` from AWS Account ID `123456789012` be able to assume this role. 
+
+If you prefer to restrict to a single IAM user, for example `pahud`:
+
+```
+"Principal": {
+    "AWS": "arn:aws:iam::903779448426:user/pahud"
+}
+```
+
+And of course you can specify multiple IAM users in `Principal` 
+```
+"Principal": {
+    "AWS": "arn:aws:iam::903779448426:user/pahud",
+    "AWS": "arn:aws:iam::903779448426:user/emilie"
+}
+```
+
+OK let's update the assume role policy
+
+```
+aws iam update-assume-role-policy --role-name AmazonEKSAdminRole --policy-document file://assume-role-policy.jso
+```
+
+Try assume this role with `aws assume-role` like this
+
+```
+$ aws sts assume-role --role-arn arn:aws:iam::903779448426:role/AmazonEKSAdminRole --role-session-name test
+{
+    "AssumedRoleUser": {
+        "AssumedRoleId": "AROAJCL4US4TE3MXZM272:test", 
+        "Arn": "arn:aws:sts::903779448426:assumed-role/AmazonEKSAdminRole/test"
+    }, 
+    "Credentials": {
+        "SecretAccessKey": "...", 
+        "SessionToken": "...", 
+        "Expiration": "2019-02-20T08:19:58Z", 
+        "AccessKeyId": "..."
+    }
+}
+
+```
+
+If you get the response like this then you are allowed to assume role to `AmazonEKSAdminRole`.
+
+
+# download required binaries
+
+download the latest `aws-iam-authenticator` and `kubectl` binaries
+
+For example, in Linux
+
+```
+$ wget https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/aws-iam-authenticator
+$ wget https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/kubectl
+$ chmod +x kubectl aws-iam-authenticator 
+$ sudo mv aws-iam-authenticator /usr/local/bin/
+$ sudo mv kubectl /usr/local/bin/
+```
+check Amazon EKS document about [install kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html#install-kubectl-linux) and [getting started](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) and 
+download the two binaries of latest version.
 
 `update-kubeconfig` as the following command
+
+# generate and update kubeconfig
 
 ```
 $ aws --region ap-northeast-1 eks update-kubeconfig --name eksdemo --role-arn arn:aws:iam::903779448426:role/LambdaEKSAdminRole
 ```
+response
+```
+Updated context arn:aws:eks:ap-southeast-1:903779448426:cluster/eksdemo in /home/ec2-user/.kube/config
+```
+
 try list the nodes
 
 ```
@@ -113,6 +232,10 @@ ip-100-64-70-247.ap-northeast-1.compute.internal    Ready     <none>    4m      
 ```
 
 Your cluster is ready now.
+
+Under the hood, before sending the request to Kubernetes API, the `kubectl` command will invoke `aws-iam-authenticator token -i eksdemo -r {AmazonEKSAdminRole_Arn}`, attaching the generated `token` in the request header to authenticate Amazon EKS 
+control plane. Read [Managing Cluster Authentication](https://docs.aws.amazon.com/eks/latest/userguide/managing-auth.html) for more details.
+
 
 
 
