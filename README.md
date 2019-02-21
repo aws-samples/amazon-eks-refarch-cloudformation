@@ -26,7 +26,7 @@
 
 ## HOWTO
 
-Create a `LambdaEKSAdminRole` IAM Role manually and we will use thie role to 
+Create a `AmazonEKSAdminRole` IAM Role manually and we will use thie role to 
 1) deploy the cloudformaiton stacks
 2) execute the Lambda function as custom resource to help you configure the `aws-auth` ConfigMap so the nodes in the nodegroup can register themselves to the control plane.
 3) `kubecl` will call Amazon EKS control plane as this IAM role for RBAC Auth.
@@ -112,7 +112,7 @@ $ aws sts get-caller-identity
 ```
 (please note your `Account` and `Arn` string would be different from mine)
 
-Let's edit `assue-role-policy.json` file from the local repo:
+Let's edit `assume-role-policy.json` file from the local repo:
 
 ```
 {
@@ -166,7 +166,7 @@ And of course you can specify multiple IAM users in `Principal`
 OK let's update the assume role policy
 
 ```
-aws iam update-assume-role-policy --role-name AmazonEKSAdminRole --policy-document file://assume-role-policy.jso
+aws iam update-assume-role-policy --role-name AmazonEKSAdminRole --policy-document file://assume-role-policy.json
 ```
 
 Try assume this role with `aws assume-role` like this
@@ -212,7 +212,7 @@ download the two binaries of latest version.
 run `update-kubeconfig` 
 
 ```
-$ aws --region ap-northeast-1 eks update-kubeconfig --name eksdemo --role-arn arn:aws:iam::903779448426:role/LambdaEKSAdminRole
+$ aws --region ap-northeast-1 eks update-kubeconfig --name eksdemo --role-arn arn:aws:iam::903779448426:role/AmazonEKSAdminRole
 ```
 response
 ```
