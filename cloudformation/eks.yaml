@@ -83,6 +83,8 @@ Mappings:
       kubectl: 'arn:aws:lambda:ap-southeast-1:903779448426:layer:eks-kubectl-layer:1'
     ap-southeast-2:
       kubectl: 'arn:aws:lambda:ap-southeast-2:903779448426:layer:eks-kubectl-layer:1'
+    ap-south-1:
+      kubectl: 'arn:aws:lambda:ap-south-1:903779448426:layer:eks-kubectl-layer:1'
     us-east-1:
       kubectl: 'arn:aws:lambda:us-east-1:903779448426:layer:eks-kubectl-layer:1'
     us-west-2:
@@ -93,6 +95,10 @@ Mappings:
       kubectl: 'arn:aws:lambda:eu-central-1:903779448426:layer:eks-kubectl-layer:1'
     eu-west-1:
       kubectl: 'arn:aws:lambda:eu-west-1:903779448426:layer:eks-kubectl-layer:1'
+    eu-west-2:
+      kubectl: 'arn:aws:lambda:eu-west-2:903779448426:layer:eks-kubectl-layer:1'
+    eu-west-3:
+      kubectl: 'arn:aws:lambda:eu-west-3:903779448426:layer:eks-kubectl-layer:1'
     cn-north-1:
       kubectl: 'arn:aws-cn:lambda:cn-north-1:937788672844:layer:eks-kubectl-layer:1'
     cn-northwest-1:
