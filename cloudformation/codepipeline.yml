@@ -1,0 +1,596 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+    ServiceName:
+        Type: String
+        Default: eks-global
+        Description: Name for the service, used in the code repository, Lambda function, and pipeline names
+    # CodeBuildEnvironment:
+    #     Type: String
+    #     Default: "docker:1.12.1"
+    #     Description: Name of the image to use for the CodeBuild container
+    UseCodeCommit:
+      Type: String
+      AllowedValues: ["yes", "no"]
+      Description: select yes if you'd like to use CodeCommit instead of Github
+      Default: "no"
+
+    GitHubUser:
+      Type: String
+      Description: Your username on GitHub. Skip this if you use CodeCommit.
+      Default: pahud
+
+    GitHubRepo:
+      Type: String
+      Default: eks-templates
+      Description: The repo name of the sample service. Skip this if you use CodeCommit.
+
+    GitHubBranch:
+      Type: String
+      Default: master
+      Description: The branch of the repo to continuously deploy. Skip this if you use CodeCommit.
+      Default: master
+
+    GitHubToken:
+      Type: String
+      Description: >
+        Token for the user specified above. (https://github.com/settings/tokens) Skip this if you use CodeCommit.
+      # Default: AWS::NoValue
+      
+    BuildArtifactsBucket:
+      Type: String
+      Default: pahud-tmp-us-west-2
+    
+    CloudFormationExecutionRole:
+      Type: String
+      
+    ClusterName:
+      Type: String
+      Default: eksdemo
+      
+    KeyName:
+      Type: String
+      Default: aws-pahud
+      
+    LambdaRoleArn:
+      Type: String
+      Default: arn:aws:iam::903779448426:role/LambdaEKSAdminRole
+    
+
+Mappings:
+  BuildArtifactsBucket:
+    us-east-1:
+        name: pahud-tmp-us-east-1
+    us-east-2:
+        name: pahud-tmp-us-east-2
+    us-west-2:
+        name: pahud-tmp-us-west-2
+    ap-northeast-1:
+        name: pahud-tmp-ap-northeast-1
+    ap-northeast-2:
+        name: pahud-tmp-ap-northeast-2
+    ap-southeast-1:
+        name: pahud-tmp-ap-southeast-1
+    ap-southeast-2:
+        name: pahud-tmp-ap-southeast-2
+    ap-south-1:
+        name: pahud-tmp-ap-south-1
+    eu-central-1:
+        name: pahud-tmp-eu-central-1
+    eu-west-1:
+        name: pahud-tmp-eu-west-1
+    eu-west-2:
+        name: pahud-tmp-eu-west-2
+    eu-west-3:
+        name: pahud-tmp-eu-west-3
+    eu-north-1:
+        name: pahud-tmp-eu-north-1
+# Conditions:
+#   UseCodeCommit: !Equals [ !Ref UseCodeCommit, "yes" ] 
+#   NotUseCodeCommit: !Equals [ !Ref UseCodeCommit, "no" ] 
+
+Resources:
+   
+
+    # CodePipeline definition and required roles
+    CFNPipelinePolicy:
+        Type: AWS::IAM::ManagedPolicy
+        Properties:
+            Description: CloudFormation Pipeline Execution Policy
+            Path: "/"
+            PolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                    Effect: Allow
+                    Action: 
+                        - 'cloudformation:CreateStack'
+                        - 'cloudformation:DescribeStacks'
+                        - 'cloudformation:DeleteStack'
+                        - 'cloudformation:UpdateStack'
+                        - 'cloudformation:CreateChangeSet'
+                        - 'cloudformation:ExecuteChangeSet'
+                        - 'cloudformation:DeleteChangeSet'
+                        - 'cloudformation:DescribeChangeSet'
+                        - 'cloudformation:SetStackPolicy'
+                        - 'cloudformation:SetStackPolicy'
+                        - 'cloudformation:ValidateTemplate'
+                        - 'codebuild:StartBuild'
+                        - 'codebuild:BatchGetBuilds'
+                        - 'codedeploy:GetApplication'
+                        - 'codedeploy:GetDeploymentGroup'
+                        - 'codedeploy:ListApplications'
+                        - 'codedeploy:ListDeploymentGroups'
+                    Resource: "*"
+    # CloudFormationExecutionRole:
+    #   Type: AWS::IAM::Role
+    #   Properties:
+    #     AssumeRolePolicyDocument:
+    #       Version: '2012-10-17'
+    #       Statement:
+    #         Action: 
+    #           - 'sts:AssumeRole'
+    #         Effect: Allow
+    #         Principal:
+    #           Service:
+    #             - cloudformation.amazonaws.com
+    #     Path: /
+    #     ManagedPolicyArns:
+    #       - 'arn:aws:iam::aws:policy/AdministratorAccess'
+    PipelineExecutionRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                  - Action: 
+                    - 'sts:AssumeRole'
+                    Effect: Allow
+                    Principal:
+                      Service: 
+                        - codepipeline.amazonaws.com
+            Path: /
+            ManagedPolicyArns:
+                - 'arn:aws:iam::aws:policy/AWSCodeCommitFullAccess'
+                - 'arn:aws:iam::aws:policy/AmazonS3FullAccess'
+                - 'arn:aws:iam::aws:policy/AWSCodePipelineFullAccess'
+                - 'arn:aws:iam::aws:policy/AWSCodeDeployFullAccess'
+                - !Ref CFNPipelinePolicy
+            Policies:
+                - PolicyName: CodePipelineAccess
+                  PolicyDocument:
+                    Version: '2012-10-17'
+                    Statement:
+                        - Action:
+                            - 'iam:PassRole'
+                            - 'lambda:InvokeFunction'
+                            - 'lambda:ListFunctions'
+                            - 'lambda:InvokeAsyc'
+                          Effect: Allow
+                          Resource: '*'
+
+
+#
+#  CoePipeline using Github as source                         
+#
+    PipelineWithGithub:
+        # Condition:  NotUseCodeCommit
+        Type: AWS::CodePipeline::Pipeline
+        Properties:
+            ArtifactStores: 
+              -
+                Region: us-east-1
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - us-east-1
+                    - name
+                  Type: S3  
+              -
+                Region: us-east-2
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - us-east-2
+                    - name
+                  Type: S3  
+              -
+                Region: us-west-2
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - us-west-2
+                    - name
+                  Type: S3   
+              -
+                Region: ap-northeast-1
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - ap-northeast-1
+                    - name
+                  Type: S3   
+              -
+                Region: ap-northeast-2
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - ap-northeast-2
+                    - name
+                  Type: S3     
+              -
+                Region: ap-southeast-1
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - ap-southeast-1
+                    - name
+                  Type: S3   
+              -
+                Region: ap-southeast-2
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - ap-southeast-2
+                    - name
+                  Type: S3    
+              -
+                Region: ap-south-1
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - ap-south-1
+                    - name
+                  Type: S3 
+              -
+                Region: eu-central-1
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - eu-central-1
+                    - name
+                  Type: S3 
+              -
+                Region: eu-west-1
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - eu-west-1
+                    - name
+                  Type: S3 
+              -
+                Region: eu-west-2
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - eu-west-2
+                    - name
+                  Type: S3 
+              -
+                Region: eu-west-3
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - eu-west-3
+                    - name
+                  Type: S3 
+              -
+                Region: eu-north-1
+                ArtifactStore: 
+                  Location: !FindInMap
+                    - BuildArtifactsBucket
+                    - eu-north-1
+                    - name
+                  Type: S3        
+                  
+            Name: !Sub ${ServiceName}-PL
+            RoleArn: !GetAtt PipelineExecutionRole.Arn
+            # DisableInboundStageTransitions: 
+            #   - 
+            #     Reason: "init disabled"
+            #     StageName: CreateEnvironments
+            Stages:
+                - Name: Source
+                  Actions:
+                    - Name: CodeRepo
+                      ActionTypeId:
+                        Category: Source
+                        Owner: ThirdParty
+                        Provider: GitHub
+                        Version: 1
+                      Configuration:
+                        Owner: !Ref GitHubUser
+                        Repo: !Ref GitHubRepo
+                        Branch: !Ref GitHubBranch
+                        OAuthToken: !Ref GitHubToken
+                      OutputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1
+                - Name: Deploy
+                  Actions:
+                    - Name: Oregon
+                      Region: us-west-2
+                      ActionTypeId:
+                        Category: Deploy
+                        Owner: AWS
+                        Provider: CloudFormation
+                        Version: 1
+                      Configuration:
+                        ActionMode: CREATE_UPDATE
+                        RoleArn: !Ref CloudFormationExecutionRole
+                        StackName: 'eksdemo'
+                        TemplatePath: SourceArtifact::cloudformation/eks.yaml
+                        Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                        ParameterOverrides: !Sub |
+                          {
+                              "VpcId": "vpc-c7635ea0",
+                              "ClusterName": "${ClusterName}", 
+                              "KeyName": "${KeyName}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "SubnetIds": "subnet-02858661648d4840a,subnet-0f247a2b289129708,subnet-0da5823de42ae81f9"
+                          }
+                      InputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1
+                    - Name: Tokyo
+                      Region: ap-northeast-1
+                      ActionTypeId:
+                        Category: Deploy
+                        Owner: AWS
+                        Provider: CloudFormation
+                        Version: 1
+                      Configuration:
+                        ActionMode: CREATE_UPDATE
+                        RoleArn: !Ref CloudFormationExecutionRole
+                        StackName: 'eksdemo'
+                        TemplatePath: SourceArtifact::cloudformation/eks.yaml
+                        Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                        ParameterOverrides: !Sub |
+                          { 
+                            "VpcId": "vpc-e549a281", 
+                              "ClusterName": "${ClusterName}", 
+                              "KeyName": "${KeyName}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                            "SubnetIds": "subnet-05b643f57a6997deb,subnet-09e79eb1dec82b7e2,subnet-0c365d97cbc75ceec"
+                          }
+                      InputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1
+                    - Name: Seoul
+                      Region: ap-northeast-2
+                      ActionTypeId:
+                        Category: Deploy
+                        Owner: AWS
+                        Provider: CloudFormation
+                        Version: 1
+                      Configuration:
+                        ActionMode: CREATE_UPDATE
+                        RoleArn: !Ref CloudFormationExecutionRole
+                        StackName: 'eksdemo'
+                        TemplatePath: SourceArtifact::cloudformation/eks.yaml
+                        Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                        ParameterOverrides: !Sub |
+                          {
+                              "VpcId": "vpc-20e77549",
+                              "ClusterName": "${ClusterName}", 
+                              "KeyName": "${KeyName}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "SubnetIds": "subnet-02c30a86d6807db3c,subnet-0593dfa54d4df475d,subnet-0a30acb7d0932f960"
+                          }
+                      InputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1
+                    - Name: Singapore
+                      Region: ap-southeast-1
+                      ActionTypeId:
+                        Category: Deploy
+                        Owner: AWS
+                        Provider: CloudFormation
+                        Version: 1
+                      Configuration:
+                        ActionMode: CREATE_UPDATE
+                        RoleArn: !Ref CloudFormationExecutionRole
+                        StackName: 'eksdemo'
+                        TemplatePath: SourceArtifact::cloudformation/eks.yaml
+                        Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                        ParameterOverrides: !Sub |
+                          {
+                              "VpcId": "vpc-b9d754de",
+                              "ClusterName": "${ClusterName}", 
+                              "KeyName": "${KeyName}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "SubnetIds": "subnet-067fd9b93df82cba9,subnet-051b5af6d4aeba997,subnet-027d8df99c8b87698"
+                          }
+                      InputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1  
+                    - Name: Sydney
+                      Region: ap-southeast-2
+                      ActionTypeId:
+                        Category: Deploy
+                        Owner: AWS
+                        Provider: CloudFormation
+                        Version: 1
+                      Configuration:
+                        ActionMode: CREATE_UPDATE
+                        RoleArn: !Ref CloudFormationExecutionRole
+                        StackName: 'eksdemo'
+                        TemplatePath: SourceArtifact::cloudformation/eks.yaml
+                        Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                        ParameterOverrides: !Sub |
+                          {
+                              "VpcId": "vpc-18eaf77d",
+                              "ClusterName": "${ClusterName}", 
+                              "KeyName": "${KeyName}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "SubnetIds": "subnet-0ae006ad3a00392ce,subnet-019a25b28f3eb674c,subnet-0e267889ac91f9418"
+                          }
+                      InputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1    
+                    - Name: Mumbai
+                      Region: ap-south-1
+                      ActionTypeId:
+                        Category: Deploy
+                        Owner: AWS
+                        Provider: CloudFormation
+                        Version: 1
+                      Configuration:
+                        ActionMode: CREATE_UPDATE
+                        RoleArn: !Ref CloudFormationExecutionRole
+                        StackName: 'eksdemo'
+                        TemplatePath: SourceArtifact::cloudformation/eks.yaml
+                        Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                        ParameterOverrides: !Sub |
+                          {
+                              "VpcId": "vpc-8a3df4e3",
+                              "ClusterName": "${ClusterName}", 
+                              "KeyName": "${KeyName}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "SubnetIds": "subnet-039e42b2ee25d3852,subnet-0d42670fb9646f286,subnet-06630a40a37d5ae05"
+                          }
+                      InputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1   
+                    - Name: Virginia
+                      Region: us-east-1
+                      ActionTypeId:
+                        Category: Deploy
+                        Owner: AWS
+                        Provider: CloudFormation
+                        Version: 1
+                      Configuration:
+                        ActionMode: CREATE_UPDATE
+                        RoleArn: !Ref CloudFormationExecutionRole
+                        StackName: 'eksdemo'
+                        TemplatePath: SourceArtifact::cloudformation/eks.yaml
+                        Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                        ParameterOverrides: !Sub |
+                          {
+                              "VpcId": "vpc-1f5b7e78",
+                              "ClusterName": "${ClusterName}", 
+                              "KeyName": "${KeyName}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "SubnetIds": "subnet-0117cbc15184a9d3c,subnet-0eb0342953ba0ed24,subnet-08566ccfbd452adfe"
+                          }
+                      InputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1
+                    - Name: Ohio
+                      Region: us-east-2
+                      ActionTypeId:
+                        Category: Deploy
+                        Owner: AWS
+                        Provider: CloudFormation
+                        Version: 1
+                      Configuration:
+                        ActionMode: CREATE_UPDATE
+                        RoleArn: !Ref CloudFormationExecutionRole
+                        StackName: 'eksdemo'
+                        TemplatePath: SourceArtifact::cloudformation/eks.yaml
+                        Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                        ParameterOverrides: !Sub |
+                          {
+                              "VpcId": "vpc-1021cf79",
+                              "ClusterName": "${ClusterName}", 
+                              "KeyName": "${KeyName}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "SubnetIds": "subnet-0ed70efa1a7489c2a,subnet-097bc1fd8257027d1,subnet-012b5be29eb24e8bf"
+                          }
+                      InputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1
+                    - Name: Frankfurt
+                      Region: eu-central-1
+                      ActionTypeId:
+                        Category: Deploy
+                        Owner: AWS
+                        Provider: CloudFormation
+                        Version: 1
+                      Configuration:
+                        ActionMode: CREATE_UPDATE
+                        RoleArn: !Ref CloudFormationExecutionRole
+                        StackName: 'eksdemo'
+                        TemplatePath: SourceArtifact::cloudformation/eks.yaml
+                        Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                        ParameterOverrides: !Sub |
+                          {
+                              "VpcId": "vpc-473eda2f",
+                              "ClusterName": "${ClusterName}", 
+                              "KeyName": "${KeyName}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "SubnetIds": "subnet-0f20d65f28d5b91d9,subnet-0a01251a1ba6a933b,subnet-07d3250457f0851a1"
+                          }
+                      InputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1
+                    - Name: Ireland
+                      Region: eu-west-1
+                      ActionTypeId:
+                        Category: Deploy
+                        Owner: AWS
+                        Provider: CloudFormation
+                        Version: 1
+                      Configuration:
+                        ActionMode: CREATE_UPDATE
+                        RoleArn: !Ref CloudFormationExecutionRole
+                        StackName: 'eksdemo'
+                        TemplatePath: SourceArtifact::cloudformation/eks.yaml
+                        Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                        ParameterOverrides: !Sub |
+                          {
+                              "VpcId": "vpc-6e099e0a",
+                              "ClusterName": "${ClusterName}", 
+                              "KeyName": "${KeyName}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "SubnetIds": "subnet-017172925f00bc8d0,subnet-04f1e78114ebf0355,subnet-0be07e284074e5628"
+                          }
+                      InputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1
+                    - Name: London
+                      Region: eu-west-2
+                      ActionTypeId:
+                        Category: Deploy
+                        Owner: AWS
+                        Provider: CloudFormation
+                        Version: 1
+                      Configuration:
+                        ActionMode: CREATE_UPDATE
+                        RoleArn: !Ref CloudFormationExecutionRole
+                        StackName: 'eksdemo'
+                        TemplatePath: SourceArtifact::cloudformation/eks.yaml
+                        Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                        ParameterOverrides: !Sub |
+                          {
+                              "VpcId": "vpc-de5bbbb7",
+                              "ClusterName": "${ClusterName}", 
+                              "KeyName": "${KeyName}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "SubnetIds": "subnet-03c45905416f6adc8,subnet-0e3e0ebb2c9f0b1a2,subnet-0fe6aa0cc1a767290"
+                          }
+                      InputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1
+                    - Name: Paris
+                      Region: eu-west-3
+                      ActionTypeId:
+                        Category: Deploy
+                        Owner: AWS
+                        Provider: CloudFormation
+                        Version: 1
+                      Configuration:
+                        ActionMode: CREATE_UPDATE
+                        RoleArn: !Ref CloudFormationExecutionRole
+                        StackName: 'eksdemo'
+                        TemplatePath: SourceArtifact::cloudformation/eks.yaml
+                        Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                        ParameterOverrides: !Sub |
+                          {
+                              "VpcId": "vpc-cf478ba6",
+                              "ClusterName": "${ClusterName}", 
+                              "KeyName": "${KeyName}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "SubnetIds": "subnet-0590f2b2e977f83d4,subnet-0ba051263bca2af08,subnet-0fa4c112446c4e9d2"
+                          }
+                      InputArtifacts:
+                        - Name: SourceArtifact
+                      RunOrder: 1
