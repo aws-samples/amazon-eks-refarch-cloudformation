@@ -1,3 +1,4 @@
 test
 .DS_Store
 Makefile.us*
+secrets.mk

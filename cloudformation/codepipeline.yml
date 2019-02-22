@@ -54,7 +54,31 @@ Parameters:
     LambdaRoleArn:
       Type: String
       Default: arn:aws:iam::903779448426:role/LambdaEKSAdminRole
-    
+      
+    OnDemandBaseCapacity:
+      Type: Number
+      Default: 0
+      
+    NodeAutoScalingGroupDesiredSize:
+      Type: Number
+      Default: 1
+      
+    NodeAutoScalingGroupMaxSize:
+      Type: Number
+      Default: 5
+      
+    NodeAutoScalingGroupMinSize:
+      Type: Number
+      Default: 1
+      
+    ActionMode:
+      Type: String
+      Default: REPLACE_ON_FAILURE
+      AllowedValues: 
+        - CHANGE_SET_EXECUTE
+        - CHANGE_SET_REPLACE 
+        - DELETE_ONLY
+        - REPLACE_ON_FAILURE
 
 Mappings:
   BuildArtifactsBucket:
@@ -314,7 +338,7 @@ Resources:
                         Provider: CloudFormation
                         Version: 1
                       Configuration:
-                        ActionMode: CREATE_UPDATE
+                        ActionMode: !Ref ActionMode
                         RoleArn: !Ref CloudFormationExecutionRole
                         StackName: 'eksdemo'
                         TemplatePath: SourceArtifact::cloudformation/eks.yaml
@@ -325,6 +349,10 @@ Resources:
                               "ClusterName": "${ClusterName}", 
                               "KeyName": "${KeyName}", 
                               "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "OnDemandBaseCapacity": "${OnDemandBaseCapacity}",
+                              "NodeAutoScalingGroupDesiredSize": "${NodeAutoScalingGroupDesiredSize}",
+                              "NodeAutoScalingGroupMaxSize": "${NodeAutoScalingGroupMaxSize}",
+                              "NodeAutoScalingGroupMinSize": "${NodeAutoScalingGroupMinSize}",                              
                               "SubnetIds": "subnet-02858661648d4840a,subnet-0f247a2b289129708,subnet-0da5823de42ae81f9"
                           }
                       InputArtifacts:
@@ -338,18 +366,22 @@ Resources:
                         Provider: CloudFormation
                         Version: 1
                       Configuration:
-                        ActionMode: CREATE_UPDATE
+                        ActionMode: !Ref ActionMode
                         RoleArn: !Ref CloudFormationExecutionRole
                         StackName: 'eksdemo'
                         TemplatePath: SourceArtifact::cloudformation/eks.yaml
                         Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
                         ParameterOverrides: !Sub |
                           { 
-                            "VpcId": "vpc-e549a281", 
+                              "VpcId": "vpc-e549a281", 
                               "ClusterName": "${ClusterName}", 
                               "KeyName": "${KeyName}", 
                               "LambdaRoleArn": "${LambdaRoleArn}", 
-                            "SubnetIds": "subnet-05b643f57a6997deb,subnet-09e79eb1dec82b7e2,subnet-0c365d97cbc75ceec"
+                              "OnDemandBaseCapacity": "${OnDemandBaseCapacity}",
+                              "NodeAutoScalingGroupDesiredSize": "${NodeAutoScalingGroupDesiredSize}",
+                              "NodeAutoScalingGroupMaxSize": "${NodeAutoScalingGroupMaxSize}",
+                              "NodeAutoScalingGroupMinSize": "${NodeAutoScalingGroupMinSize}",                              
+                              "SubnetIds": "subnet-05b643f57a6997deb,subnet-09e79eb1dec82b7e2,subnet-0c365d97cbc75ceec"
                           }
                       InputArtifacts:
                         - Name: SourceArtifact
@@ -362,7 +394,7 @@ Resources:
                         Provider: CloudFormation
                         Version: 1
                       Configuration:
-                        ActionMode: CREATE_UPDATE
+                        ActionMode: !Ref ActionMode
                         RoleArn: !Ref CloudFormationExecutionRole
                         StackName: 'eksdemo'
                         TemplatePath: SourceArtifact::cloudformation/eks.yaml
@@ -373,6 +405,11 @@ Resources:
                               "ClusterName": "${ClusterName}", 
                               "KeyName": "${KeyName}", 
                               "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "OnDemandBaseCapacity": "${OnDemandBaseCapacity}",
+                              "NodeAutoScalingGroupDesiredSize": "${NodeAutoScalingGroupDesiredSize}",
+                              "NodeAutoScalingGroupMaxSize": "${NodeAutoScalingGroupMaxSize}",
+                              "NodeAutoScalingGroupMinSize": "${NodeAutoScalingGroupMinSize}",
+                              "InstanceTypesOverride": "t3.medium,t3.large,m5.large",
                               "SubnetIds": "subnet-02c30a86d6807db3c,subnet-0593dfa54d4df475d,subnet-0a30acb7d0932f960"
                           }
                       InputArtifacts:
@@ -386,7 +423,7 @@ Resources:
                         Provider: CloudFormation
                         Version: 1
                       Configuration:
-                        ActionMode: CREATE_UPDATE
+                        ActionMode: !Ref ActionMode
                         RoleArn: !Ref CloudFormationExecutionRole
                         StackName: 'eksdemo'
                         TemplatePath: SourceArtifact::cloudformation/eks.yaml
@@ -396,7 +433,11 @@ Resources:
                               "VpcId": "vpc-b9d754de",
                               "ClusterName": "${ClusterName}", 
                               "KeyName": "${KeyName}", 
-                              "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "LambdaRoleArn": "${LambdaRoleArn}",
+                              "OnDemandBaseCapacity": "${OnDemandBaseCapacity}",
+                              "NodeAutoScalingGroupDesiredSize": "${NodeAutoScalingGroupDesiredSize}",
+                              "NodeAutoScalingGroupMaxSize": "${NodeAutoScalingGroupMaxSize}",
+                              "NodeAutoScalingGroupMinSize": "${NodeAutoScalingGroupMinSize}",                              
                               "SubnetIds": "subnet-067fd9b93df82cba9,subnet-051b5af6d4aeba997,subnet-027d8df99c8b87698"
                           }
                       InputArtifacts:
@@ -410,7 +451,7 @@ Resources:
                         Provider: CloudFormation
                         Version: 1
                       Configuration:
-                        ActionMode: CREATE_UPDATE
+                        ActionMode: !Ref ActionMode
                         RoleArn: !Ref CloudFormationExecutionRole
                         StackName: 'eksdemo'
                         TemplatePath: SourceArtifact::cloudformation/eks.yaml
@@ -421,6 +462,10 @@ Resources:
                               "ClusterName": "${ClusterName}", 
                               "KeyName": "${KeyName}", 
                               "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "OnDemandBaseCapacity": "${OnDemandBaseCapacity}",
+                              "NodeAutoScalingGroupDesiredSize": "${NodeAutoScalingGroupDesiredSize}",
+                              "NodeAutoScalingGroupMaxSize": "${NodeAutoScalingGroupMaxSize}",
+                              "NodeAutoScalingGroupMinSize": "${NodeAutoScalingGroupMinSize}",                              
                               "SubnetIds": "subnet-0ae006ad3a00392ce,subnet-019a25b28f3eb674c,subnet-0e267889ac91f9418"
                           }
                       InputArtifacts:
@@ -434,7 +479,7 @@ Resources:
                         Provider: CloudFormation
                         Version: 1
                       Configuration:
-                        ActionMode: CREATE_UPDATE
+                        ActionMode: !Ref ActionMode
                         RoleArn: !Ref CloudFormationExecutionRole
                         StackName: 'eksdemo'
                         TemplatePath: SourceArtifact::cloudformation/eks.yaml
@@ -445,6 +490,10 @@ Resources:
                               "ClusterName": "${ClusterName}", 
                               "KeyName": "${KeyName}", 
                               "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "OnDemandBaseCapacity": "${OnDemandBaseCapacity}",
+                              "NodeAutoScalingGroupDesiredSize": "${NodeAutoScalingGroupDesiredSize}",
+                              "NodeAutoScalingGroupMaxSize": "${NodeAutoScalingGroupMaxSize}",
+                              "NodeAutoScalingGroupMinSize": "${NodeAutoScalingGroupMinSize}",                              
                               "SubnetIds": "subnet-039e42b2ee25d3852,subnet-0d42670fb9646f286,subnet-06630a40a37d5ae05"
                           }
                       InputArtifacts:
@@ -458,7 +507,7 @@ Resources:
                         Provider: CloudFormation
                         Version: 1
                       Configuration:
-                        ActionMode: CREATE_UPDATE
+                        ActionMode: !Ref ActionMode
                         RoleArn: !Ref CloudFormationExecutionRole
                         StackName: 'eksdemo'
                         TemplatePath: SourceArtifact::cloudformation/eks.yaml
@@ -469,6 +518,10 @@ Resources:
                               "ClusterName": "${ClusterName}", 
                               "KeyName": "${KeyName}", 
                               "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "OnDemandBaseCapacity": "${OnDemandBaseCapacity}",
+                              "NodeAutoScalingGroupDesiredSize": "${NodeAutoScalingGroupDesiredSize}",
+                              "NodeAutoScalingGroupMaxSize": "${NodeAutoScalingGroupMaxSize}",
+                              "NodeAutoScalingGroupMinSize": "${NodeAutoScalingGroupMinSize}",                              
                               "SubnetIds": "subnet-0117cbc15184a9d3c,subnet-0eb0342953ba0ed24,subnet-08566ccfbd452adfe"
                           }
                       InputArtifacts:
@@ -482,7 +535,7 @@ Resources:
                         Provider: CloudFormation
                         Version: 1
                       Configuration:
-                        ActionMode: CREATE_UPDATE
+                        ActionMode: !Ref ActionMode
                         RoleArn: !Ref CloudFormationExecutionRole
                         StackName: 'eksdemo'
                         TemplatePath: SourceArtifact::cloudformation/eks.yaml
@@ -493,6 +546,10 @@ Resources:
                               "ClusterName": "${ClusterName}", 
                               "KeyName": "${KeyName}", 
                               "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "OnDemandBaseCapacity": "${OnDemandBaseCapacity}",
+                              "NodeAutoScalingGroupDesiredSize": "${NodeAutoScalingGroupDesiredSize}",
+                              "NodeAutoScalingGroupMaxSize": "${NodeAutoScalingGroupMaxSize}",
+                              "NodeAutoScalingGroupMinSize": "${NodeAutoScalingGroupMinSize}",                              
                               "SubnetIds": "subnet-0ed70efa1a7489c2a,subnet-097bc1fd8257027d1,subnet-012b5be29eb24e8bf"
                           }
                       InputArtifacts:
@@ -506,7 +563,7 @@ Resources:
                         Provider: CloudFormation
                         Version: 1
                       Configuration:
-                        ActionMode: CREATE_UPDATE
+                        ActionMode: !Ref ActionMode
                         RoleArn: !Ref CloudFormationExecutionRole
                         StackName: 'eksdemo'
                         TemplatePath: SourceArtifact::cloudformation/eks.yaml
@@ -517,6 +574,10 @@ Resources:
                               "ClusterName": "${ClusterName}", 
                               "KeyName": "${KeyName}", 
                               "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "OnDemandBaseCapacity": "${OnDemandBaseCapacity}",
+                              "NodeAutoScalingGroupDesiredSize": "${NodeAutoScalingGroupDesiredSize}",
+                              "NodeAutoScalingGroupMaxSize": "${NodeAutoScalingGroupMaxSize}",
+                              "NodeAutoScalingGroupMinSize": "${NodeAutoScalingGroupMinSize}",                              
                               "SubnetIds": "subnet-0f20d65f28d5b91d9,subnet-0a01251a1ba6a933b,subnet-07d3250457f0851a1"
                           }
                       InputArtifacts:
@@ -530,7 +591,7 @@ Resources:
                         Provider: CloudFormation
                         Version: 1
                       Configuration:
-                        ActionMode: CREATE_UPDATE
+                        ActionMode: !Ref ActionMode
                         RoleArn: !Ref CloudFormationExecutionRole
                         StackName: 'eksdemo'
                         TemplatePath: SourceArtifact::cloudformation/eks.yaml
@@ -541,6 +602,10 @@ Resources:
                               "ClusterName": "${ClusterName}", 
                               "KeyName": "${KeyName}", 
                               "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "OnDemandBaseCapacity": "${OnDemandBaseCapacity}",
+                              "NodeAutoScalingGroupDesiredSize": "${NodeAutoScalingGroupDesiredSize}",
+                              "NodeAutoScalingGroupMaxSize": "${NodeAutoScalingGroupMaxSize}",
+                              "NodeAutoScalingGroupMinSize": "${NodeAutoScalingGroupMinSize}",                              
                               "SubnetIds": "subnet-017172925f00bc8d0,subnet-04f1e78114ebf0355,subnet-0be07e284074e5628"
                           }
                       InputArtifacts:
@@ -554,7 +619,7 @@ Resources:
                         Provider: CloudFormation
                         Version: 1
                       Configuration:
-                        ActionMode: CREATE_UPDATE
+                        ActionMode: !Ref ActionMode
                         RoleArn: !Ref CloudFormationExecutionRole
                         StackName: 'eksdemo'
                         TemplatePath: SourceArtifact::cloudformation/eks.yaml
@@ -565,6 +630,10 @@ Resources:
                               "ClusterName": "${ClusterName}", 
                               "KeyName": "${KeyName}", 
                               "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "OnDemandBaseCapacity": "${OnDemandBaseCapacity}",
+                              "NodeAutoScalingGroupDesiredSize": "${NodeAutoScalingGroupDesiredSize}",
+                              "NodeAutoScalingGroupMaxSize": "${NodeAutoScalingGroupMaxSize}",
+                              "NodeAutoScalingGroupMinSize": "${NodeAutoScalingGroupMinSize}",                              
                               "SubnetIds": "subnet-03c45905416f6adc8,subnet-0e3e0ebb2c9f0b1a2,subnet-0fe6aa0cc1a767290"
                           }
                       InputArtifacts:
@@ -578,7 +647,7 @@ Resources:
                         Provider: CloudFormation
                         Version: 1
                       Configuration:
-                        ActionMode: CREATE_UPDATE
+                        ActionMode: !Ref ActionMode
                         RoleArn: !Ref CloudFormationExecutionRole
                         StackName: 'eksdemo'
                         TemplatePath: SourceArtifact::cloudformation/eks.yaml
@@ -589,6 +658,11 @@ Resources:
                               "ClusterName": "${ClusterName}", 
                               "KeyName": "${KeyName}", 
                               "LambdaRoleArn": "${LambdaRoleArn}", 
+                              "OnDemandBaseCapacity": "${OnDemandBaseCapacity}",
+                              "NodeAutoScalingGroupDesiredSize": "${NodeAutoScalingGroupDesiredSize}",
+                              "NodeAutoScalingGroupMaxSize": "${NodeAutoScalingGroupMaxSize}",
+                              "NodeAutoScalingGroupMinSize": "${NodeAutoScalingGroupMinSize}",      
+                              "InstanceTypesOverride": "t3.medium,t3.large,m5.large",
                               "SubnetIds": "subnet-0590f2b2e977f83d4,subnet-0ba051263bca2af08,subnet-0fa4c112446c4e9d2"
                           }
                       InputArtifacts:
