@@ -218,12 +218,12 @@ Parameters:
 
   BootstrapArgumentsForOnDemand:
     Description: Arguments to pass to the bootstrap script. See files/bootstrap.sh in https://github.com/awslabs/amazon-eks-ami
-    Default: "--kubelet-extra-args --node-labels=ondemand=yes"
+    Default: "--kubelet-extra-args --node-labels=lifecycle=OnDemand"
     Type: String
 
   BootstrapArgumentsForSpotFleet:
     Description: Arguments to pass to the bootstrap script. See files/bootstrap.sh in https://github.com/awslabs/amazon-eks-ami
-    Default: "--kubelet-extra-args '--node-labels=spotfleet=yes --register-with-taints=spotInstance=true:PreferNoSchedule'"
+    Default: "--kubelet-extra-args '--node-labels=lifecycle=Ec2Spot --register-with-taints=spotInstance=true:PreferNoSchedule'"
     Type: String
 
   ClusterControlPlaneSecurityGroup:
