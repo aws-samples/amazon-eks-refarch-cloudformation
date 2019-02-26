@@ -245,7 +245,7 @@ By default, all the on-demand instances will have **asgnode=yes** label while sp
 
 
 
-![](images/01.png)
+![](images/01-2.png)
 
 Additionally, all the spot instances have a **spotInstance=true:PreferNoSchedule** taint. To deploy your Pod on spot instances, use the node label selector to specify **spotfleet=yes**, otherwise the pod will not be scheduled on the spot instances unless it has relevant toleration. ([Taint and Toleration in Kubernetes](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)).
 
