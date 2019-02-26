@@ -241,13 +241,13 @@ control plane. Read [Managing Cluster Authentication](https://docs.aws.amazon.co
 
 ## Node Labels, Taints and Tolerations
 
-By default, all the on-demand instances will have **asgnode=yes** label while spot instances will have **spotfleet=yes**. Use the node selector to better schedule your workload
+By default, all the on-demand instances will have **lifecycle=OnDemand** label while spot instances will have **lifecycle=Ec2Spot**. Use the node selector to better schedule your workload
 
 
 
 ![](images/01-2.png)
 
-Additionally, all the spot instances have a **spotInstance=true:PreferNoSchedule** taint. To deploy your Pod on spot instances, use the node label selector to specify **spotfleet=yes**, otherwise the pod will not be scheduled on the spot instances unless it has relevant toleration. ([Taint and Toleration in Kubernetes](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)).
+Additionally, all the spot instances have a **spotInstance=true:PreferNoSchedule** taint. To deploy your Pod on spot instances, use the node label selector to specify **lifecycle=Ec2Spot**, otherwise the pod will not be scheduled on the spot instances unless it has relevant toleration. ([Taint and Toleration in Kubernetes](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)).
 
 
 # Spot Termination Handling
