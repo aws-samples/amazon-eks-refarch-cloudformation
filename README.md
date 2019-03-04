@@ -82,9 +82,9 @@ response
 
 ![](images/11.png)
 
-Behind the scene, a cloudformation stack with `4` nested stacks will be created:
+Behind the scene, a cloudformation stack with `5` nested stacks will be created:
 
-1. **eksdemo** - the primary stack containing 4 nested stacks
+1. **eksdemo** - the primary stack containing 5 nested stacks
 2. **eksdemo-CL-** - the control plane and security group
 3. **eksdemo-AMI-** - EKS-Optimized AMI info for Amazon EKS
 3. **eksdemo-NG-** - the nodegroup
