@@ -116,8 +116,21 @@ Resources:
         # ClusterRoleArn: !Ref ClusterRoleArn
         SubnetIds: !Ref SubnetIds
         # SecurityGroupIds: !Ref SecurityGroupIds
+        
+  AMI:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/ami-dev.yaml
+      # Parameters:
+      #   VpcId: !Ref VpcId
+      #   ClusterName: !Ref ClusterName
+      #   # ClusterRoleArn: !Ref ClusterRoleArn
+      #   SubnetIds: !Ref SubnetIds
+      #   # SecurityGroupIds: !Ref SecurityGroupIds
   NG:
-    DependsOn: CL
+    DependsOn: 
+      - CL
+      - AMI
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev.yaml
@@ -133,6 +146,7 @@ Resources:
         NodeAutoScalingGroupDesiredSize: !Ref NodeAutoScalingGroupDesiredSize
         NodeAutoScalingGroupMaxSize: !Ref NodeAutoScalingGroupMaxSize
         OnDemandBaseCapacity: !Ref OnDemandBaseCapacity
+        LatestAMIId: !GetAtt AMI.Outputs.AmiId
         Subnets: !Ref SubnetIds
         # RootStackName: !Sub "${AWS::StackName}"
      

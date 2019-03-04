@@ -38,12 +38,12 @@ Metadata:
         Parameters: 
           - TargetGroupPort
 
-Mappings:
-  AMIMap:
-    'Fn::Transform':
-      Name: 'AWS::Include'
-      Parameters:
-        Location: s3://pahud-eks-templates/eks-latest-ami.yaml
+# Mappings:
+#   AMIMap:
+#     'Fn::Transform':
+#       Name: 'AWS::Include'
+#       Parameters:
+#         Location: s3://pahud-eks-templates/eks-latest-ami.yaml
 
 Parameters:
   VpcId:
@@ -67,6 +67,11 @@ Parameters:
     Type: String
     Default: ""
     Description: Specify AMI id for the node instances. Leave it blank if you preferred the latest EKS-optimized AMI
+    
+  LatestAMIId:
+    Type: String
+    Default: ""
+    Description: placeholder - do not input
 
   NodeInstanceType:
     Description: Default EC2 instance type for the node instances.
@@ -485,7 +490,8 @@ Resources:
         ImageId: 
           !If
             - PreferredDefaultAMI
-            - !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
+            - !Ref LatestAMIId
+            # - !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
             - !Ref NodeImageId        
         InstanceType: !Ref NodeInstanceType
 
