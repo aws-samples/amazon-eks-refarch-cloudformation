@@ -14,12 +14,12 @@
 - [x] Fully support the latest Autoscaling Group features to hybrid on-demand and spot instances with mixed types and purchase options.
 - [x] The cloudformation stack will help you automate the configuration on `aws-auth-cm` **ConfigMap** with AWS Lambda-backed `custom resource`.
 - [x] No need to provision SpotFleet anymore.
-- [x] on-demand instances will have node label **ondemand=yes**
-- [x] spot instances will have node label **spotfleet=yes** and a **spotInstance=true:PreferNoSchedule** taint
-- [x] support private subnets
-- [x] support non-RFC1918 IP/CIDR VPC subnets
-- [x] support the latest EKS-optimized AMI auto selection
-- [x] support `pahud/eks-lambda-drainer` to help you `drain` the pods on terminating spot instances to protect your online workload.
+- [x] On-demand instances will have node label **ondemand=yes**
+- [x] Spot instances will have node label **spotfleet=yes** and a **spotInstance=true:PreferNoSchedule** taint
+- [x] Support private subnets
+- [x] Support non-RFC1918 IP/CIDR VPC subnets
+- [x] Select the latest EKS-optimized AMI for Amazon Linux from a Lambda-backed cloudformaiton custom resource. This help you always use the latest EKS-Optimized AMI.
+- [x] Support `pahud/eks-lambda-drainer` to help you `drain` the pods on terminating spot instances to protect your online workload.
 
 
 
@@ -85,10 +85,11 @@ response
 Behind the scene, a cloudformation stack with `4` nested stacks will be created:
 
 1. **eksdemo** - the primary stack containing 4 nested stacks
-2. **eksdemo-CL** - the control plane and security group
-3. **eksdemo-NG** - the nodegroup
-4. **eksdemo-CM** - the custom resource to update the `aws-auth` ConfigMap
-5. **eksdemo-CM-xxx** - the custom resource lambda function as `AWS::Serverless::Application` resource from `SAR(Serverless Application Repository)`
+2. **eksdemo-CL-** - the control plane and security group
+3. **eksdemo-AMI-** - EKS-Optimized AMI info for Amazon EKS
+3. **eksdemo-NG-** - the nodegroup
+4. **eksdemo-CM-** - the custom resource to update the `aws-auth` ConfigMap
+5. **eksdemo-CM-xxx-** - the custom resource lambda function as `AWS::Serverless::Application` resource from `SAR(Serverless Application Repository)`
 
 
 # Test and Validate
