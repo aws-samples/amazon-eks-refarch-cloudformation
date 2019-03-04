@@ -47,11 +47,13 @@ update-yaml:
 	#aws --region us-west-2 s3 sync cloudformation s3://pahud-cfn-us-west-2/eks-templates/cloudformation/ --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/nodegroup.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/eks.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/eks.yaml --acl public-read
+	@aws --region us-west-2 s3 cp cloudformation/ami.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/ami.yaml --acl public-read
 	@echo https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks.yaml
 
 .PHONY: update-dev-yaml	
 update-dev-yaml: 
 	@aws --region us-west-2 s3 cp cloudformation/eks.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/eks-dev.yaml --acl public-read
+	@aws --region us-west-2 s3 cp cloudformation/ami.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/ami-dev.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/cluster.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/cluster-dev.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/nodegroup.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/configmap.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-dev.yaml --acl public-read
