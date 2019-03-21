@@ -2,6 +2,10 @@ SECRETS_FILE ?= secrets.mk
 ifeq ($(shell test -e $(SECRETS_FILE) && echo -n yes),yes)
     include $(SECRETS_FILE)
 endif
+CUSTOM_FILE ?= custom.mk
+ifeq ($(shell test -e $(CUSTOM_FILE) && echo -n yes),yes)
+    include $(CUSTOM_FILE)
+endif
 ROOT ?= $(shell pwd)
 AWS_ACCOUNT_ID := $(shell aws sts get-caller-identity --query 'Account' --output text)
 EKS_YAML_URL ?= https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks-dev.yaml
@@ -20,6 +24,7 @@ NodeAutoScalingGroupMinSize ?= 0
 NodeAutoScalingGroupDesiredSize ?= 4
 NodeAutoScalingGroupMaxSize ?= 5
 ASGAutoAssignPublicIp ?= yes
+
 
 
 .PHONY: sam-dev-package
