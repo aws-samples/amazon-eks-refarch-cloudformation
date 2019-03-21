@@ -73,6 +73,14 @@ You may override the default values like this
 ```
 $ REGION=ap-northeast-1 EKS_ADMIN_ROLE=arn:aws:iam::903779448426:role/AmazonEKSAdminRole CLUSTER_STACK_NAME=eksdemo10 make create-eks-cluster
 ```
+or if you intend to run your nodegroup in private subnets and disable the `auto-assign-public-ip` completely for your nodes.
+
+```
+$ ASGAutoAssignPublicIp=no make create-eks-cluster
+
+```
+
+
 response
 ```
 {

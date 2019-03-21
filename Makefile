@@ -19,6 +19,7 @@ OnDemandBaseCapacity ?= 1
 NodeAutoScalingGroupMinSize ?= 0
 NodeAutoScalingGroupDesiredSize ?= 4
 NodeAutoScalingGroupMaxSize ?= 5
+ASGAutoAssignPublicIp ?= yes
 
 
 .PHONY: sam-dev-package
@@ -79,6 +80,7 @@ create-eks-cluster:
 	ParameterKey=NodeAutoScalingGroupMinSize,ParameterValue=$(NodeAutoScalingGroupMinSize) \
 	ParameterKey=NodeAutoScalingGroupDesiredSize,ParameterValue=$(NodeAutoScalingGroupDesiredSize) \
 	ParameterKey=NodeAutoScalingGroupMaxSize,ParameterValue=$(NodeAutoScalingGroupMaxSize) \
+	ParameterKey=ASGAutoAssignPublicIp,ParameterValue=$(ASGAutoAssignPublicIp) \
 	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3)
 
 .PHONY: update-eks-cluster	
@@ -96,6 +98,7 @@ update-eks-cluster:
 	ParameterKey=NodeAutoScalingGroupMinSize,ParameterValue=$(NodeAutoScalingGroupMinSize) \
 	ParameterKey=NodeAutoScalingGroupDesiredSize,ParameterValue=$(NodeAutoScalingGroupDesiredSize) \
 	ParameterKey=NodeAutoScalingGroupMaxSize,ParameterValue=$(NodeAutoScalingGroupMaxSize) \
+	ParameterKey=ASGAutoAssignPublicIp,ParameterValue=$(ASGAutoAssignPublicIp) \
 	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3)
 	
 .PHONY: delete-eks-cluster	
