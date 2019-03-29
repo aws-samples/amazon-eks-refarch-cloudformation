@@ -79,6 +79,7 @@ create-eks-cluster:
 	--parameters \
 	ParameterKey=VpcId,ParameterValue=$(VPC_ID) \
 	ParameterKey=ClusterName,ParameterValue=$(CLUSTER_NAME) \
+	ParameterKey=ClusterVersion,ParameterValue=$(ClusterVersion) \
 	ParameterKey=KeyName,ParameterValue=$(SSH_KEY_NAME) \
 	ParameterKey=LambdaRoleArn,ParameterValue=$(EKS_ADMIN_ROLE) \
 	ParameterKey=OnDemandBaseCapacity,ParameterValue=$(OnDemandBaseCapacity) \
@@ -97,6 +98,7 @@ update-eks-cluster:
 	--parameters \
 	ParameterKey=VpcId,ParameterValue=$(VPC_ID) \
 	ParameterKey=ClusterName,ParameterValue=$(CLUSTER_NAME) \
+	ParameterKey=ClusterVersion,ParameterValue=$(ClusterVersion) \
 	ParameterKey=KeyName,ParameterValue=$(SSH_KEY_NAME) \
 	ParameterKey=LambdaRoleArn,ParameterValue=$(EKS_ADMIN_ROLE) \
 	ParameterKey=OnDemandBaseCapacity,ParameterValue=$(OnDemandBaseCapacity) \

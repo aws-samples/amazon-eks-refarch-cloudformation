@@ -113,6 +113,7 @@ Resources:
       Parameters:
         VpcId: !Ref VpcId
         ClusterName: !Ref ClusterName
+        ClusterVersion: !Ref ClusterVersion
         # ClusterRoleArn: !Ref ClusterRoleArn
         SubnetIds: !Ref SubnetIds
         # SecurityGroupIds: !Ref SecurityGroupIds
