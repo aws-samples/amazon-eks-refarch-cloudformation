@@ -2,6 +2,21 @@ AWSTemplateFormatVersion: "2010-09-09"
 
 Description: "Amazon EKS latest AMIInfo"
 
+Parameters:
+  ClusterVersion:
+    Description: Cluster Version
+    Type: String
+    Default: "latest"
+    AllowedValues:
+      - "1.10"
+      - "1.11"
+      - "1.12"
+      - "latest"
+
+Conditions:
+  CreateLatestVersionCluster: !Equals [ !Ref ClusterVersion, latest ]
+
+
 Resources:
   AMIInfoFunction:
     Type: AWS::Lambda::Function
@@ -10,13 +25,18 @@ Resources:
         ZipFile: |
           import json
           
-          import boto3
+          import boto3, os
           
           from dateutil import parser
           
           from botocore.endpoint import BotocoreHTTPSession
           
           from botocore.awsrequest import AWSRequest
+          
+          if 'ClusterVersion' in os.environ:
+            ClusterVersion = os.environ['ClusterVersion']
+          else:
+            ClusterVersion = '1.12'
           
           def http_resp(statusCode, resp_body):
               return {
@@ -27,7 +47,7 @@ Resources:
                       "body": json.dumps(resp_body)
                    }
                    
-          def get_latest_ami():
+          def get_latest_ami(ver=ClusterVersion):
             client = boto3.client('ec2')
             response = client.describe_images(
                 ExecutableUsers=[
@@ -37,7 +57,7 @@ Resources:
                     {
                         'Name': 'name',
                         'Values': [
-                            'amazon-eks-node-1.11-*',
+                            'amazon-eks-node-%s-*' % ver,
                         ]
                     },
                 ],
@@ -103,6 +123,13 @@ Resources:
       Description: "Query the latest ECS AMI for Cloudformation template"
       Timeout: 300
       Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          ClusterVersion: 
+            Fn::If:
+              - CreateLatestVersionCluster
+              - '*'
+              - !Ref ClusterVersion
       Tags:
         - Key: custom:cloudformation:purpose
           Value: AMIInfo

@@ -10,7 +10,12 @@ Parameters:
   ClusterVersion:
     Description: Cluster Version
     Type: String
-    Default: "1.11"
+    Default: "latest"
+    AllowedValues:
+      - "1.10"
+      - "1.11"
+      - "1.12"
+      - "latest"
     
   VpcId:
     Description: The VPC of the worker instances
@@ -19,7 +24,11 @@ Parameters:
   SubnetIds:
     Description: Select 3 subnets where workers can be created.
     Type: List<AWS::EC2::Subnet::Id>
-    
+
+Conditions:
+  CreateLatestVersionCluster: !Equals [ !Ref ClusterVersion, latest ]
+  CreateCustomVersionCluster: !Not [!Equals [!Ref ClusterVersion, latest]]
+  
 Resources:
   EKSCluster:
     Type: "AWS::EKS::Cluster"
@@ -30,7 +39,12 @@ Resources:
           - !Ref ControlPlaneSecurityGroup
         SubnetIds: !Ref SubnetIds
       RoleArn: !GetAtt EksServiceRole.Arn
-      Version: !Ref ClusterVersion
+      Version:
+         Fn::If:
+          - CreateCustomVersionCluster
+          - !Ref ClusterVersion
+          - !Ref AWS::NoValue
+        
       
   ControlPlaneSecurityGroup:
     Type: AWS::EC2::SecurityGroup

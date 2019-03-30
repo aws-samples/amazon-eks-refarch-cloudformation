@@ -80,6 +80,17 @@ $ ASGAutoAssignPublicIp=no make create-eks-cluster
 
 ```
 
+To specify a specific Amazon EKS cluster version(`1.10`, `1.11` or `1.12`):
+
+```
+<<<<<<< HEAD
+$ ClusterVersion=1.12 make create-eks-cluster    
+=======
+$ ClusterVersion=1.12 CLUSTER_STACK_NAME=eksdemo-112 make create-eks-cluster    
+>>>>>>> 8dbc1c6... add multiple cluster support
+```
+(if you don't specify `ClusterVersion`, it will create the latest version for you)
+
 
 response
 ```
@@ -244,6 +255,18 @@ Your cluster is ready now.
 
 Under the hood, before sending the request to Kubernetes API, the `kubectl` command will invoke `aws-iam-authenticator token -i eksdemo -r {AmazonEKSAdminRole_Arn}`, attaching the generated `token` in the request header to authenticate Amazon EKS 
 control plane. Read [Managing Cluster Authentication](https://docs.aws.amazon.com/eks/latest/userguide/managing-auth.html) for more details.
+
+
+# update the cluster 
+
+update from `1.10` to `1.11`
+```
+$ ClusterVersion=1.11 make update-eks-cluster
+```
+update from `1.11` to `1.12`
+```
+$ ClusterVersion=1.12 make update-eks-cluster
+```
 
 
 

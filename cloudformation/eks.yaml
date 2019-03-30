@@ -7,7 +7,12 @@ Parameters:
   ClusterVersion:
     Description: Cluster Version
     Type: String
-    Default: "1.11"
+    Default: "latest"
+    AllowedValues:
+      - "1.10"
+      - "1.11"
+      - "1.12"
+      - "latest"
     
   VpcId:
     Description: The VPC of the worker instances
@@ -72,6 +77,11 @@ Parameters:
   LambdaRoleArn:
     Description: Lambda IAM Role Arn
     Type: String
+    
+  YamlBranch:
+    Description: "stable or dev"
+    Type: String
+    Default: "stable"
 
 Mappings: 
   LayerArn: 
@@ -109,7 +119,7 @@ Resources:
   CL:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/cluster-dev.yaml
+      TemplateURL: !Sub "https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/cluster-${YamlBranch}.yaml"
       Parameters:
         VpcId: !Ref VpcId
         ClusterName: !Ref ClusterName
@@ -121,8 +131,9 @@ Resources:
   AMI:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/ami-dev.yaml
-      # Parameters:
+      TemplateURL: !Sub "https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/ami-${YamlBranch}.yaml"
+      Parameters:
+        ClusterVersion: !Ref ClusterVersion
       #   VpcId: !Ref VpcId
       #   ClusterName: !Ref ClusterName
       #   # ClusterRoleArn: !Ref ClusterRoleArn
@@ -134,7 +145,7 @@ Resources:
       - AMI
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev.yaml
+      TemplateURL: !Sub "https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-${YamlBranch}.yaml"
       Parameters:
         VpcId:  !Ref VpcId
         ClusterControlPlaneSecurityGroup: !GetAtt CL.Outputs.SecurityGroups
@@ -155,7 +166,7 @@ Resources:
     DependsOn: NG
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev.yaml
+      TemplateURL: !Sub "https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-${YamlBranch}.yaml"
       Parameters:
         RootStackName: !Sub "${AWS::StackName}"
         ClusterName: !Ref ClusterName
