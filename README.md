@@ -83,11 +83,7 @@ $ ASGAutoAssignPublicIp=no make create-eks-cluster
 To specify a specific Amazon EKS cluster version(`1.10`, `1.11` or `1.12`):
 
 ```
-<<<<<<< HEAD
 $ ClusterVersion=1.12 make create-eks-cluster    
-=======
-$ ClusterVersion=1.12 CLUSTER_STACK_NAME=eksdemo-112 make create-eks-cluster    
->>>>>>> 8dbc1c6... add multiple cluster support
 ```
 (if you don't specify `ClusterVersion`, it will create the latest version for you)
 
