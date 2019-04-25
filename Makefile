@@ -26,6 +26,7 @@ NodeAutoScalingGroupDesiredSize ?= 4
 NodeAutoScalingGroupMaxSize ?= 5
 ASGAutoAssignPublicIp ?= yes
 ClusterVersion ?= latest
+InstanceTypesOverride ?= 't3.medium,t3.large,t3.xlarge'
 
 
 
@@ -91,6 +92,7 @@ create-eks-cluster:
 	ParameterKey=NodeAutoScalingGroupMinSize,ParameterValue="$(NodeAutoScalingGroupMinSize)" \
 	ParameterKey=NodeAutoScalingGroupDesiredSize,ParameterValue="$(NodeAutoScalingGroupDesiredSize)" \
 	ParameterKey=NodeAutoScalingGroupMaxSize,ParameterValue="$(NodeAutoScalingGroupMaxSize)" \
+	ParameterKey=InstanceTypesOverride,ParameterValue="$(InstanceTypesOverride)" \
 	ParameterKey=ASGAutoAssignPublicIp,ParameterValue="$(ASGAutoAssignPublicIp)" \
 	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3)
 
@@ -111,6 +113,7 @@ update-eks-cluster:
 	ParameterKey=NodeAutoScalingGroupMinSize,ParameterValue="$(NodeAutoScalingGroupMinSize)" \
 	ParameterKey=NodeAutoScalingGroupDesiredSize,ParameterValue="$(NodeAutoScalingGroupDesiredSize)" \
 	ParameterKey=NodeAutoScalingGroupMaxSize,ParameterValue="$(NodeAutoScalingGroupMaxSize)" \
+	ParameterKey=InstanceTypesOverride,ParameterValue="$(InstanceTypesOverride)" \
 	ParameterKey=ASGAutoAssignPublicIp,ParameterValue="$(ASGAutoAssignPublicIp)" \
 	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3)
 	
