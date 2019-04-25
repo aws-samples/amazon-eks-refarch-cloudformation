@@ -128,7 +128,7 @@ Resources:
           ClusterVersion: 
             Fn::If:
               - CreateLatestVersionCluster
-              - '*'
+              - !Ref AWS::NoValue
               - !Ref ClusterVersion
       Tags:
         - Key: custom:cloudformation:purpose
@@ -172,6 +172,7 @@ Resources:
     Type: Custom::AMIInfo
     Properties:
       ServiceToken: !GetAtt AMIInfoFunction.Arn
+      ClusterVersion: !Ref ClusterVersion
       # Region: !Ref "AWS::Region"
       # # Architecture: HVM64
 
