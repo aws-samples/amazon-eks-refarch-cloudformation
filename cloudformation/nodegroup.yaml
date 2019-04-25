@@ -198,7 +198,7 @@ Parameters:
   SpotInstancePools:
     Type: Number
     Description: "spot instance pools(1-20)"
-    Default: 2
+    Default: 9
 
   InstanceTypesOverride:
     Type: String
@@ -370,7 +370,7 @@ Resources:
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
       # Matcher: Matcher
-      Name: !Sub "${AWS::StackName}-tg"
+      Name: !Sub "${ClusterName}"
       Port: !Ref TargetGroupPort
       Protocol: HTTP
       TargetType: instance
