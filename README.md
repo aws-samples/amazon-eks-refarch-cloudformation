@@ -63,6 +63,26 @@ You **MUST** update `Makefile` and configure the following variables:
 
 **SUBNET3** The 3rd subnet ID to deploy your nodegroup
 
+Optionally, you can leave the `Makefile` untouched, and create a `custom.mk` file as your configuration file like this:
+
+
+```
+CLUSTER_STACK_NAME ?= eksdemo
+SSH_KEY_NAME ?= 'aws-pahud'
+EKS_ADMIN_ROLE ?= arn:aws:iam::903779448426:role/AmazonEKSAdminRole
+REGION ?= us-west-2 
+VPC_ID ?= vpc-c7635ea0 
+SUBNET1 ?= subnet-0f247a2b289129708
+SUBNET2 ?= subnet-0da5823de42ae81f9
+SUBNET3 ?= subnet-02858661648d4840a
+InstanceTypesOverride ?= 't3.medium,m4.large,m5.large'
+OnDemandBaseCapacity ?= 2
+NodeAutoScalingGroupMinSize ?= 10 
+NodeAutoScalingGroupDesiredSize ?= 12
+NodeAutoScalingGroupMaxSize ?= 20
+```
+The parameters in `custom.mk` file will override the content of `Makefile` for customization.
+
 
 OK. Let's create the complete Amazon EKS cluster and nodegroup
 
