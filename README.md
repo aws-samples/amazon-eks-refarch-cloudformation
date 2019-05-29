@@ -264,9 +264,6 @@ ip-100-64-147-100.ap-northeast-1.compute.internal   Ready    <none>   11d   v1.1
 
 Your cluster is ready now.
 
-Under the hood, before sending the request to Kubernetes API, the `kubectl` command will invoke `aws-iam-authenticator token -i eksdemo -r {AmazonEKSAdminRole_Arn}`, attaching the generated `token` in the request header to authenticate Amazon EKS 
-control plane. Read [Managing Cluster Authentication](https://docs.aws.amazon.com/eks/latest/userguide/managing-auth.html) for more details.
-
 
 # update the cluster 
 
