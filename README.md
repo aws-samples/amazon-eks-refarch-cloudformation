@@ -86,11 +86,11 @@ The parameters in `custom.mk` file will override the content of `Makefile` for c
 
 OK. Let's create the complete Amazon EKS cluster and nodegroup
 
-```
+```bash
 $ make create-eks-cluster
 ```
 You may override the default values like this
-```
+```bash
 $ REGION=ap-northeast-1 EKS_ADMIN_ROLE=arn:aws:iam::903779448426:role/AmazonEKSAdminRole CLUSTER_STACK_NAME=eksdemo10 make create-eks-cluster
 ```
 or if you intend to run your nodegroup in private subnets and disable the `auto-assign-public-ip` completely for your nodes.
@@ -138,7 +138,7 @@ Now cloudformation stack is created. The Amazon EKS cluster will only be able to
 We need to grant our current IAM identity to assume this role(i.e. `AmazonEKSAdminRole`)
 
 Let's check our current identity
-```
+```bash
 $ aws sts get-caller-identity
 {
     "Account": "903779448426", 
@@ -150,7 +150,7 @@ $ aws sts get-caller-identity
 
 Let's edit `assume-role-policy.json` file from the local repo:
 
-```
+```json
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -201,13 +201,13 @@ And of course you can specify multiple IAM users in `Principal`
 
 OK let's update the assume role policy
 
-```
-aws iam update-assume-role-policy --role-name AmazonEKSAdminRole --policy-document file://assume-role-policy.json
+```bash
+$ aws iam update-assume-role-policy --role-name AmazonEKSAdminRole --policy-document file://assume-role-policy.json
 ```
 
 Try assume this role with `aws assume-role` like this
 
-```
+```bash
 $ aws sts assume-role --role-arn arn:aws:iam::903779448426:role/AmazonEKSAdminRole --role-session-name test
 {
     "AssumedRoleUser": {
@@ -229,16 +229,14 @@ If you get the response like this then you are allowed to assume role to `Amazon
 
 # download required binaries
 
-download the latest `aws-iam-authenticator` and `kubectl` binaries
+download the latest `kubectl` binary
 
 For example, in Linux
 
-```
-$ wget https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/aws-iam-authenticator
-$ wget https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/kubectl
-$ chmod +x kubectl aws-iam-authenticator 
-$ sudo mv aws-iam-authenticator /usr/local/bin/
-$ sudo mv kubectl /usr/local/bin/
+```bash
+$ curl https://amazon-eks.s3-us-west-2.amazonaws.com/1.12.7/2019-03-27/bin/linux/amd64/kubectl -o kubectl
+$ chmod +x $_
+$ sudo mv $_ /usr/local/bin/
 ```
 check Amazon EKS document about [install kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html#install-kubectl-linux) and [getting started](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) and 
 download the two binaries of latest version.
@@ -247,7 +245,7 @@ download the two binaries of latest version.
 
 run `update-kubeconfig` 
 
-```
+```bash
 $ aws --region ap-northeast-1 eks update-kubeconfig --name eksdemo --role-arn arn:aws:iam::903779448426:role/AmazonEKSAdminRole
 ```
 response
@@ -257,14 +255,11 @@ Updated context arn:aws:eks:ap-southeast-1:903779448426:cluster/eksdemo in /home
 
 try list the nodes
 
-```
+```bash
 $ kubectl get no
-NAME                                                STATUS    ROLES     AGE       VERSION
-ip-100-64-181-184.ap-northeast-1.compute.internal   Ready     <none>    4m        v1.11.5
-ip-100-64-211-68.ap-northeast-1.compute.internal    Ready     <none>    4m        v1.11.5
-ip-100-64-252-139.ap-northeast-1.compute.internal   Ready     <none>    4m        v1.11.5
-ip-100-64-70-247.ap-northeast-1.compute.internal    Ready     <none>    4m        v1.11.5
-
+NAME                                                STATUS   ROLES    AGE   VERSION
+ip-100-64-106-134.ap-northeast-1.compute.internal   Ready    <none>   11d   v1.12.7
+ip-100-64-147-100.ap-northeast-1.compute.internal   Ready    <none>   11d   v1.12.7
 ```
 
 Your cluster is ready now.
@@ -276,11 +271,11 @@ control plane. Read [Managing Cluster Authentication](https://docs.aws.amazon.co
 # update the cluster 
 
 update from `1.10` to `1.11`
-```
+```bash
 $ ClusterVersion=1.11 make update-eks-cluster
 ```
 update from `1.11` to `1.12`
-```
+```bash
 $ ClusterVersion=1.12 make update-eks-cluster
 ```
 
