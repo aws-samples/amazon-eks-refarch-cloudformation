@@ -14,8 +14,8 @@
 - [x] Fully support the latest Autoscaling Group features to hybrid on-demand and spot instances with mixed types and purchase options.
 - [x] The cloudformation stack will help you automate the configuration on `aws-auth-cm` **ConfigMap** with AWS Lambda-backed `custom resource`.
 - [x] No need to provision SpotFleet anymore.
-- [x] On-demand instances will have node label **ondemand=yes**
-- [x] Spot instances will have node label **spotfleet=yes** and a **spotInstance=true:PreferNoSchedule** taint
+- [x] On-demand instances will have node label **lifecycle=OnDemand**
+- [x] Spot instances will have node label **lifecycle=Ec2Spot** and a **spotInstance=true:PreferNoSchedule** taint
 - [x] Support private subnets
 - [x] Support non-RFC1918 IP/CIDR VPC subnets
 - [x] Select the latest EKS-optimized AMI for Amazon Linux from a Lambda-backed cloudformaiton custom resource. This help you always use the latest EKS-Optimized AMI.
