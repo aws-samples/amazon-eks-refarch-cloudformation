@@ -18,6 +18,14 @@ Parameters:
     Description: The VPC of the worker instances
     Type: AWS::EC2::VPC::Id
     
+  EnableNodeDrainer:
+    Description: enable pahud/eks-lambda-drainer plug-in
+    Type: String
+    Default: "no"
+    AllowedValues:
+      - "yes"
+      - "no"
+    
   # ClusterRoleArn:
   #   Description: IAM Role Arn
   #   Type: String
@@ -82,6 +90,10 @@ Parameters:
     Description: "stable or dev"
     Type: String
     Default: "stable"
+
+Conditions:
+  EnableNodeDrainerCond: !Equals [ !Ref EnableNodeDrainer, "yes" ]
+
 
 Mappings: 
   LayerArn: 
@@ -178,4 +190,15 @@ Resources:
           - kubectl
         # ApplicationId: !Sub "arn:aws:serverlessrepo:${AWS::Region}:903779448426:applications/eks-auth-update-hook"
         
-  
+
+  Drainer:
+    Condition: EnableNodeDrainerCond
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks-lambda-drainer-${YamlBranch}.yaml"
+      Parameters:
+        # RootStackName: !Sub "${AWS::StackName}"
+        FunctionRoleArn: !Ref LambdaRoleArn
+        FunctionName: !Sub "${AWS::StackName}-node-drainer"
+
+    

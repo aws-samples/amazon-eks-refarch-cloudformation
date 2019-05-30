@@ -32,7 +32,7 @@ Create a `AmazonEKSAdminRole` IAM Role manually and we will use thie role to
 3) `kubecl` will call Amazon EKS control plane as this IAM role for RBAC Auth.
 
 
-```
+```bash
 $ aws iam create-role --role-name AmazonEKSAdminRole --assume-role-policy-document file://assume-role-policy.json
 $ aws iam attach-role-policy --role-name AmazonEKSAdminRole --policy-arn arn:aws:iam::aws:policy/AmazonEC2FullAccess
 $ aws iam attach-role-policy --role-name AmazonEKSAdminRole --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
@@ -40,7 +40,7 @@ $ aws iam put-role-policy --role-name AmazonEKSAdminRole --policy-name EKSAdminE
 ```
 get the role arn string. We will use the arn later.
 
-```
+```bash
 $ aws iam get-role --role-name AmazonEKSAdminRole --query 'Role.Arn' --output text
 arn:aws:iam::903779448426:role/AmazonEKSAdminRole
 ```
@@ -95,14 +95,13 @@ $ REGION=ap-northeast-1 EKS_ADMIN_ROLE=arn:aws:iam::903779448426:role/AmazonEKSA
 ```
 or if you intend to run your nodegroup in private subnets and disable the `auto-assign-public-ip` completely for your nodes.
 
-```
+```bash
 $ ASGAutoAssignPublicIp=no make create-eks-cluster
-
 ```
 
 To specify a specific Amazon EKS cluster version(`1.10`, `1.11` or `1.12`):
 
-```
+```bash
 $ ClusterVersion=1.12 make create-eks-cluster    
 ```
 (if you don't specify `ClusterVersion`, it will create the latest version for you)
@@ -292,4 +291,11 @@ Additionally, all the spot instances have a **spotInstance=true:PreferNoSchedule
 
 # Spot Termination Handling
 
-Worried about the spot instance termination? Check [**pahud/eks-lambda-drainer**](https://github.com/pahud/eks-lambda-drainer) to learn how to handle the spot instance termination 120 seconds before the final execution of the termination and get your all running pods re-scheduled onto another node.
+To enable the [**pahud/eks-lambda-drainer**](https://github.com/pahud/eks-lambda-drainer) support as the plug-in and install the drainer from SAR, 
+just pass `EnableNodeDrainer=yes` to the `make` command. e.g.
+
+```bash
+$ EnableNodeDrainer=yes make create-eks-cluster
+```
+A `Drainer` cloudformation nested stack will be created and install the `eks-lambda-drainer` from SAR for you. All the 
+spot instance termination will be watched and handled by the provided Lambda function. Easy peasy! 

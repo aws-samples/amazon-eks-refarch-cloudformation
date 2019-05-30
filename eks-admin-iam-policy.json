@@ -85,6 +85,7 @@
             "Effect": "Allow",
             "Action": [
                 "lambda:CreateFunction",
+                "lambda:AddPermission",
                 "lambda:TagResource",
                 "lambda:GetLayerVersion",
                 "lambda:PublishLayerVersion",
@@ -121,6 +122,18 @@
             "Action": "s3:GetObject",
             "Resource": "*"
         },
+        {
+            "Sid": "CWE",
+            "Effect": "Allow",
+            "Action": [
+                "events:PutRule",
+                "events:DescribeRule",
+                "events:RemoveTargets",
+                "events:PutTargets",
+                "events:DeleteRule"
+            ],
+            "Resource": "*"
+        }
         {
             "Sid": "SAR",
             "Effect": "Allow",

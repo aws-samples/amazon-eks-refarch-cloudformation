@@ -40,7 +40,7 @@ Resources:
         SubnetIds: !Ref SubnetIds
       RoleArn: !GetAtt EksServiceRole.Arn
       Version:
-         Fn::If:
+        Fn::If:
           - CreateCustomVersionCluster
           - !Ref ClusterVersion
           - !Ref AWS::NoValue

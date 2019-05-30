@@ -27,6 +27,7 @@ NodeAutoScalingGroupMaxSize ?= 5
 ASGAutoAssignPublicIp ?= yes
 ClusterVersion ?= latest
 InstanceTypesOverride ?= 't3.medium,t3.large,t3.xlarge'
+EnableNodeDrainer ?= no
 
 
 
@@ -69,6 +70,7 @@ update-dev-yaml:
 	@aws --region us-west-2 s3 cp cloudformation/nodegroup.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/configmap.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-dev.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-dev.yaml --acl public-read
+	@aws --region us-west-2 s3 cp cloudformation/eks-lambda-drainer.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/eks-lambda-drainer-dev.yaml --acl public-read
 	@echo https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks-dev.yaml
 
 .PHONY: clean
@@ -94,6 +96,7 @@ create-eks-cluster:
 	ParameterKey=NodeAutoScalingGroupMaxSize,ParameterValue="$(NodeAutoScalingGroupMaxSize)" \
 	ParameterKey=InstanceTypesOverride,ParameterValue="$(InstanceTypesOverride)" \
 	ParameterKey=ASGAutoAssignPublicIp,ParameterValue="$(ASGAutoAssignPublicIp)" \
+	ParameterKey=EnableNodeDrainer,ParameterValue="$(EnableNodeDrainer)" \
 	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3)
 
 .PHONY: update-eks-cluster	
@@ -115,6 +118,7 @@ update-eks-cluster:
 	ParameterKey=NodeAutoScalingGroupMaxSize,ParameterValue="$(NodeAutoScalingGroupMaxSize)" \
 	ParameterKey=InstanceTypesOverride,ParameterValue="$(InstanceTypesOverride)" \
 	ParameterKey=ASGAutoAssignPublicIp,ParameterValue="$(ASGAutoAssignPublicIp)" \
+	ParameterKey=EnableNodeDrainer,ParameterValue="$(EnableNodeDrainer)" \
 	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3)
 	
 .PHONY: delete-eks-cluster	
