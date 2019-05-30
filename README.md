@@ -116,14 +116,15 @@ response
 
 ![](images/11.png)
 
-Behind the scene, a cloudformation stack with `5` nested stacks will be created:
+Behind the scene, a cloudformation stack with nested stacks will be created:
 
-1. **eksdemo** - the primary stack containing 5 nested stacks
+1. **eksdemo** - the primary stack
 2. **eksdemo-CL-** - the control plane and security group
 3. **eksdemo-AMI-** - EKS-Optimized AMI info for Amazon EKS
 3. **eksdemo-NG-** - the nodegroup
 4. **eksdemo-CM-** - the custom resource to update the `aws-auth` ConfigMap
 5. **eksdemo-CM-xxx-** - the custom resource lambda function as `AWS::Serverless::Application` resource from `SAR(Serverless Application Repository)`
+6. **eksdemo-Drainer-*** - the `eks-lambda-drainer` app installed from SAR public repo.
 
 
 # Test and Validate
