@@ -86,6 +86,7 @@
             "Action": [
                 "lambda:CreateFunction",
                 "lambda:AddPermission",
+                "lambda:AddPermission",
                 "lambda:TagResource",
                 "lambda:GetLayerVersion",
                 "lambda:PublishLayerVersion",

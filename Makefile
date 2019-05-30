@@ -60,6 +60,7 @@ update-stable-yaml:
 	@aws --region us-west-2 s3 cp cloudformation/nodegroup.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-stable.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/configmap.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-stable.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/configmap-sar.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-sar-stable.yaml --acl public-read
+	@aws --region us-west-2 s3 cp cloudformation/eks-lambda-drainer.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/eks-lambda-drainer-stable.yaml --acl public-read
 	@echo https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/eks-stable.yaml
 
 .PHONY: update-dev-yaml	
