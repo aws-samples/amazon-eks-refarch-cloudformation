@@ -19,7 +19,7 @@
 - [x] Support private subnets
 - [x] Support non-RFC1918 IP/CIDR VPC subnets
 - [x] Select the latest EKS-optimized AMI for Amazon Linux from a Lambda-backed cloudformaiton custom resource. This help you always use the latest EKS-Optimized AMI.
-- [x] Support `pahud/eks-lambda-drainer` to help you `drain` the pods on terminating spot instances to protect your online workload. Just pass `EnableNodeDrainer=yes` to the `make` command to install the plug-in straight from SAR.
+- [x] Support [pahud/eks-lambda-drainer](https://github.com/pahud/eks-lambda-drainer) to help you `drain` the pods on terminating spot instances to protect your online workload. Just pass `EnableNodeDrainer=yes` to the `make` command to install the plug-in straight from SAR.
 
 
 
