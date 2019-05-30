@@ -128,12 +128,7 @@
                 "serverlessrepo:GetCloudFormationTemplate",
                 "serverlessrepo:CreateCloudFormationTemplate"
             ],
-            "Resource": "arn:aws:serverlessrepo:*:903779448426:applications/eks-auth-update-hook"
+            "Resource": "*"
         }
     ]
 }
-
-
-
-
-
