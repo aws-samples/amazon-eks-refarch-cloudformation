@@ -134,7 +134,7 @@
                 "events:DeleteRule"
             ],
             "Resource": "*"
-        }
+        },
         {
             "Sid": "SAR",
             "Effect": "Allow",
