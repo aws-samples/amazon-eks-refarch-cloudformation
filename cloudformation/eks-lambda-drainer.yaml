@@ -16,7 +16,7 @@ Resources:
     Properties:
       Location:
         # serverless app from all regoins should be able to import this ApplicationId from 'us-east-1' across accounts.
-        ApplicationId: arn:aws:serverlessrepo:ap-northeast-1:903779448426:applications/eks-lambda-drainer
+        ApplicationId: arn:aws:serverlessrepo:us-east-1:903779448426:applications/eks-lambda-drainer
         SemanticVersion: 1.0.1-beta2
       Parameters:
         # ClusterName: !Ref ClusterName
