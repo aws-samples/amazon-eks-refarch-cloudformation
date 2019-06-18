@@ -86,6 +86,11 @@ Parameters:
     Description: Lambda IAM Role Arn
     Type: String
     
+  ForceUpdateAMI:
+    Description: A placeholder for a random string to force update to the latest Amaozn EKS-optimized AMI(if any)
+    Type: String
+    Default: "placeholder"
+    
   YamlBranch:
     Description: "stable or dev"
     Type: String
@@ -148,6 +153,7 @@ Resources:
       TemplateURL: !Sub "https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/ami-${YamlBranch}.yaml"
       Parameters:
         ClusterVersion: !Ref ClusterVersion
+        ForceUpdateAMI: !Ref ForceUpdateAMI
       #   VpcId: !Ref VpcId
       #   ClusterName: !Ref ClusterName
       #   # ClusterRoleArn: !Ref ClusterRoleArn

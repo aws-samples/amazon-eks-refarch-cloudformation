@@ -6,6 +6,13 @@ CUSTOM_FILE ?= custom.mk
 ifeq ($(shell test -e $(CUSTOM_FILE) && echo -n yes),yes)
     include $(CUSTOM_FILE)
 endif
+
+ifeq ($(UPDATE_AMI),1)
+	ForceUpdateAMI ?= $(shell date +%s)
+else
+	ForceUpdateAMI ?= placeholder 
+endif
+
 ROOT ?= $(shell pwd)
 AWS_ACCOUNT_ID := $(shell aws sts get-caller-identity --query 'Account' --output text)
 YAML_BRANCH ?= stable
@@ -99,6 +106,8 @@ create-eks-cluster:
 	ParameterKey=ASGAutoAssignPublicIp,ParameterValue="$(ASGAutoAssignPublicIp)" \
 	ParameterKey=EnableNodeDrainer,ParameterValue="$(EnableNodeDrainer)" \
 	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3)
+	@echo click "https://console.aws.amazon.com/cloudformation/home?region=$(REGION)#/stacks to see the details"
+
 
 .PHONY: update-eks-cluster	
 update-eks-cluster:
@@ -120,6 +129,7 @@ update-eks-cluster:
 	ParameterKey=InstanceTypesOverride,ParameterValue="$(InstanceTypesOverride)" \
 	ParameterKey=ASGAutoAssignPublicIp,ParameterValue="$(ASGAutoAssignPublicIp)" \
 	ParameterKey=EnableNodeDrainer,ParameterValue="$(EnableNodeDrainer)" \
+	ParameterKey=ForceUpdateAMI,ParameterValue="$(ForceUpdateAMI)" \
 	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3)
 	
 .PHONY: delete-eks-cluster	

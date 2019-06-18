@@ -12,6 +12,11 @@ Parameters:
       - "1.11"
       - "1.12"
       - "latest"
+      
+  ForceUpdateAMI:
+    Description: A placeholder for a random string to force update to the latest Amaozn EKS-optimized AMI(if any)
+    Type: String
+    Default: "placeholder"
 
 Conditions:
   CreateLatestVersionCluster: !Equals [ !Ref ClusterVersion, latest ]
@@ -173,6 +178,7 @@ Resources:
     Properties:
       ServiceToken: !GetAtt AMIInfoFunction.Arn
       ClusterVersion: !Ref ClusterVersion
+      ForceUpdateAMI: !Ref ForceUpdateAMI
       # Region: !Ref "AWS::Region"
       # # Architecture: HVM64
 
