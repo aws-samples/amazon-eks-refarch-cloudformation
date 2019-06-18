@@ -289,8 +289,8 @@ By default, all the on-demand instances will have **lifecycle=OnDemand** label w
 
 Additionally, all the spot instances have a **spotInstance=true:PreferNoSchedule** taint. To deploy your Pod on spot instances, use the node label selector to specify **lifecycle=Ec2Spot**, otherwise the pod will not be scheduled on the spot instances unless it has relevant toleration. ([Taint and Toleration in Kubernetes](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)).
 
-# Force Nodegroup AMI update and kick off a nodegroup rolling update
-From time to time you may need to update your nodegroup with the latst Amazon EKS-optimized AMI, especially when there's a new security fix from a newer AMI. 
+# Force AMI update and kick off nodegroup rolling update
+From time to time you may need to update your nodegroup with the latst Amazon EKS-optimized AMI, especially when there's a new security patch like [this](https://aws.amazon.com/tw/security/security-bulletins/AWS-2019-005/) and a new AMI is released. No bother to specify the latest AMI ID - just let eks-templates get the latest AMI ID for you and kick off the rolling update with that AMI ID.
 
 ```bash
 # force AMI check and update(if any)
