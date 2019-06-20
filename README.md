@@ -99,10 +99,10 @@ or if you intend to run your nodegroup in private subnets and disable the `auto-
 $ ASGAutoAssignPublicIp=no make create-eks-cluster
 ```
 
-To specify a specific Amazon EKS cluster version(`1.10`, `1.11` or `1.12`):
+To specify a specific Amazon EKS cluster version(`1.11` , `1.12` or `1.13`):
 
 ```bash
-$ ClusterVersion=1.12 make create-eks-cluster    
+$ ClusterVersion=1.13 make create-eks-cluster    
 ```
 (if you don't specify `ClusterVersion`, it will create the latest version for you)
 
@@ -234,7 +234,7 @@ download the latest `kubectl` binary
 For example, in Linux
 
 ```bash
-$ curl https://amazon-eks.s3-us-west-2.amazonaws.com/1.12.7/2019-03-27/bin/linux/amd64/kubectl -o kubectl
+$ curl https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.7/2019-06-11/bin/linux/amd64/kubectl -o kubectl
 $ chmod +x $_
 $ sudo mv $_ /usr/local/bin/
 ```
@@ -267,9 +267,9 @@ Your cluster is ready now.
 
 # update the cluster 
 
-update from `1.10` to `1.11`
+update from `1.12` to `1.13`
 ```bash
-$ ClusterVersion=1.11 make update-eks-cluster
+$ ClusterVersion=1.13 make update-eks-cluster
 ```
 update from `1.11` to `1.12`
 ```bash

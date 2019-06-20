@@ -131,10 +131,13 @@ update-eks-cluster:
 	ParameterKey=EnableNodeDrainer,ParameterValue="$(EnableNodeDrainer)" \
 	ParameterKey=ForceUpdateAMI,ParameterValue="$(ForceUpdateAMI)" \
 	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3)
+	@echo click "https://console.aws.amazon.com/cloudformation/home?region=$(REGION)#/stacks to see the details"
+
 	
 .PHONY: delete-eks-cluster	
 delete-eks-cluster:
 	@aws --region $(REGION) cloudformation delete-stack --role-arn $(EKS_ADMIN_ROLE) --stack-name "$(CLUSTER_STACK_NAME)"
+	@echo click "https://console.aws.amazon.com/cloudformation/home?region=$(REGION)#/stacks to see the details"
 
 
 .PHONY: deploy-pl

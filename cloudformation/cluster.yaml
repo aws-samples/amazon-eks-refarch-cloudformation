@@ -15,6 +15,7 @@ Parameters:
       - "1.10"
       - "1.11"
       - "1.12"
+      - "1.13"
       - "latest"
     
   VpcId:
@@ -43,7 +44,7 @@ Resources:
         Fn::If:
           - CreateCustomVersionCluster
           - !Ref ClusterVersion
-          - !Ref AWS::NoValue
+          - 1.13
         
       
   ControlPlaneSecurityGroup:

@@ -11,6 +11,7 @@ Parameters:
       - "1.10"
       - "1.11"
       - "1.12"
+      - "1.13"
       - "latest"
       
   ForceUpdateAMI:
@@ -41,7 +42,7 @@ Resources:
           if 'ClusterVersion' in os.environ:
             ClusterVersion = os.environ['ClusterVersion']
           else:
-            ClusterVersion = '1.12'
+            ClusterVersion = '1.13'
           
           def http_resp(statusCode, resp_body):
               return {
