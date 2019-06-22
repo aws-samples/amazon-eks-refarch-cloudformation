@@ -21,8 +21,6 @@
 - [x] Select the latest EKS-optimized AMI for Amazon Linux from a Lambda-backed cloudformaiton custom resource. This help you always use the latest EKS-Optimized AMI.
 - [x] Support [pahud/eks-lambda-drainer](https://github.com/pahud/eks-lambda-drainer) to help you `drain` the pods on terminating spot instances to protect your online workload. Just pass `EnableNodeDrainer=yes` to the `make` command to install the plug-in straight from SAR.
 
-[![asciicast](https://asciinema.org/a/2slFwVxjRTuORTI7X5tPrKxhT.svg)](https://asciinema.org/a/2slFwVxjRTuORTI7X5tPrKxhT?autoplay=1&t=2&speed=3&theme=monokai)
-
 
 ## HOWTO
 
