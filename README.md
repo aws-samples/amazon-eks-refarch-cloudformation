@@ -255,12 +255,10 @@ Updated context arn:aws:eks:ap-southeast-1:903779448426:cluster/eksdemo in /home
 try list the nodes
 
 ```bash
-$ kubectl get no                                                          
-NAME                                           STATUS   ROLES    AGE     VERSION
-ip-100-64-161-147.us-west-2.compute.internal   Ready    <none>   2d21h   v1.13.7-eks-c57ff8
-ip-100-64-209-61.us-west-2.compute.internal    Ready    <none>   2d21h   v1.13.7-eks-c57ff8
-ip-100-64-237-93.us-west-2.compute.internal    Ready    <none>   2d21h   v1.13.7-eks-c57ff8
-ip-100-64-72-211.us-west-2.compute.internal    Ready    <none>   2d21h   v1.13.7-eks-c57ff8
+$ kubectl get no
+NAME                                          STATUS   ROLES    AGE   VERSION
+ip-100-64-182-62.us-west-2.compute.internal   Ready    <none>   1m   v1.13.7-eks-c57ff8
+ip-100-64-71-142.us-west-2.compute.internal   Ready    <none>   1m   v1.13.7-eks-c57ff8
 ```
 
 Your cluster is ready now.
