@@ -19,9 +19,8 @@ Parameters:
     Type: String
     Default: "placeholder"
 
-Conditions:
-  CreateLatestVersionCluster: !Equals [ !Ref ClusterVersion, latest ]
-
+# Conditions:
+  # CreateLatestVersionCluster: !Equals [ !Ref ClusterVersion, latest ]
 
 Resources:
   AMIInfoFunction:
@@ -39,10 +38,10 @@ Resources:
           
           from botocore.awsrequest import AWSRequest
           
-          if 'ClusterVersion' in os.environ:
-            ClusterVersion = os.environ['ClusterVersion']
-          else:
+          if 'ClusterVersion' in os.environ and os.environ['ClusterVersion'] == 'latest':
             ClusterVersion = '1.13'
+          else:
+            ClusterVersion = os.environ['ClusterVersion']
           
           def http_resp(statusCode, resp_body):
               return {
@@ -131,11 +130,7 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Environment:
         Variables:
-          ClusterVersion: 
-            Fn::If:
-              - CreateLatestVersionCluster
-              - !Ref AWS::NoValue
-              - !Ref ClusterVersion
+          ClusterVersion: !Ref ClusterVersion
       Tags:
         - Key: custom:cloudformation:purpose
           Value: AMIInfo

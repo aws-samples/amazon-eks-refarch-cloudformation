@@ -160,6 +160,11 @@ Parameters:
     - z1d.6xlarge
     - z1d.12xlarge
     ConstraintDescription: Must be a valid EC2 instance type
+    
+  NodeVolumeSize:
+    Type: Number
+    Description: Node volume size
+    Default: 20
 
   NodeAutoScalingGroupMinSize:
     Type: Number
@@ -494,6 +499,12 @@ Resources:
             # - !FindInMap [AMIMap, !Ref "AWS::Region", ami ]
             - !Ref NodeImageId        
         InstanceType: !Ref NodeInstanceType
+        BlockDeviceMappings:
+          - DeviceName: /dev/xvda
+            Ebs:
+              VolumeSize: !Ref NodeVolumeSize
+              VolumeType: gp2
+              DeleteOnTermination: true
 
 Outputs:
   NodeInstanceRoleArn:

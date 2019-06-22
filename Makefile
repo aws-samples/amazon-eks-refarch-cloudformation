@@ -31,6 +31,7 @@ OnDemandBaseCapacity ?= 1
 NodeAutoScalingGroupMinSize ?= 0
 NodeAutoScalingGroupDesiredSize ?= 4
 NodeAutoScalingGroupMaxSize ?= 5
+NodeVolumeSize ?= 20
 ASGAutoAssignPublicIp ?= yes
 ClusterVersion ?= latest
 InstanceTypesOverride ?= 't3.medium,t3.large,t3.xlarge'
@@ -102,6 +103,7 @@ create-eks-cluster:
 	ParameterKey=NodeAutoScalingGroupMinSize,ParameterValue="$(NodeAutoScalingGroupMinSize)" \
 	ParameterKey=NodeAutoScalingGroupDesiredSize,ParameterValue="$(NodeAutoScalingGroupDesiredSize)" \
 	ParameterKey=NodeAutoScalingGroupMaxSize,ParameterValue="$(NodeAutoScalingGroupMaxSize)" \
+	ParameterKey=NodeVolumeSize,ParameterValue="$(NodeVolumeSize)" \
 	ParameterKey=InstanceTypesOverride,ParameterValue="$(InstanceTypesOverride)" \
 	ParameterKey=ASGAutoAssignPublicIp,ParameterValue="$(ASGAutoAssignPublicIp)" \
 	ParameterKey=EnableNodeDrainer,ParameterValue="$(EnableNodeDrainer)" \
@@ -126,6 +128,7 @@ update-eks-cluster:
 	ParameterKey=NodeAutoScalingGroupMinSize,ParameterValue="$(NodeAutoScalingGroupMinSize)" \
 	ParameterKey=NodeAutoScalingGroupDesiredSize,ParameterValue="$(NodeAutoScalingGroupDesiredSize)" \
 	ParameterKey=NodeAutoScalingGroupMaxSize,ParameterValue="$(NodeAutoScalingGroupMaxSize)" \
+	ParameterKey=NodeVolumeSize,ParameterValue="$(NodeVolumeSize)" \
 	ParameterKey=InstanceTypesOverride,ParameterValue="$(InstanceTypesOverride)" \
 	ParameterKey=ASGAutoAssignPublicIp,ParameterValue="$(ASGAutoAssignPublicIp)" \
 	ParameterKey=EnableNodeDrainer,ParameterValue="$(EnableNodeDrainer)" \

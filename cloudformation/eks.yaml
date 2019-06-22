@@ -41,6 +41,11 @@ Parameters:
   #   #Type: List<String>
   #   Type: String
     
+  NodeVolumeSize:
+    Type: Number
+    Description: Node volume size
+    Default: 20
+    
   NodeAutoScalingGroupMinSize:
     Description: ASG min size
     Type: Number
@@ -178,6 +183,7 @@ Resources:
         NodeAutoScalingGroupMinSize: !Ref NodeAutoScalingGroupMinSize
         NodeAutoScalingGroupDesiredSize: !Ref NodeAutoScalingGroupDesiredSize
         NodeAutoScalingGroupMaxSize: !Ref NodeAutoScalingGroupMaxSize
+        NodeVolumeSize: !Ref NodeVolumeSize
         OnDemandBaseCapacity: !Ref OnDemandBaseCapacity
         LatestAMIId: !GetAtt AMI.Outputs.AmiId
         Subnets: !Ref SubnetIds

@@ -78,6 +78,7 @@ OnDemandBaseCapacity ?= 2
 NodeAutoScalingGroupMinSize ?= 10 
 NodeAutoScalingGroupDesiredSize ?= 12
 NodeAutoScalingGroupMaxSize ?= 20
+NodeVolumeSize ?= 50
 ```
 The parameters in `custom.mk` file will override the content of `Makefile` for customization.
 
@@ -254,10 +255,12 @@ Updated context arn:aws:eks:ap-southeast-1:903779448426:cluster/eksdemo in /home
 try list the nodes
 
 ```bash
-$ kubectl get no
-NAME                                                STATUS   ROLES    AGE   VERSION
-ip-100-64-106-134.ap-northeast-1.compute.internal   Ready    <none>   11d   v1.12.7
-ip-100-64-147-100.ap-northeast-1.compute.internal   Ready    <none>   11d   v1.12.7
+$ kubectl get no                                                          
+NAME                                           STATUS   ROLES    AGE     VERSION
+ip-100-64-161-147.us-west-2.compute.internal   Ready    <none>   2d21h   v1.13.7-eks-c57ff8
+ip-100-64-209-61.us-west-2.compute.internal    Ready    <none>   2d21h   v1.13.7-eks-c57ff8
+ip-100-64-237-93.us-west-2.compute.internal    Ready    <none>   2d21h   v1.13.7-eks-c57ff8
+ip-100-64-72-211.us-west-2.compute.internal    Ready    <none>   2d21h   v1.13.7-eks-c57ff8
 ```
 
 Your cluster is ready now.
