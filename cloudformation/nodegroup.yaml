@@ -461,6 +461,7 @@ Resources:
             !Sub |
             #!/bin/bash
             set -o xtrace
+            yum install -y ec2-instance-connect
             iid=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
             export AWS_DEFAULT_REGION=${AWS::Region}
             ilc=`aws ec2 describe-instances --instance-ids  $iid  --query 'Reservations[0].Instances[0].InstanceLifecycle' --output text`
