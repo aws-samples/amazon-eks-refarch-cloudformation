@@ -43,26 +43,7 @@ $ aws iam get-role --role-name AmazonEKSAdminRole --query 'Role.Arn' --output te
 arn:aws:iam::903779448426:role/AmazonEKSAdminRole
 ```
 
-You **MUST** update `Makefile` and configure the following variables:
-
-**CLUSTER_STACK_NAME** - the stack name and cluster name. default: `eksdemo`
-
-**EKS_ADMIN_ROLE** - The `AmazonEKSAdminRole` arn described above.
-
-**REGION** - The region code to deploy your EKS cluster. default: `ap-northeast-1`
-
-**SSH_KEY_NAME** - Your existing SSH keypair name in AWS EC2 console. default: `aws-pahud` (please update this value)
-
-**VPC_ID** - The VPC ID to deploy your nodegroup
-
-**SUBNET1** The 1st subnet ID to deploy your nodegroup
-
-**SUBNET2** The 2nd subnet ID to deploy your nodegroup
-
-**SUBNET3** The 3rd subnet ID to deploy your nodegroup
-
-Optionally, you can leave the `Makefile` untouched, and create a `custom.mk` file as your configuration file like this:
-
+Create a `custom.mk` file as your configuration file like this and leave `Makefile` untouched.
 
 ```
 CLUSTER_STACK_NAME ?= eksdemo
@@ -81,6 +62,24 @@ NodeAutoScalingGroupMaxSize ?= 20
 NodeVolumeSize ?= 50
 ```
 The parameters in `custom.mk` file will override the content of `Makefile` for customization.
+
+
+1. **CLUSTER_STACK_NAME** - the stack name and cluster name. default: `eksdemo`
+2. **SSH_KEY_NAME** - Your existing SSH keypair name in AWS EC2 console. default: `aws-pahud` (please update this value)
+3. **REGION** - The region code to deploy your EKS cluster. default: `ap-northeast-1`
+4. **VPC_ID** - The VPC ID to deploy your nodegroup
+5. **EKS_ADMIN_ROLE** - The `AmazonEKSAdminRole` arn described above.
+6. **SUBNET1** The 1st subnet ID to deploy your nodegroup
+7. **SUBNET2** The 2nd subnet ID to deploy your nodegroup
+8. **SUBNET3** The 3rd subnet ID to deploy your nodegroup
+9. **InstanceTypesOverride** Instance types for your ASG
+10. **OnDemandBaseCapacity** On-Demand base capacity
+11. **NodeAutoScalingGroupMinSize** ASG min size
+12. **NodeAutoScalingGroupDesiredSize** ASG desired size
+13. **NodeAutoScalingGroupMaxSize** ASG max size
+14. **NodeVolumeSize** Default node volume size
+
+
 
 
 OK. Let's create the complete Amazon EKS cluster and nodegroup
