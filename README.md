@@ -1,9 +1,8 @@
-# eks-templates
+# amazon-eks-refarch-cloudformation
+Reference architecture of Amazon EKS with modern cloudformation templates.
 
 
-#### Amazon EKS cloudformation templates
-
-**pahud/eks-templates** aims to help you provision a ready-to-use Amazon EKS cluster by simply launching a cloudformation template with nested stacks. Supper easy and hassel-free!
+This project aims to help you provision a ready-to-use Amazon EKS cluster by simply launching a cloudformation template with nested stacks. Supper easy and hassel-free!
 
 ![](images/arch-overview.png)
 
