@@ -1,4 +1,4 @@
-## Amazon Eks Refarch Cloudformation
+## Amazon EKS Refarch Cloudformation
 
 Reference architecture of Amazon EKS with modern cloudformation templates.
 
