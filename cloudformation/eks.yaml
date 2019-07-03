@@ -35,6 +35,16 @@ Parameters:
     Description: Select 3 subnets where workers can be created.
     #Type: List<AWS::EC2::Subnet::Id>
     Type: String
+
+  ExistingNodeSecurityGroups:
+    Type: String
+    Description: OPTIONAL - attach existing security group ID(s) for your nodegroup
+    Default: ""
+    
+  ExtraNodeSecurityGroups:
+    Type: String
+    Description: OPTIONAL - attach extra existing security group ID(s) for your nodegroup
+    Default: ""
     
   # SecurityGroupIds:
   #   Description: The security group of the cluster control plane.
@@ -187,6 +197,10 @@ Resources:
         OnDemandBaseCapacity: !Ref OnDemandBaseCapacity
         LatestAMIId: !GetAtt AMI.Outputs.AmiId
         Subnets: !Ref SubnetIds
+        ExistingNodeSecurityGroups: !Ref ExistingNodeSecurityGroups
+        ExtraNodeSecurityGroups: !Ref ExtraNodeSecurityGroups
+        
+        
         # RootStackName: !Sub "${AWS::StackName}"
      
   CM:

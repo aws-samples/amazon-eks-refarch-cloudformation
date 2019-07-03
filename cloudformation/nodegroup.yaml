@@ -16,7 +16,7 @@ Metadata:
           - BootstrapArgumentsForSpotFleet
           - ClusterControlPlaneSecurityGroup
           - NodeGroupName
-          - UseExistingNodeSecurityGroups
+          # - UseExistingNodeSecurityGroups
           - ExistingNodeSecurityGroups
           - Subnets
       - 
@@ -210,16 +210,21 @@ Parameters:
     Description: "multiple spot instances to override(seperated by comma)"
     Default: "t3.medium,t3.large,t3.xlarge"
 
-  UseExistingNodeSecurityGroups:
-    Type: String
-    Description: OPTIONAL - select 'yes' if you prefer to attach existing SGs to nodegroup
-    Default: "no"
-    AllowedValues:
-      - "yes"
-      - "no"
+  # UseExistingNodeSecurityGroups:
+  #   Type: String
+  #   Description: OPTIONAL - select 'yes' if you prefer to attach existing SGs to nodegroup
+  #   Default: "no"
+  #   AllowedValues:
+  #     - "yes"
+  #     - "no"
   ExistingNodeSecurityGroups:
     Type: String
     Description: OPTIONAL - attach existing security group ID(s) for your nodegroup
+    Default: ""
+    
+  ExtraNodeSecurityGroups:
+    Type: String
+    Description: OPTIONAL - attach extra existing security group ID(s) for your nodegroup
     Default: ""
 
   ClusterName:
@@ -250,8 +255,13 @@ Parameters:
 Conditions:
   PreferredDefaultAMI: !Equals [ !Ref NodeImageId, "" ]
   IsASGAutoAssignPublicIp: !Equals [ !Ref ASGAutoAssignPublicIp , "yes" ]
-  AttachExistingNodeSG: !Equals [ !Ref UseExistingNodeSecurityGroups, "yes" ] 
-  CreateNewNodeSG: !Equals [ !Ref UseExistingNodeSecurityGroups, "no" ]
+  # AttachExistingNodeSG: !Equals [ !Ref UseExistingNodeSecurityGroups, "yes" ] 
+  # CreateNewNodeSG: !Equals [ !Ref UseExistingNodeSecurityGroups, "no" ]
+  CreateNewNodeSG: !Equals [ !Ref ExistingNodeSecurityGroups, "" ]
+  AttachExistingNodeSG: !Not [ !Equals [ !Ref ExistingNodeSecurityGroups, "" ] ]
+  AttachExtraNodeSG: !Not [ !Equals [ !Ref ExtraNodeSecurityGroups, "" ] ]
+  
+  
 
 
 Resources:
@@ -488,11 +498,18 @@ Resources:
                 - 'false'
             SubnetId: !Select [0, !Ref Subnets]
             Groups: 
+              # - !Ref NodeSecurityGroup
               !If
                 - CreateNewNodeSG
-                - 
-                  - !Ref NodeSecurityGroup
-                - !Split [ ",", !Ref ExistingNodeSecurityGroups ]
+                - !If
+                  - AttachExtraNodeSG
+                  - !Split [",", !Sub "${NodeSecurityGroup},${ExtraNodeSecurityGroups}"]
+                  # - !Split [ ",", !Ref ExtraNodeSecurityGroups ]
+                    # - !Ref NodeSecurityGroup
+                    # - !Split [ ",", !Ref ExtraNodeSecurityGroups ]
+                  -
+                    - !Ref NodeSecurityGroup
+                - !Split [",", !Ref ExistingNodeSecurityGroups ]
         ImageId: 
           !If
             - PreferredDefaultAMI

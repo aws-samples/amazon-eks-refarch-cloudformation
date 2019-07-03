@@ -107,7 +107,9 @@ create-eks-cluster:
 	ParameterKey=InstanceTypesOverride,ParameterValue="$(InstanceTypesOverride)" \
 	ParameterKey=ASGAutoAssignPublicIp,ParameterValue="$(ASGAutoAssignPublicIp)" \
 	ParameterKey=EnableNodeDrainer,ParameterValue="$(EnableNodeDrainer)" \
-	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3)
+	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3) \
+	ParameterKey=ExtraNodeSecurityGroups,ParameterValue=$(ExtraNodeSecurityGroups) \
+	ParameterKey=ExistingNodeSecurityGroups,ParameterValue=$(ExistingNodeSecurityGroups) 
 	@echo click "https://console.aws.amazon.com/cloudformation/home?region=$(REGION)#/stacks to see the details"
 
 
@@ -133,7 +135,9 @@ update-eks-cluster:
 	ParameterKey=ASGAutoAssignPublicIp,ParameterValue="$(ASGAutoAssignPublicIp)" \
 	ParameterKey=EnableNodeDrainer,ParameterValue="$(EnableNodeDrainer)" \
 	ParameterKey=ForceUpdateAMI,ParameterValue="$(ForceUpdateAMI)" \
-	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3)
+	ParameterKey=SubnetIds,ParameterValue=$(SUBNET1)\\,$(SUBNET2)\\,$(SUBNET3) \
+	ParameterKey=ExtraNodeSecurityGroups,ParameterValue=$(ExtraNodeSecurityGroups) \
+	ParameterKey=ExistingNodeSecurityGroups,ParameterValue=$(ExistingNodeSecurityGroups) 
 	@echo click "https://console.aws.amazon.com/cloudformation/home?region=$(REGION)#/stacks to see the details"
 
 	
