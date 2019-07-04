@@ -225,7 +225,7 @@ $ aws sts assume-role --role-arn arn:aws:iam::903779448426:role/AmazonEKSAdminRo
 If you get the response like this then you are allowed to assume role to `AmazonEKSAdminRole`.
 
 
-# download required binaries
+# Download required binaries
 
 download the latest `kubectl` binary
 
@@ -239,7 +239,7 @@ $ sudo mv $_ /usr/local/bin/
 check Amazon EKS document about [install kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html#install-kubectl-linux) and [getting started](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) and 
 download the two binaries of latest version.
 
-# generate or update kubeconfig
+# Generate or update kubeconfig
 
 run `update-kubeconfig` 
 
@@ -263,7 +263,7 @@ ip-100-64-71-142.us-west-2.compute.internal   Ready    <none>   1m   v1.13.7-eks
 Your cluster is ready now.
 
 
-# update the cluster 
+# Update the cluster 
 
 update from `1.12` to `1.13`
 ```bash
@@ -287,7 +287,7 @@ By default, all the on-demand instances will have **lifecycle=OnDemand** label w
 
 Additionally, all the spot instances have a **spotInstance=true:PreferNoSchedule** taint. To deploy your Pod on spot instances, use the node label selector to specify **lifecycle=Ec2Spot**, otherwise the pod will not be scheduled on the spot instances unless it has relevant toleration. ([Taint and Toleration in Kubernetes](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/)).
 
-# Force AMI update and kick off nodegroup rolling update
+# Nodegroup rolling update with the latest AMI
 From time to time you may need to update your nodegroup with the latst Amazon EKS-optimized AMI, especially when there's a new security patch like [this](https://aws.amazon.com/tw/security/security-bulletins/AWS-2019-005/) and a new AMI is released. No bother to specify the latest AMI ID - just let eks-templates get the latest AMI ID for you and kick off the rolling update with that AMI ID.
 
 ```bash
