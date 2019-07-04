@@ -1,5 +1,4 @@
-## Amazon EKS Reference Architecture with Cloudformation
-
+## Amazon EKS Reference Architecture
 Reference architecture of Amazon EKS with modern cloudformation templates.
 
 
