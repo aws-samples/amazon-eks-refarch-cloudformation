@@ -230,15 +230,20 @@ Parameters:
   ClusterName:
     Description: The cluster name provided when the cluster was created.  If it is incorrect, nodes will not be able to join the cluster.
     Type: String
+    
+  ExtraNodeLabels:
+    Description: Extra Node Labels(seperated by comma)
+    Type: String
+    Default: "foo=bar"
 
   BootstrapArgumentsForOnDemand:
     Description: Arguments to pass to the bootstrap script. See files/bootstrap.sh in https://github.com/awslabs/amazon-eks-ami
-    Default: "--kubelet-extra-args --node-labels=lifecycle=OnDemand"
+    Default: "--kubelet-extra-args --node-labels=lifecycle=OnDemand,$ExtraNodeLabels"
     Type: String
 
   BootstrapArgumentsForSpotFleet:
     Description: Arguments to pass to the bootstrap script. See files/bootstrap.sh in https://github.com/awslabs/amazon-eks-ami
-    Default: "--kubelet-extra-args '--node-labels=lifecycle=Ec2Spot --register-with-taints=spotInstance=true:PreferNoSchedule'"
+    Default: "--kubelet-extra-args '--node-labels=lifecycle=Ec2Spot,$ExtraNodeLabels --register-with-taints=spotInstance=true:PreferNoSchedule'"
     Type: String
 
   ClusterControlPlaneSecurityGroup:
@@ -248,6 +253,11 @@ Parameters:
   NodeGroupName:
     Description: Unique identifier for the Node Group.
     Type: String
+    
+  PauseTime:
+    Description: Pause Time
+    Type: String
+    Default: PT1M
     
   # RootStackName:
   #   Type: String
@@ -435,7 +445,7 @@ Resources:
       AutoScalingRollingUpdate:
         MinInstancesInService: !Ref NodeAutoScalingGroupDesiredSize
         MaxBatchSize: '1'
-        PauseTime: 'PT5M'
+        PauseTime: !Ref PauseTime
 
   LCH:
     Type: AWS::AutoScaling::LifecycleHook
@@ -473,14 +483,21 @@ Resources:
             set -o xtrace
             yum install -y ec2-instance-connect
             iid=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+            it=$(curl -s http://169.254.169.254/latest/meta-data/instance-type)
             export AWS_DEFAULT_REGION=${AWS::Region}
             ilc=`aws ec2 describe-instances --instance-ids  $iid  --query 'Reservations[0].Instances[0].InstanceLifecycle' --output text`
-            if [ "$ilc" == "spot" ]; then
-              /etc/eks/bootstrap.sh ${ClusterName} ${BootstrapArgumentsForSpotFleet}
+            if [[ $it == p* ]] || [[ $it == g* ]]; then
+              # GPU instance type
+              ExtraNodeLabels="${ExtraNodeLabels},NVIDIAGPU=1"
             else
-              /etc/eks/bootstrap.sh ${ClusterName} ${BootstrapArgumentsForOnDemand}
+              ExtraNodeLabels="${ExtraNodeLabels}"
             fi
-            # /etc/eks/bootstrap.sh ${ClusterName} $BootstrapArgumentsForOnDemand
+            if [ "$ilc" == "spot" ]; then
+              bash -c "/etc/eks/bootstrap.sh ${ClusterName} ${BootstrapArgumentsForSpotFleet}"
+            else
+              bash -c "/etc/eks/bootstrap.sh ${ClusterName} ${BootstrapArgumentsForOnDemand}"
+            fi
+            /etc/eks/bootstrap.sh ${ClusterName} $BootstrapArgumentsForOnDemand
             /opt/aws/bin/cfn-signal --exit-code $? \
                      --stack  ${AWS::StackName} \
                      --resource NodeGroup  \

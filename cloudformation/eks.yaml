@@ -51,6 +51,11 @@ Parameters:
   #   #Type: List<String>
   #   Type: String
     
+  NodeImageId:
+    Type: String
+    Default: ""
+    Description: Specify AMI id for the node instances. Leave it blank if you preferred the latest EKS-optimized AMI
+    
   NodeVolumeSize:
     Type: Number
     Description: Node volume size
@@ -194,11 +199,13 @@ Resources:
         NodeAutoScalingGroupDesiredSize: !Ref NodeAutoScalingGroupDesiredSize
         NodeAutoScalingGroupMaxSize: !Ref NodeAutoScalingGroupMaxSize
         NodeVolumeSize: !Ref NodeVolumeSize
+        NodeImageId: !Ref NodeImageId
         OnDemandBaseCapacity: !Ref OnDemandBaseCapacity
         LatestAMIId: !GetAtt AMI.Outputs.AmiId
         Subnets: !Ref SubnetIds
         ExistingNodeSecurityGroups: !Ref ExistingNodeSecurityGroups
         ExtraNodeSecurityGroups: !Ref ExtraNodeSecurityGroups
+
         
         
         # RootStackName: !Sub "${AWS::StackName}"

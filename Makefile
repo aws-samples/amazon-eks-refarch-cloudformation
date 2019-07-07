@@ -100,6 +100,7 @@ create-eks-cluster:
 	ParameterKey=KeyName,ParameterValue="$(SSH_KEY_NAME)" \
 	ParameterKey=LambdaRoleArn,ParameterValue="$(EKS_ADMIN_ROLE)" \
 	ParameterKey=OnDemandBaseCapacity,ParameterValue="$(OnDemandBaseCapacity)" \
+	ParameterKey=NodeImageId,ParameterValue="$(NodeImageId)" \
 	ParameterKey=NodeAutoScalingGroupMinSize,ParameterValue="$(NodeAutoScalingGroupMinSize)" \
 	ParameterKey=NodeAutoScalingGroupDesiredSize,ParameterValue="$(NodeAutoScalingGroupDesiredSize)" \
 	ParameterKey=NodeAutoScalingGroupMaxSize,ParameterValue="$(NodeAutoScalingGroupMaxSize)" \
@@ -127,6 +128,7 @@ update-eks-cluster:
 	ParameterKey=KeyName,ParameterValue="$(SSH_KEY_NAME)" \
 	ParameterKey=LambdaRoleArn,ParameterValue="$(EKS_ADMIN_ROLE)" \
 	ParameterKey=OnDemandBaseCapacity,ParameterValue="$(OnDemandBaseCapacity)" \
+	ParameterKey=NodeImageId,ParameterValue="$(NodeImageId)" \
 	ParameterKey=NodeAutoScalingGroupMinSize,ParameterValue="$(NodeAutoScalingGroupMinSize)" \
 	ParameterKey=NodeAutoScalingGroupDesiredSize,ParameterValue="$(NodeAutoScalingGroupDesiredSize)" \
 	ParameterKey=NodeAutoScalingGroupMaxSize,ParameterValue="$(NodeAutoScalingGroupMaxSize)" \
