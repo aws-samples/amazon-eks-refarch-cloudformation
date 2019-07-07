@@ -15,6 +15,8 @@ This project aims to help you provision a ready-to-use Amazon EKS cluster by sim
 - [x] No need to provision SpotFleet anymore.
 - [x] On-demand instances will have node label **lifecycle=OnDemand**
 - [x] Spot instances will have node label **lifecycle=Ec2Spot** and a **spotInstance=true:PreferNoSchedule** taint
+- [x] **NVIDIAGPU=1** node label will be created for all GPU instances on nodegroup creation
+- [x] support passing `ExtraNodeLabels`([#3](https://github.com/aws-samples/amazon-eks-refarch-cloudformation/issues/3))
 - [x] Support private subnets
 - [x] Support non-RFC1918 IP/CIDR VPC subnets
 - [x] Select the latest EKS-optimized AMI for Amazon Linux from a Lambda-backed cloudformaiton custom resource. This help you always use the latest EKS-Optimized AMI.
