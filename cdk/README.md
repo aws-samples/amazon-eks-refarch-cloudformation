@@ -116,3 +116,12 @@ If you prefer to have different NAT gateway provisioned for each public subnet, 
         //   ],
         // });   
 ```
+
+3. Can I specify different Amazon EKS cluster version?
+Yes.
+
+```bash
+# Specify 1.13 as the Amazon EKS cluster version
+cdk synth -c clusterVersion=1.13
+cdk deploy -c clusterVersion=1.13
+```
