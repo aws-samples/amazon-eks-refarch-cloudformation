@@ -12,7 +12,7 @@ class EKSCdkStack extends cdk.Stack {
         // const vpc = new ec2.Vpc(this, 'cdk-EKS-vpc');
         
         // VPC with only single NAT gateway in one of the public subnets
-        const vpc = new ec2.Vpc(this, 'TheVPC', {
+        const vpc = new ec2.Vpc(this, 'cdk-EKS-vpc', {
           cidr: '10.0.0.0/16',
           natGateways: 1,
           natGatewaySubnets: {subnetName: 'Public'},
