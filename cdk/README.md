@@ -118,6 +118,7 @@ If you prefer to have different NAT gateway provisioned for each public subnet, 
 ```
 
 3. Can I specify different Amazon EKS cluster version?
+
 Yes.
 
 ```bash
