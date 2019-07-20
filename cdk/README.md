@@ -40,7 +40,15 @@ EKS-CDK-demo.ClusterARN = arn:aws:eks:ap-northeast-1:903779448426:cluster/eksdem
 EKS-CDK-demo.eksdemocdkNodesInstanceRoleARN7B26F304 = arn:aws:iam::903779448426:role/EKS-CDK-demo-eksdemocdkNodesInstanceRoleAA83309B-BWBA4TG1XLJP
 ```
 
-## update aws-auth
+## Generate kubeconfig
+
+
+```bash
+# generate kubeconfig for our cluster
+$ aws eks update-kubeconfig --name eksdemo-cdk
+```
+
+## Update aws-auth
 
 You need to specify your own NodeInstanceRoleARN above to replace the provided `aws-auth-cm.yaml` and update it with `kubectl apply`.
 
@@ -56,6 +64,12 @@ curl -sL https://github.com/aws-samples/amazon-eks-refarch-cloudformation/raw/ma
 sed -e "s?<your role arn here>?${MY_InstanceRole_ARN}?g" | kubectl apply -f -                                            
 ```
 
+Response
+
+```
+configmap/aws-auth created
+```
+
 And then you'll be able to list the nodes
 ```
 $ kubectl get no
@@ -65,7 +79,7 @@ ip-10-0-22-228.ap-northeast-1.compute.internal   NotReady   <none>   9m50s   v1.
 ```
 
 
-## Destroy the Stack
+## Destroy the stack
 
 ```bash
 # destroy the stack
