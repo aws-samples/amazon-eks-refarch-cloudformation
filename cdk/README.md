@@ -123,9 +123,18 @@ cdk bootstrap
 # cdk synth with -r to specify your AmazonEKSAdminRole IAM role ARN
 cdk synth -c region=ap-northeast-1 -c clusterVersion=1.13 -r arn:aws:iam::903779448426:role/AmazonEKSAdminRole -a index-with-role.js
 # cdk deploy the EKS-VPC stack first
-cdk deploy EKS-VPC -c region=ap-northeast-1 -c clusterVersion=1.13 -r arn:aws:iam::903779448426:role/AmazonEKSAdminRole -a index-with-role.js
+cdk deploy EKS-VPC \
+-c region=ap-northeast-1 \
+-r arn:aws:iam::903779448426:role/AmazonEKSAdminRole \
+-a index-with-role.js
+
 # cdk deploy the EKS-Main stack
-cdk deploy EKS-Main -c region=ap-northeast-1 -c clusterVersion=1.13 -r arn:aws:iam::903779448426:role/AmazonEKSAdminRole -a index-with-role.js
+cdk deploy EKS-Main \
+-c region=ap-northeast-1 \
+-c clusterVersion=1.13 \
+-c lambdaRoleArn=arn:aws:iam::903779448426:role/AmazonEKSAdminRole \
+-r arn:aws:iam::903779448426:role/AmazonEKSAdminRole \
+-a index-with-role.js
 ```
 
 
@@ -172,7 +181,7 @@ NOTE: You don't have to manually update `aws-auth` ConfigMap in this option - AW
 
 ```bash
 # destroy the stack
-cdk destroy EKS* -c region=ap-northeast-1 -a index-with-role.js
+cdk destroy -c region=ap-northeast-1 -a index-with-role.js
 ```
 
 

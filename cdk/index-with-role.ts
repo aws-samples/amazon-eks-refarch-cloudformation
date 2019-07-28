@@ -14,6 +14,7 @@ const env = {
 const clusterName = app.node.tryGetContext("clusterName") || 'eksdemo-cdk'
 const eksVpcStackName = app.node.tryGetContext("eksVpcStackName") || 'EKS-VPC'
 const eksMainStackName = app.node.tryGetContext("eksMainStackName") || 'EKS-Main'
+const lambdaRoleArn = app.node.tryGetContext("lambdaRoleArn")
 
 class NetworkStack extends cdk.Stack {
   public readonly vpc: ec2.Vpc;
@@ -65,6 +66,18 @@ class EKSCdkStack extends cdk.Stack {
           instanceType: new ec2.InstanceType('t3.large'),
           desiredCapacity: 2, 
         });
+        
+        // aws-lambda-layer-kubectl
+        const lambdaLayerKubectl = new sam.CfnApplication(this, 'lambdaLayerKubectl', {
+          location: {
+            applicationId: 'arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl',
+            semanticVersion: '1.13.7',
+          },
+          parameters: {
+            LayerName: 'lambda-layer-kubectl'
+          }
+        })             
+        
 
         // cfn custom resource to handle aws-auth-cm update
         const eksAuthHook = new sam.CfnApplication(this, 'sam', {
@@ -74,8 +87,9 @@ class EKSCdkStack extends cdk.Stack {
           },
           parameters: {
             ClusterName: 'eksdemo-cdk',
-            LambdaRoleArn: 'arn:aws:iam::903779448426:role/AmazonEKSAdminRole',
-            LambdaLayerKubectlArn: 'arn:aws:lambda:ap-northeast-1:903779448426:layer:eks-kubectl-layer:30',
+            // LambdaRoleArn: 'arn:aws:iam::903779448426:role/AmazonEKSAdminRole',
+            LambdaRoleArn: lambdaRoleArn,
+            LambdaLayerKubectlArn: lambdaLayerKubectl.getAtt('Outputs.LayerVersionArn').toString(),
             NodeInstanceRoleArn: asg.role.roleArn,
             FunctionName: 'eks-auth-hook'
           }
