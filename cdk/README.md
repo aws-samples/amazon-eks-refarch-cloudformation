@@ -182,8 +182,9 @@ NOTE: You don't have to manually update `aws-auth` ConfigMap in this option - AW
 
 ```bash
 # destroy the stack
-cdk destroy -c region=ap-northeast-1 -a index-with-role.js
+cdk destroy EKS* -c region=ap-northeast-1 -a index-with-role.js
 ```
+
 
 
 ## FAQ
