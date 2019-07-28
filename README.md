@@ -302,7 +302,7 @@ $ UPDATE_AMI=1 make update-eks-cluster
 
 # Spot Termination Handling
 
-To enable the [**pahud/eks-lambda-drainer**](https://github.com/pahud/eks-lambda-drainer) support as the plug-in and install the drainer from SAR, 
+To enable the [**awslabs/amazon-eks-serverless-drainer**](https://github.com/awslabs/amazon-eks-serverless-drainer) support as the plug-in and install the drainer from SAR, 
 just pass `EnableNodeDrainer=yes` to the `make` command. e.g.
 
 ```bash
