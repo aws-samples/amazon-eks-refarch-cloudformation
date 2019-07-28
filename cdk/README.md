@@ -139,11 +139,12 @@ cdk deploy EKS-Main \
 
 
 
-Behind the scene, 3 cloudformation stacks will be created:
+Behind the scene, 4 cloudformation stacks will be created:
 
 1. **EKS-VPC** is the infrastructure stack for your Amazon EKS cluster.
 2. **EKS-Main** is your primary Amazon EKS stack including the cluster and nodegrup.
-3. **EKS-Main-sam-{RANDON_ID}** is a nested stack with Lambda function generated from SAR(Serverless App Repository) to help you update `aws-auth-cm` automatically.
+3. **EKS-Main-lambdaLayerKubectl-{RANDOM_ID}** lambda layer installed from SAR for **EKS-Main-sam**
+4. **EKS-Main-sam-{RANDON_ID}** is a nested stack with Lambda function generated from SAR(Serverless App Repository) to help you update `aws-auth-cm` automatically.
 
 
 
