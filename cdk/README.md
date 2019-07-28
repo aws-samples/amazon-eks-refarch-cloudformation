@@ -3,9 +3,12 @@
 This sample CDK scripts help you provision your Amaozn EKS cluster and nodegroup.
 
 
+
+# Option #1
+
+Build the Amazon EKS with AWS CDK and update **aws-auth** ConfigMap manually.
+
 ## Setup
-
-
 
 ```bash
 # install the nvm installer
@@ -48,7 +51,7 @@ EKS-CDK-demo.eksdemocdkNodesInstanceRoleARN7B26F304 = arn:aws:iam::903779448426:
 $ aws eks update-kubeconfig --name eksdemo-cdk
 ```
 
-## Update aws-auth
+## Update aws-auth ConfigMap
 
 You need to specify your own NodeInstanceRoleARN above to replace the provided `aws-auth-cm.yaml` and update it with `kubectl apply`.
 
@@ -77,6 +80,83 @@ NAME                                             STATUS     ROLES    AGE     VER
 ip-10-0-17-49.ap-northeast-1.compute.internal    NotReady   <none>   9m50s   v1.13.7-eks-c57ff8
 ip-10-0-22-228.ap-northeast-1.compute.internal   NotReady   <none>   9m50s   v1.13.7-eks-c57ff8
 ```
+
+
+
+# Option #2
+
+1. Build the `VPC` and `EKS` stacks seperatedly
+2. Using `AmazonEKSAdminRole` IAM role to create the cluster and update `aws-auth` ConfigMap from Lambda as cloudformation custom resource automatically.
+
+## Prerequisities
+
+Follow [Create AmazonEKSAdminRole IAM Role](https://github.com/aws-samples/amazon-eks-refarch-cloudformation/blob/master/README.md#create-amazoneksadminrole-iam-role) to create your **AmazonEKSAdminRole** IAM Role in your AWS account.
+
+## Setup
+
+```bash
+# install the nvm installer
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+# nvm install 
+nvm install lts/dubnium
+nvm alias default lts/dubnium
+# install AWS CDK
+npm i -g aws-cdk
+# check cdk version, make sure your version >=1.0.0
+cdk --version
+1.0.0 (build d89592e)
+# install other required npm modules
+npm install
+# build the index.ts to index.js with tsc
+npm run build
+# cdk bootstrapping
+cdk bootstrap
+# cdk synth with -r to specify your AmazonEKSAdminRole IAM role ARN
+cdk synth -c region=ap-northeast-1 -c clusterVersion=1.13 -r arn:aws:iam::903779448426:role/AmazonEKSAdminRole -a index-with-role.js
+# cdk deploy the EKS-VPC stack first
+cdk deploy EKS-VPC -c region=ap-northeast-1 -c clusterVersion=1.13 -r arn:aws:iam::903779448426:role/AmazonEKSAdminRole -a index-with-role.js
+# cdk deploy the EKS-Main stack
+cdk deploy EKS-Main -c region=ap-northeast-1 -c clusterVersion=1.13 -r arn:aws:iam::903779448426:role/AmazonEKSAdminRole -a index-with-role.js
+```
+
+
+
+Behind the scene, 3 cloudformation stacks will be created:
+
+1. **EKS-VPC** is the infrastructure stack for your Amazon EKS cluster.
+2. **EKS-Main** is your primary Amazon EKS stack including the cluster and nodegrup.
+3. EKS-Main-sam-{RANDON_ID} is a nested stack with Lambda function generated from SAR(Serverless App Repository) to help you update `aws-auth-cm` automatically.
+
+
+
+## Generate kubeconfig
+
+```bash
+# generate kubeconfig for our cluster
+$ aws --region ap-northeast-1 eks update-kubeconfig --name eksdemo-cdk --role-arn arn:aws:iam::903779448426:role/AmazonEKSAdminRole
+```
+
+Output
+
+```bash
+Updated context arn:aws:eks:ap-northeast-1:903779448426:cluster/eksdemo-cdk in /Users/pahud/.kube/config
+```
+
+Make sure you specify `—role-arn` as Amazon EKS cluster was just created by this role and we need to assume this role before we can execute the `kubectl` commands.
+
+Let's list the nodes
+
+```bash
+$ kubectl get no
+NAME                                             STATUS   ROLES    AGE   VERSION
+ip-10-0-16-10.ap-northeast-1.compute.internal    Ready    <none>   46m   v1.13.7-eks-c57ff8
+ip-10-0-21-170.ap-northeast-1.compute.internal   Ready    <none>   46m   v1.13.7-eks-c57ff8
+```
+
+
+
+NOTE: You don't have to manually update `aws-auth` ConfigMap in this option - AWS Lamdda from the custom resource will take care of that for you.
+
 
 
 ## Destroy the stack

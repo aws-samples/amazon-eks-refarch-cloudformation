@@ -1,4 +1,4 @@
 node_modules
 package-lock.json
 cdk.out
-index.js
+*.js

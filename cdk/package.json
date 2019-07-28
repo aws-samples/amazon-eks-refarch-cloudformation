@@ -1,9 +1,6 @@
 {
   "name": "eks-cdk",
   "version": "0.1.0",
-  "bin": {
-    "fargate-appmesh": "bin/fargate-appmesh.js"
-  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
@@ -11,18 +8,22 @@
   },
   "devDependencies": {
     "@types/node": "8.10.40",
-    "aws-cdk": "^1.0.0",
+    "aws-cdk": "^1.1.0",
     "typescript": "^3.3.3333"
   },
   "dependencies": {
     "@aws-cdk/aws-appmesh": "*",
+    "@aws-cdk/aws-cloudformation": "^1.1.0",
     "@aws-cdk/aws-ec2": "*",
     "@aws-cdk/aws-ecs": "*",
     "@aws-cdk/aws-ecs-patterns": "*",
-    "@aws-cdk/aws-eks": "^1.0.0",
+    "@aws-cdk/aws-eks": "*",
     "@aws-cdk/aws-elasticloadbalancingv2": "*",
     "@aws-cdk/aws-iam": "*",
+    "@aws-cdk/aws-lambda": "^1.1.0",
     "@aws-cdk/aws-logs": "*",
-    "@aws-cdk/core": "*"
+    "@aws-cdk/aws-sam": "^1.1.0",
+    "@aws-cdk/core": "*",
+    "@aws-cdk/custom-resources": "^1.1.0"
   }
 }
