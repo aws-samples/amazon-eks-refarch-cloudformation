@@ -25,6 +25,8 @@ This project aims to help you provision a ready-to-use Amazon EKS cluster by sim
 
 ## HOWTO
 
+### Create AmazonEKSAdminRole IAM Role
+
 Create a `AmazonEKSAdminRole` IAM Role manually and we will use thie role to 
 1) deploy the cloudformaiton stacks
 2) execute the Lambda function as custom resource to help you configure the `aws-auth` ConfigMap so the nodes in the nodegroup can register themselves to the control plane.
@@ -43,6 +45,8 @@ get the role arn string. We will use the arn later.
 $ aws iam get-role --role-name AmazonEKSAdminRole --query 'Role.Arn' --output text
 arn:aws:iam::903779448426:role/AmazonEKSAdminRole
 ```
+
+### Create custom.mk
 
 Create a `custom.mk` file as your configuration file like this and leave `Makefile` untouched.
 
@@ -298,7 +302,7 @@ $ UPDATE_AMI=1 make update-eks-cluster
 
 # Spot Termination Handling
 
-To enable the [**pahud/eks-lambda-drainer**](https://github.com/pahud/eks-lambda-drainer) support as the plug-in and install the drainer from SAR, 
+To enable the [**awslabs/amazon-eks-serverless-drainer**](https://github.com/awslabs/amazon-eks-serverless-drainer) support as the plug-in and install the drainer from SAR, 
 just pass `EnableNodeDrainer=yes` to the `make` command. e.g.
 
 ```bash
