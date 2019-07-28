@@ -81,6 +81,17 @@ ip-10-0-22-228.ap-northeast-1.compute.internal   NotReady   <none>   9m50s   v1.
 
 
 
+## Destroy the stack
+
+```bash
+# destroy the stack
+cdk destroy
+```
+
+## 
+
+
+
 # Option #2
 
 1. Build the `VPC` and `EKS` stacks seperatedly
@@ -161,7 +172,7 @@ NOTE: You don't have to manually update `aws-auth` ConfigMap in this option - AW
 
 ```bash
 # destroy the stack
-cdk destroy
+cdk destroy EKS* -c region=ap-northeast-1 -a index-with-role.js
 ```
 
 
