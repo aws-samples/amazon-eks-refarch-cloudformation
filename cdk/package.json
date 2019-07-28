@@ -6,24 +6,25 @@
     "watch": "tsc -w",
     "cdk": "cdk"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aws-samples/amazon-eks-refarch-cloudformation.git"
+  },
+  "license": "SEE LICENSE IN https://github.com/aws-samples/amazon-eks-refarch-cloudformation/blob/master/LICENSE",
   "devDependencies": {
+    "@aws-cdk/aws-cloudformation": "^1.2.0",
+    "@aws-cdk/aws-lambda": "^1.2.0",
+    "@aws-cdk/aws-sam": "^1.2.0",
     "@types/node": "8.10.40",
-    "aws-cdk": "^1.1.0",
+    "aws-cdk": "^1.2.0",
     "typescript": "^3.3.3333"
   },
   "dependencies": {
-    "@aws-cdk/aws-appmesh": "*",
-    "@aws-cdk/aws-cloudformation": "^1.1.0",
-    "@aws-cdk/aws-ec2": "*",
-    "@aws-cdk/aws-ecs": "*",
-    "@aws-cdk/aws-ecs-patterns": "*",
-    "@aws-cdk/aws-eks": "*",
-    "@aws-cdk/aws-elasticloadbalancingv2": "*",
-    "@aws-cdk/aws-iam": "*",
-    "@aws-cdk/aws-lambda": "^1.1.0",
-    "@aws-cdk/aws-logs": "*",
-    "@aws-cdk/aws-sam": "^1.1.0",
-    "@aws-cdk/core": "*",
-    "@aws-cdk/custom-resources": "^1.1.0"
+    "@aws-cdk/aws-ec2": "^1.2.0",
+    "@aws-cdk/aws-eks": "^1.2.0",
+    "@aws-cdk/aws-elasticloadbalancingv2": "^1.2.0",
+    "@aws-cdk/aws-iam": "^1.2.0",
+    "@aws-cdk/aws-logs": "^1.2.0",
+    "@aws-cdk/core": "^1.2.0"
   }
 }

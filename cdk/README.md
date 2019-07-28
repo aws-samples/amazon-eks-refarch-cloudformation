@@ -20,7 +20,7 @@ nvm alias default lts/dubnium
 npm i -g aws-cdk
 # check cdk version, make sure your version >=1.0.0
 cdk --version
-1.0.0 (build d89592e)
+1.2.0 (build 6b763b7)
 # install other required npm modules
 npm install
 # build the index.ts to index.js with tsc
@@ -104,7 +104,7 @@ nvm alias default lts/dubnium
 npm i -g aws-cdk
 # check cdk version, make sure your version >=1.0.0
 cdk --version
-1.0.0 (build d89592e)
+1.2.0 (build 6b763b7)
 # install other required npm modules
 npm install
 # build the index.ts to index.js with tsc
