@@ -20,7 +20,7 @@ This project aims to help you provision a ready-to-use Amazon EKS cluster by sim
 - [x] Support private subnets
 - [x] Support non-RFC1918 IP/CIDR VPC subnets
 - [x] Select the latest EKS-optimized AMI for Amazon Linux from a Lambda-backed cloudformaiton custom resource. This help you always use the latest EKS-Optimized AMI.
-- [x] Support [pahud/eks-lambda-drainer](https://github.com/pahud/eks-lambda-drainer) to help you `drain` the pods on terminating spot instances to protect your online workload. Just pass `EnableNodeDrainer=yes` to the `make` command to install the plug-in straight from SAR.
+- [x] Support [**awslabs/amazon-eks-serverless-drainer**](https://github.com/awslabs/amazon-eks-serverless-drainer) to help you `drain` the pods on terminating spot instances to protect your online workload. Just pass `EnableNodeDrainer=yes` to the `make` command to install the plug-in straight from SAR.
 - [x] Support the latest **Amazon EC2 Instance Connect** with web SSH capabilities([details](https://github.com/pahud/eks-templates/issues/58))
 
 ## HOWTO
