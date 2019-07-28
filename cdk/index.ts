@@ -54,6 +54,5 @@ const app = new cdk.App();
 new EKSCdkStack(app, 'EKS-CDK-demo', { 
     env: { 
         region:  app.node.tryGetContext("region")  || process.env.CDK_INTEG_REGION  || process.env.CDK_DEFAULT_REGION,
-        account: app.node.tryGetContext("account") || process.env.CDK_INTEG_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT,
     }
 });
