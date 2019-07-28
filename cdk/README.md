@@ -1,8 +1,6 @@
 # Building Amazon EKS cluter and nodegroup with AWS CDK
 
-This sample CDK scripts help you provision your Amaozn EKS cluster and nodegroup.
-
-
+This sample CDK scripts help you provision your Amaozn EKS cluster and nodegroup. Two options are provided below:
 
 # Option #1
 
