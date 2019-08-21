@@ -16,7 +16,7 @@ nvm alias default lts/dubnium
 npm i -g aws-cdk
 # check cdk version, make sure your version >=1.4.0
 cdk --version
-1.4.0 (build xxxxxxx)
+1.5.0 (build xxxxxxx)
 ```
 
 
@@ -42,22 +42,20 @@ Outputs
 
 ```bash
 Outputs:
-CdkEksStack.clusterAdminRoleArn = arn:aws:iam::903779448426:role/CdkEksStack-AdminRole38563C57-LKOPLK0P9GVJ
-CdkEksStack.helloeksDefaultCapacityInstanceRoleARN57400C70 = arn:aws:iam::903779448426:role/CdkEksStack-helloeksDefaultCapacityInstanceRole4DA-1TA4SC2WWC9H1
-CdkEksStack.helloeksClusterName12358BC8 = cdk-eks
+CdkEksStack.ClusterConfigCommand43AAE40F = aws eks update-kubeconfig --name cdk-eks --role-arn arn:aws:iam::112233445566:role/CdkEksStack-AdminRole38563C57-14ON0YFUELKGC
 ```
 
 
 
 ## Generate kubeconfig
 
+Just copy and paste the Outputs and execute it to update your kubeconfig
+
 ```bash
-aws eks update-kubeconfig --name cdk-eks --role-arn arn:aws:iam::903779448426:role/CdkEksStack-AdminRole38563C57-LKOPLK0P9GVJ
+aws eks update-kubeconfig --name cdk-eks --role-arn arn:aws:iam::112233445566:role/CdkEksStack-AdminRole38563C57-14ON0YFUELKGC
 ```
 
-* use the **CdkEksStack.clusterAdminRoleArn** for **--role-arn** argument in the Outputs
-
-OK. Try list the nodes
+OK. Now you got it!
 
 ```bash
 kubectl get no                                                                    
@@ -84,9 +82,7 @@ This sample gives you:
 
 ## In Action
 
-
-
-![](https://pbs.twimg.com/media/EB8Dm5vU4AAyNns?format=jpg&name=4096x4096)
+![](https://pbs.twimg.com/media/ECgSJkpU8AAptiL?format=jpg&name=large)
 
 
 
