@@ -3,3 +3,7 @@ test
 Makefile.us*
 secrets.mk
 custom.mk
+cdk.context.json
+package-lock.json
+node_modules
+cdk.out
