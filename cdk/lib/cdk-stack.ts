@@ -13,7 +13,7 @@ export class CdkStack extends cdk.Stack {
     });
 
     // eks cluster with nodegroup of 2x m5.large instances in dedicated vpc with default configuratrion
-    const cluster = new eks.Cluster(this, 'hello-eks', {
+    const cluster = new eks.Cluster(this, 'Cluster', {
       clusterName: 'cdk-eks',
       mastersRole: clusterAdmin
     });
@@ -55,9 +55,5 @@ export class CdkStack extends cdk.Stack {
 
     cluster.addResource('hello-kub', service, deployment);
 
-    // output the clusterAdmin role arn
-    new cdk.CfnOutput(this, 'clusterAdminRoleArn', {
-      value: clusterAdmin.roleArn
-    })
   }
 }
