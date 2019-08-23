@@ -150,3 +150,29 @@ You will get a k8s delployment and service immediately after you deploy the CDK 
 cdk destroy
 ```
 
+
+## Using the default VPC
+
+If you do not specify the vpc, `aws-eks` CDK construct lib will create a default VPC for you. If you intend to use the default VPC.
+
+```js
+
+    const vpc = Vpc.fromLookup(this, 'VPC', {
+      isDefault: true
+    })
+
+    // first define the role
+    const clusterAdmin = new iam.Role(this, 'AdminRole', {
+      assumedBy: new iam.AccountRootPrincipal()
+    });
+
+    // eks cluster with nodegroup of 2x m5.large instances in dedicated vpc with default configuratrion
+    const cluster = new eks.Cluster(this, 'Cluster', {
+      vpc: vpc,
+      clusterName: 'cdk-eks',
+      mastersRole: clusterAdmin
+    });    
+
+```
+
+And make sure you tag **kubernetes.io/role/internal-elb=1** on all your private subnets in your default VPC
