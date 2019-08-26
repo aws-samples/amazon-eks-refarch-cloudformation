@@ -174,5 +174,7 @@ If you do not specify the vpc, `aws-eks` CDK construct lib will create a default
     });    
 
 ```
-
-And make sure you tag **kubernetes.io/role/internal-elb=1** on all your private subnets in your default VPC
+Make sure:
+1. All your private subnets have a default routing table with NAT gateway for `0.0.0.0/0`
+2. All your public subnets have enable the `auto-assign public IP` option
+3. Tag **kubernetes.io/role/internal-elb=1** on all your private subnets in your default VPC
