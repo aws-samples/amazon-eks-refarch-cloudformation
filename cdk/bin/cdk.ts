@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import cdk = require('@aws-cdk/core');
-import { CdkStack } from '../lib/cdk-stack';
+import { EksSampleStack } from '../lib/cdk-stack';
 
 
 const app = new cdk.App();
@@ -11,6 +11,6 @@ const env = {
     account: app.node.tryGetContext('account') || process.env['CDK_DEFAULT_ACCOUNT'] || process.env['AWS_ACCOUNT'],
 }
 
-new CdkStack(app, 'CdkEksStack', {
+new EksSampleStack(app, 'EksSampleStack', {
     env: env
 });
