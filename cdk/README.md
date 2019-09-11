@@ -16,7 +16,7 @@ nvm alias default lts/dubnium
 npm i -g aws-cdk
 # check cdk version, make sure your version >=1.4.0
 cdk --version
-1.5.0 (build xxxxxxx)
+1.8.0 (build 5244f97)
 ```
 
 
@@ -58,10 +58,10 @@ aws eks update-kubeconfig --name cdk-eks --role-arn arn:aws:iam::112233445566:ro
 OK. Now you got it!
 
 ```bash
-kubectl get no                                                                    
-NAME                                         STATUS   ROLES    AGE     VERSION
-ip-10-0-150-198.us-west-2.compute.internal   Ready    <none>   6m57s   v1.13.7-eks-c57ff8
-ip-10-0-190-37.us-west-2.compute.internal    Ready    <none>   7m3s    v1.13.7-eks-c57ff8
+kubectl get no
+NAME                                          STATUS   ROLES    AGE   VERSION
+ip-172-31-11-179.us-west-2.compute.internal   Ready    <none>   40s   v1.14.6-eks-5047ed
+ip-172-31-14-197.us-west-2.compute.internal   Ready    <none>   59s   v1.14.6-eks-5047ed
 ```
 
 
@@ -82,7 +82,7 @@ This sample gives you:
 
 ## In Action
 
-![](https://pbs.twimg.com/media/ECgSJkpU8AAptiL?format=jpg&name=large)
+![](https://pbs.twimg.com/media/EEKUFrOWwAE_uxb?format=jpg&name=4096x4096)
 
 
 
