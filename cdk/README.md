@@ -150,3 +150,48 @@ You will get a k8s delployment and service immediately after you deploy the CDK 
 cdk destroy
 ```
 
+
+## Using the default VPC
+
+If you do not specify the vpc, `aws-eks` CDK construct lib will create a default VPC for you. If you intend to use the default VPC.
+
+```js
+
+    const vpc = Vpc.fromLookup(this, 'VPC', {
+      isDefault: true
+    })
+
+    // first define the role
+    const clusterAdmin = new iam.Role(this, 'AdminRole', {
+      assumedBy: new iam.AccountRootPrincipal()
+    });
+
+    // eks cluster with nodegroup of 2x m5.large instances in dedicated vpc with default configuratrion
+    const cluster = new eks.Cluster(this, 'Cluster', {
+      vpc: vpc,
+      clusterName: 'cdk-eks',
+      mastersRole: clusterAdmin
+    });    
+
+```
+Make sure:
+1. All your private subnets have a default routing table with NAT gateway for `0.0.0.0/0`
+2. All your public subnets have enable the `auto-assign public IP` option
+3. Tag **kubernetes.io/role/internal-elb=1** on all your private subnets in your default VPC
+
+
+## specify SSH KeyPair for your default capacity
+
+You can't specify SSH KeyPair for your default capacity with `eks.Cluster()` at this moment. A quick hack is to use `addPropertyOverride` like this:
+
+```js
+    const cluster = new eks.Cluster(this, 'Cluster', {
+      vpc: vpc,
+      clusterName: 'cdk-eks',
+      mastersRole: clusterAdmin
+    });  
+
+    // specify ssh keypair for your default capacity
+    const resourceLaunchConfig = cluster.defaultCapacity!.node.findChild('LaunchConfig') as CfnLaunchConfiguration
+    resourceLaunchConfig.addPropertyOverride('KeyName', 'your-keypair-name')
+```
