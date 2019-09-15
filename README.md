@@ -1,8 +1,9 @@
-## Amazon EKS Reference Architecture
-Reference architecture of Amazon EKS with modern cloudformation templates.
+## Amazon EKS Reference Architecture with AWS CDK
+Reference architecture of Amazon EKS cloudformation templates and AWS CDK samples
 
+This project aims to help you provision a ready-to-use Amazon EKS cluster by simply launching a cloudformation template with nested stacks. 
 
-This project aims to help you provision a ready-to-use Amazon EKS cluster by simply launching a cloudformation template with nested stacks. Supper easy and hassel-free!
+However, we also encourage you refer to the [CDK sample](./cdk/) to provision your Amazon EKS cluster and nodegroup(s) with AWS CDK by simply `cdk deploy`.
 
 ![](images/arch-overview.png)
 
