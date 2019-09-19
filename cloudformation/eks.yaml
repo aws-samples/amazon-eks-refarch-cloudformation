@@ -54,7 +54,7 @@ Parameters:
   NodeImageId:
     Type: String
     Default: ""
-    Description: Specify AMI id for the node instances. Leave it blank if you preferred the latest EKS-optimized AMI
+    Description: (Optional) Specify your own custom image ID. This value overrides any AWS Systems Manager Parameter Store value specified above.
     
   NodeVolumeSize:
     Type: Number
@@ -168,13 +168,13 @@ Resources:
         SubnetIds: !Ref SubnetIds
         # SecurityGroupIds: !Ref SecurityGroupIds
         
-  AMI:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub "https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/ami-${YamlBranch}.yaml"
-      Parameters:
-        ClusterVersion: !Ref ClusterVersion
-        ForceUpdateAMI: !Ref ForceUpdateAMI
+  # AMI:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: !Sub "https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/ami-${YamlBranch}.yaml"
+  #     Parameters:
+  #       ClusterVersion: !Ref ClusterVersion
+  #       ForceUpdateAMI: !Ref ForceUpdateAMI
       #   VpcId: !Ref VpcId
       #   ClusterName: !Ref ClusterName
       #   # ClusterRoleArn: !Ref ClusterRoleArn
@@ -183,7 +183,6 @@ Resources:
   NG:
     DependsOn: 
       - CL
-      - AMI
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub "https://s3-us-west-2.amazonaws.com/pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-${YamlBranch}.yaml"
@@ -201,7 +200,7 @@ Resources:
         NodeVolumeSize: !Ref NodeVolumeSize
         NodeImageId: !Ref NodeImageId
         OnDemandBaseCapacity: !Ref OnDemandBaseCapacity
-        LatestAMIId: !GetAtt AMI.Outputs.AmiId
+        # LatestAMIId: !GetAtt AMI.Outputs.AmiId
         Subnets: !Ref SubnetIds
         ExistingNodeSecurityGroups: !Ref ExistingNodeSecurityGroups
         ExtraNodeSecurityGroups: !Ref ExtraNodeSecurityGroups

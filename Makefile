@@ -59,11 +59,11 @@ sync: deploy
 update-ami:
 	@aws s3 cp files/eks-latest-ami.yaml s3://pahud-eks-templates/eks-latest-ami.yaml --acl public-read
 
-
+	
 .PHONY: update-yaml
 update-stable-yaml:
 	@aws --region us-west-2 s3 cp cloudformation/eks.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/eks-stable.yaml --acl public-read
-	@aws --region us-west-2 s3 cp cloudformation/ami.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/ami-stable.yaml --acl public-read
+	# @aws --region us-west-2 s3 cp cloudformation/ami.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/ami-stable.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/cluster.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/cluster-stable.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/nodegroup.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-stable.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/configmap.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-stable.yaml --acl public-read
@@ -74,7 +74,7 @@ update-stable-yaml:
 .PHONY: update-dev-yaml	
 update-dev-yaml: 
 	@aws --region us-west-2 s3 cp cloudformation/eks.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/eks-dev.yaml --acl public-read
-	@aws --region us-west-2 s3 cp cloudformation/ami.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/ami-dev.yaml --acl public-read
+	# @aws --region us-west-2 s3 cp cloudformation/ami.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/ami-dev.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/cluster.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/cluster-dev.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/nodegroup.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/nodegroup-dev.yaml --acl public-read
 	@aws --region us-west-2 s3 cp cloudformation/configmap.yaml s3://pahud-cfn-us-west-2/eks-templates/cloudformation/configmap-dev.yaml --acl public-read

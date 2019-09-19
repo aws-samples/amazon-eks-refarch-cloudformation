@@ -143,6 +143,17 @@
                 "serverlessrepo:CreateCloudFormationTemplate"
             ],
             "Resource": "*"
+        },
+        {
+            "Sid": "SSM",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParameters",
+                "ssm:GetParameter"
+            ],
+            "Resource": [
+                "arn:aws:ssm:*:*:parameter/aws/service/eks/optimized-ami/*"
+            ]
         }
     ]
 }
