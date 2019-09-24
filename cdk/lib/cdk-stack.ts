@@ -3,7 +3,7 @@ import eks = require('@aws-cdk/aws-eks');
 import iam = require('@aws-cdk/aws-iam');
 import { InstanceType, Vpc } from '@aws-cdk/aws-ec2';
 
-export class CdkStack extends cdk.Stack {
+export class EksSampleStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
