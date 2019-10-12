@@ -16,30 +16,29 @@ export class EksSampleStack extends cdk.Stack {
       assumedBy: new iam.AccountRootPrincipal()
     });
 
-    // eks cluster 
+    // eks cluster with ondemand default capacity
     const cluster = new eks.Cluster(this, 'Cluster', {
       vpc: vpc,
-      defaultCapacity: 0,
+      defaultCapacity: 1,
       mastersRole: clusterAdmin,
-      version: '1.14',
       outputClusterName: true,
     });
-
-    cluster.addCapacity('OnDemand', {
-      maxCapacity: 1,
-      instanceType: new InstanceType('t3.large'),
-      bootstrapOptions: {
-        kubeletExtraArgs: '--node-labels myCustomLabel=od'
-      },
-    })
 
     cluster.addCapacity('Spot', {
       maxCapacity: 1,
       instanceType: new InstanceType('t3.large'),
       bootstrapOptions: {
-        kubeletExtraArgs: '--node-labels myCustomLabel=spot'
+        kubeletExtraArgs: '--node-labels foo=bar'
       },
     })
+
+    // cluster.addCapacity('OnDemand', {
+    //   maxCapacity: 1,
+    //   instanceType: new InstanceType('t3.large'),
+    //   bootstrapOptions: {
+    //     kubeletExtraArgs: '--node-labels myCustomLabel=od'
+    //   },
+    // })
 
     // cluster.addCapacity('SpotGPU', {
     //   spotPrice: '12.2400',
@@ -49,7 +48,6 @@ export class EksSampleStack extends cdk.Stack {
     //     kubeletExtraArgs: '--node-labels NVIDIAGPU=1'
     //   },
     // })
-
 
     // const appLabel = { app: "hello-kubernetes" };
 
