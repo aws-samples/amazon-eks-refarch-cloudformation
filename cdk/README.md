@@ -14,9 +14,8 @@ nvm install lts/dubnium
 nvm alias default lts/dubnium
 # install AWS CDK
 npm i -g aws-cdk
-# check cdk version, make sure your version >=1.4.0
+# check cdk version
 cdk --version
-1.8.0 (build 5244f97)
 ```
 
 
@@ -35,7 +34,7 @@ npm run build
 # cdk bootstrapping (only for the 1st time)
 cdk bootstrap
 # cdk deploy
-cdk deploy
+cdk --app lib/cdk-stack.js deploy EksStack 
 ```
 
 Outputs
@@ -77,14 +76,6 @@ This sample gives you:
 3) A default nodegroup of **2x m5.large** instances
 
 4) Self-configured `aws-auth` ConfigMap
-
-
-
-## In Action
-
-![](https://pbs.twimg.com/media/EEKUFrOWwAE_uxb?format=jpg&name=4096x4096)
-
-
 
 
 
@@ -147,7 +138,7 @@ You will get a k8s delployment and service immediately after you deploy the CDK 
 
 ```bash
 # destroy the stack
-cdk destroy
+cdk --app lib/cdk-stack.js destroy EksStack 
 ```
 
 
@@ -168,7 +159,7 @@ If you do not specify the vpc, `aws-eks` CDK construct lib will create a default
 
     // eks cluster with nodegroup of 2x m5.large instances in dedicated vpc with default configuratrion
     const cluster = new eks.Cluster(this, 'Cluster', {
-      vpc: vpc,
+      vpc,
       clusterName: 'cdk-eks',
       mastersRole: clusterAdmin
     });    
@@ -180,13 +171,13 @@ Make sure:
 3. Tag **kubernetes.io/role/internal-elb=1** on all your private subnets in your default VPC
 
 
-## specify SSH KeyPair for your default capacity
+## Specify SSH KeyPair for your default capacity
 
 You can't specify SSH KeyPair for your default capacity with `eks.Cluster()` at this moment. A quick hack is to use `addPropertyOverride` like this:
 
 ```js
     const cluster = new eks.Cluster(this, 'Cluster', {
-      vpc: vpc,
+      vpc,
       clusterName: 'cdk-eks',
       mastersRole: clusterAdmin
     });  
