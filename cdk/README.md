@@ -34,7 +34,7 @@ npm run build
 # cdk bootstrapping (only for the 1st time)
 cdk bootstrap
 # cdk deploy
-cdk --app lib/cdk-stack.js deploy EksStack 
+cdk deploy EksStack -c region=us-west-2
 ```
 
 Outputs
@@ -138,7 +138,7 @@ You will get a k8s delployment and service immediately after you deploy the CDK 
 
 ```bash
 # destroy the stack
-cdk --app lib/cdk-stack.js destroy EksStack 
+cdk destroy EksStack -c region=us-west-2
 ```
 
 
