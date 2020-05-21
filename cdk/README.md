@@ -4,34 +4,27 @@ This sample CDK scripts help you provision your Amaozn EKS cluster, a default no
 
 
 
-## Setup
-
-```bash
-# install the nvm installer
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-# nvm install 
-nvm install lts/dubnium
-nvm alias default lts/dubnium
-# install AWS CDK CLI
-npm i -g aws-cdk
-# check cdk version
-cdk --version
-```
-
 OK. Let's deploy our Amazon EKS stack.
 
-## Deploy in a new VPC
+## Deploy in a new VPC in default `AWS_REGION`
+
+Make sure you have `nodejs` and `npm` installed.
 
 
 ```bash
+# git clone the project
+git clone https://github.com/aws-samples/amazon-eks-refarch-cloudformation.git
+cd amazon-eks-refarch-cloudformation
+# cd to the cdk sub-directory
+cd cdk
 # install other required npm modules
 npm i
-# cdk bootstrapping (only for the 1st time)
-cdk bootstrap
+# cdk bootstrapping (only required for the 1st time)
+npx cdk bootstrap
 # cdk diff to see what will be created
-cdk diff
+npx cdk diff
 # cdk deploy
-cdk deploy EksStack
+npx cdk deploy
 ```
 
 ## Deploy in another AWS_REGION or existing VPC
@@ -40,19 +33,19 @@ Alternatively, to deploy in aother `AWS_REGION`
 
 ```bash
 # only for the first time in this region
-AWS_REGION=ap-northeast-1 cdk bootrap
+AWS_REGION=ap-northeast-1 npx cdk bootrap
 # cdk diff
-AWS_REGION=ap-northeast-1 cdk diff
-AWS_REGION=ap-northeast-1 cdk depoy
+AWS_REGION=ap-northeast-1 npx cdk diff
+AWS_REGION=ap-northeast-1 npx cdk depoy
 ```
 
 To deploy in any existing VPC
 
 ```bash
 # To deploy in the default vpc
-cdk diff -c use_default_vpc=1
+npx cdk diff -c use_default_vpc=1
 # To deploy in a specific VPC ID
-cdk diff -c use_vpc_id=vpc-123456
+npx cdk diff -c use_vpc_id=vpc-123456
 ```
 
 
@@ -82,7 +75,6 @@ kubectl get no
 NAME                                               STATUS   ROLES    AGE   VERSION
 ip-172-31-50-156.ap-northeast-1.compute.internal   Ready    <none>   1m   v1.16.8-eks-e16311
 ip-172-31-65-158.ap-northeast-1.compute.internal   Ready    <none>   1m   v1.16.8-eks-e16311
-ip-172-31-84-250.ap-northeast-1.compute.internal   Ready    <none>   1m   v1.16.8-eks-e16311
 ```
 
 
@@ -100,11 +92,38 @@ This sample gives you:
 4) **2x** `t3.large` spot instancs
 
 
+## Spot Instances
+
+OK. Now we have a default cluster with a default managed nodegroup. Let's add spot instances into this cluster.
+
+
+```bash
+npx cdk diff -c with_spot_instances=yes
+npx cdk deploy -c with_spot_instances=yes
+```
+
+## 2nd Managed Nodegroup
+
+
+Append `-c with_2nd_nodegroup=yes` to add the 2nd nodegroup into the cluster.
+
+## IAM Role for Service Account(IRSA)
+
+
+Append `-c with_irsa=yes` to create a service account for a demo pod.
+
+
+## Fargate Profile
+
+
+Append `-c with_fargate_profile=yes` to create a fargate profile for this cluster.
+
+
 ## Destroy the stack
 
 ```bash
 # destroy the stack
-cdk destroy EksStack
+npx cdk destroy EksStack
 ```
 
 ## More examples
