@@ -89,9 +89,6 @@ This sample gives you:
 
 3) A default managed nodegroup of **2x** `m5.large` instances
 
-4) **2x** `t3.large` spot instancs
-
-
 ## Spot Instances
 
 OK. Now we have a default cluster with a default managed nodegroup. Let's add spot instances into this cluster.
