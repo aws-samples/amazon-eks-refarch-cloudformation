@@ -99,7 +99,7 @@ npx cdk diff -c with_spot_instances=yes
 npx cdk deploy -c with_spot_instances=yes
 ```
 
-## 2nd Managed Nodegroup
+## Additional Managed Nodegroup
 
 
 Append `-c with_2nd_nodegroup=yes` to add the 2nd nodegroup into the cluster.
