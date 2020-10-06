@@ -1,17 +1,17 @@
-import * as cdk from '@aws-cdk/core';
-import * as eks from '@aws-cdk/aws-eks';
 import * as ec2 from '@aws-cdk/aws-ec2';
+import * as eks from '@aws-cdk/aws-eks';
 import * as iam from '@aws-cdk/aws-iam';
+import * as cdk from '@aws-cdk/core';
 
 function getOrCreateVpc(scope: cdk.Construct): ec2.IVpc {
   // use an existing vpc or create a new one
-  const stack = cdk.Stack.of(scope)
+  const stack = cdk.Stack.of(scope);
   const vpc = stack.node.tryGetContext('use_default_vpc') === '1' ?
     ec2.Vpc.fromLookup(stack, 'Vpc', { isDefault: true }) :
     stack.node.tryGetContext('use_vpc_id') ?
       ec2.Vpc.fromLookup(stack, 'Vpc', { vpcId: stack.node.tryGetContext('use_vpc_id') }) :
       new ec2.Vpc(stack, 'Vpc', { maxAzs: 3, natGateways: 1 });
-  return vpc
+  return vpc;
 }
 
 export class MyStack extends cdk.Stack {
@@ -21,7 +21,7 @@ export class MyStack extends cdk.Stack {
     const vpc = getOrCreateVpc(this);
 
     const clusterAdmin = new iam.Role(this, 'AdminRole', {
-      assumedBy: new iam.AccountRootPrincipal()
+      assumedBy: new iam.AccountRootPrincipal(),
     });
 
     // create the cluster and a default maanged nodegroup of 2 x m5.large instances
@@ -40,9 +40,9 @@ export class MyStack extends cdk.Stack {
         spotPrice: '0.04',
         instanceType: new ec2.InstanceType('t3.large'),
         bootstrapOptions: {
-          kubeletExtraArgs: '--node-labels foo=bar'
+          kubeletExtraArgs: '--node-labels foo=bar',
         },
-      })
+      });
     };
 
 
@@ -53,7 +53,7 @@ export class MyStack extends cdk.Stack {
         desiredSize: 1,
         nodegroupName: 'NG2',
         instanceType: new ec2.InstanceType('t3.large'),
-      })
+      });
     };
 
     // conditionally create service account for a pod
@@ -71,25 +71,25 @@ export class MyStack extends cdk.Stack {
               name: 'main',
               image: 'pahud/aws-whoami',
               ports: [{ containerPort: 5000 }],
-            }
-          ]
-        }
+            },
+          ],
+        },
       });
 
-      new cdk.CfnOutput(this, 'SARoleArn', { value: sa.role.roleArn })
+      new cdk.CfnOutput(this, 'SARoleArn', { value: sa.role.roleArn });
     };
 
     // conditionally create a fargate profile
     if (this.node.tryGetContext('with_fargate_profile') === 'yes') {
       const profile = cluster.addFargateProfile('FargateProfile', {
         selectors: [
-          { namespace: 'default' }
-        ]
+          { namespace: 'default' },
+        ],
       });
 
-      profile.fargateProfileName
+      profile.fargateProfileName;
 
-      new cdk.CfnOutput(this, 'FargareProfileName', { value: profile.fargateProfileName })
+      new cdk.CfnOutput(this, 'FargareProfileName', { value: profile.fargateProfileName });
     };
 
   }
