@@ -17,7 +17,6 @@ cdk.out/
 .cdk.staging/
 cdk.out
 cdk.context.json
-.venv
 images
 yarn-error.log
 !/lib

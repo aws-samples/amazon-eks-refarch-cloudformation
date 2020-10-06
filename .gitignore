@@ -43,7 +43,6 @@ cdk.out/
 .parcel-cache/
 cdk.out
 cdk.context.json
-.venv
 images
 yarn-error.log
 !/package.json
