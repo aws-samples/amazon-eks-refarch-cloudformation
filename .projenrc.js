@@ -1,13 +1,12 @@
 const {
   AwsCdkTypeScriptApp,
-  GithubWorkflow,
 } = require('projen');
 
 const AUTOMATION_TOKEN = 'GITHUB_TOKEN';
 
 
 const project = new AwsCdkTypeScriptApp({
-  cdkVersion: "1.63.0",
+  cdkVersion: "1.77.0",
   name: "amazon-eks-refarch",
   authorName: "Pahud Hsieh",
   authorEmail: "pahudnet@gmail.com",
@@ -24,12 +23,12 @@ const project = new AwsCdkTypeScriptApp({
 
 
 // create a custom projen and yarn upgrade workflow
-const workflow = new GithubWorkflow(project, 'ProjenYarnUpgrade');
+workflow = project.github.addWorkflow('ProjenYarnUpgrade');
 
 workflow.on({
   schedule: [{
-    cron: '0 6 * * *'
-  }], // 6am every day
+    cron: '11 0 * * *',
+  }], // 0:11am every day
   workflow_dispatch: {}, // allow manual triggering
 });
 
@@ -37,18 +36,15 @@ workflow.addJobs({
   upgrade: {
     'runs-on': 'ubuntu-latest',
     'steps': [
-      ...project.workflowBootstrapSteps,
-
-      // yarn upgrade
+      { uses: 'actions/checkout@v2' },
       {
-        run: `yarn upgrade`
+        uses: 'actions/setup-node@v1',
+        with: {
+          'node-version': '10.17.0',
+        },
       },
-
-      // upgrade projen
-      {
-        run: `yarn projen:upgrade`
-      },
-
+      { run: 'yarn upgrade' },
+      { run: 'yarn projen:upgrade' },
       // submit a PR
       {
         name: 'Create Pull Request',
@@ -60,7 +56,7 @@ workflow.addJobs({
           'title': 'chore: upgrade projen and yarn',
           'body': 'This PR upgrades projen and yarn upgrade to the latest version',
           'labels': 'auto-merge',
-        }
+        },
       },
     ],
   },
