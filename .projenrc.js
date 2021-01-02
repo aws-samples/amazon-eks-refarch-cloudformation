@@ -4,21 +4,21 @@ const {
 
 const AUTOMATION_TOKEN = 'GITHUB_TOKEN';
 
-
 const project = new AwsCdkTypeScriptApp({
-  cdkVersion: "1.77.0",
-  name: "amazon-eks-refarch",
-  authorName: "Pahud Hsieh",
-  authorEmail: "pahudnet@gmail.com",
-  repository: "https://github.com/aws-samples/amazon-eks-refarch-cloudformation.git",
+  cdkVersion: '1.81.0',
+  name: 'amazon-eks-refarch',
+  authorName: 'Pahud Hsieh',
+  authorEmail: 'pahudnet@gmail.com',
+  repository: 'https://github.com/aws-samples/amazon-eks-refarch-cloudformation.git',
   dependabot: false,
   antitamper: false,
   cdkDependencies: [
-    "@aws-cdk/core",
-    "@aws-cdk/aws-ec2",
-    "@aws-cdk/aws-eks",
-    "@aws-cdk/aws-iam",
-  ]
+    '@aws-cdk/core',
+    '@aws-cdk/aws-ec2',
+    '@aws-cdk/aws-eks',
+    '@aws-cdk/aws-iam',
+  ],
+  deps: ['awscdk-81-patch'],
 });
 
 
@@ -61,7 +61,6 @@ workflow.addJobs({
     ],
   },
 });
-
 
 
 const common_exclude = ['cdk.out', 'cdk.context.json', 'images', 'yarn-error.log'];

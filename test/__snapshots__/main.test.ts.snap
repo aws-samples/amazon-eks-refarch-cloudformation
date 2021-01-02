@@ -19,7 +19,7 @@ Object {
             " --role-arn ",
             Object {
               "Fn::GetAtt": Array [
-                "AdminRole38563C57",
+                "ClusterMastersRole9AA35625",
                 "Arn",
               ],
             },
@@ -43,7 +43,7 @@ Object {
             " --role-arn ",
             Object {
               "Fn::GetAtt": Array [
-                "AdminRole38563C57",
+                "ClusterMastersRole9AA35625",
                 "Arn",
               ],
             },
@@ -65,16 +65,16 @@ Object {
       "Description": "S3 key for asset version \\"50e10880d134a01b440991fc77d217f39f01c2d56945215ee9a3b81187c6f3b1\\"",
       "Type": "String",
     },
-    "AssetParameters8f6ddea19bd9a790b129fdd157cdf31c5172a316d29d3be7a559835d67ea5ed1ArtifactHash5FD4EEEC": Object {
-      "Description": "Artifact hash for asset \\"8f6ddea19bd9a790b129fdd157cdf31c5172a316d29d3be7a559835d67ea5ed1\\"",
+    "AssetParameters752aa9e7fcf8477dc4910d637ca8e9259ba59e7f1a7d4a3d88ecb6c3c13813f8ArtifactHash664BAE0D": Object {
+      "Description": "Artifact hash for asset \\"752aa9e7fcf8477dc4910d637ca8e9259ba59e7f1a7d4a3d88ecb6c3c13813f8\\"",
       "Type": "String",
     },
-    "AssetParameters8f6ddea19bd9a790b129fdd157cdf31c5172a316d29d3be7a559835d67ea5ed1S3BucketDE580665": Object {
-      "Description": "S3 bucket for asset \\"8f6ddea19bd9a790b129fdd157cdf31c5172a316d29d3be7a559835d67ea5ed1\\"",
+    "AssetParameters752aa9e7fcf8477dc4910d637ca8e9259ba59e7f1a7d4a3d88ecb6c3c13813f8S3BucketA67326D3": Object {
+      "Description": "S3 bucket for asset \\"752aa9e7fcf8477dc4910d637ca8e9259ba59e7f1a7d4a3d88ecb6c3c13813f8\\"",
       "Type": "String",
     },
-    "AssetParameters8f6ddea19bd9a790b129fdd157cdf31c5172a316d29d3be7a559835d67ea5ed1S3VersionKey6DA5E1B0": Object {
-      "Description": "S3 key for asset version \\"8f6ddea19bd9a790b129fdd157cdf31c5172a316d29d3be7a559835d67ea5ed1\\"",
+    "AssetParameters752aa9e7fcf8477dc4910d637ca8e9259ba59e7f1a7d4a3d88ecb6c3c13813f8S3VersionKey7F484692": Object {
+      "Description": "S3 key for asset version \\"752aa9e7fcf8477dc4910d637ca8e9259ba59e7f1a7d4a3d88ecb6c3c13813f8\\"",
       "Type": "String",
     },
     "AssetParameters9b457ef32303d2b51e25a22bbe14ea4ea39b8f53dc1919a9948b81997901f537ArtifactHash9AB78741": Object {
@@ -89,16 +89,16 @@ Object {
       "Description": "S3 key for asset version \\"9b457ef32303d2b51e25a22bbe14ea4ea39b8f53dc1919a9948b81997901f537\\"",
       "Type": "String",
     },
-    "AssetParametersb7d8a9750f8bfded8ac76be100e3bee1c3d4824df006766110d023f42952f5c2ArtifactHashE86B38C7": Object {
-      "Description": "Artifact hash for asset \\"b7d8a9750f8bfded8ac76be100e3bee1c3d4824df006766110d023f42952f5c2\\"",
+    "AssetParametersbafd50ae9f214e496ff8c72c6425f93dca3ccd590e20963706d5d610d9c75757ArtifactHashF584A7D8": Object {
+      "Description": "Artifact hash for asset \\"bafd50ae9f214e496ff8c72c6425f93dca3ccd590e20963706d5d610d9c75757\\"",
       "Type": "String",
     },
-    "AssetParametersb7d8a9750f8bfded8ac76be100e3bee1c3d4824df006766110d023f42952f5c2S3Bucket9ABBD5A2": Object {
-      "Description": "S3 bucket for asset \\"b7d8a9750f8bfded8ac76be100e3bee1c3d4824df006766110d023f42952f5c2\\"",
+    "AssetParametersbafd50ae9f214e496ff8c72c6425f93dca3ccd590e20963706d5d610d9c75757S3Bucket008DBB35": Object {
+      "Description": "S3 bucket for asset \\"bafd50ae9f214e496ff8c72c6425f93dca3ccd590e20963706d5d610d9c75757\\"",
       "Type": "String",
     },
-    "AssetParametersb7d8a9750f8bfded8ac76be100e3bee1c3d4824df006766110d023f42952f5c2S3VersionKey40FF2C4A": Object {
-      "Description": "S3 key for asset version \\"b7d8a9750f8bfded8ac76be100e3bee1c3d4824df006766110d023f42952f5c2\\"",
+    "AssetParametersbafd50ae9f214e496ff8c72c6425f93dca3ccd590e20963706d5d610d9c75757S3VersionKey97C3E1A0": Object {
+      "Description": "S3 key for asset version \\"bafd50ae9f214e496ff8c72c6425f93dca3ccd590e20963706d5d610d9c75757\\"",
       "Type": "String",
     },
     "AssetParametersc691172cdeefa2c91b5a2907f9d81118e47597634943344795f1a844192dd49cArtifactHash627DAAA7": Object {
@@ -113,40 +113,20 @@ Object {
       "Description": "S3 key for asset version \\"c691172cdeefa2c91b5a2907f9d81118e47597634943344795f1a844192dd49c\\"",
       "Type": "String",
     },
+    "AssetParametersfedf79599f50975ac7166aaeba976652cabf9c06e4593ced26e82ee1f04e5024ArtifactHashA1EFA46D": Object {
+      "Description": "Artifact hash for asset \\"fedf79599f50975ac7166aaeba976652cabf9c06e4593ced26e82ee1f04e5024\\"",
+      "Type": "String",
+    },
+    "AssetParametersfedf79599f50975ac7166aaeba976652cabf9c06e4593ced26e82ee1f04e5024S3Bucket2CC2A865": Object {
+      "Description": "S3 bucket for asset \\"fedf79599f50975ac7166aaeba976652cabf9c06e4593ced26e82ee1f04e5024\\"",
+      "Type": "String",
+    },
+    "AssetParametersfedf79599f50975ac7166aaeba976652cabf9c06e4593ced26e82ee1f04e5024S3VersionKeyC250659C": Object {
+      "Description": "S3 key for asset version \\"fedf79599f50975ac7166aaeba976652cabf9c06e4593ced26e82ee1f04e5024\\"",
+      "Type": "String",
+    },
   },
   "Resources": Object {
-    "AdminRole38563C57": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      "arn:",
-                      Object {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":iam::",
-                      Object {
-                        "Ref": "AWS::AccountId",
-                      },
-                      ":root",
-                    ],
-                  ],
-                },
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-      },
-      "Type": "AWS::IAM::Role",
-    },
     "Cluster9EE0221C": Object {
       "DeletionPolicy": "Delete",
       "DependsOn": Array [
@@ -215,7 +195,7 @@ Object {
               "Arn",
             ],
           },
-          "version": "1.17",
+          "version": "1.18",
         },
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
@@ -240,17 +220,17 @@ Object {
           "Fn::Join": Array [
             "",
             Array [
-              "[{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"ConfigMap\\",\\"metadata\\":{\\"name\\":\\"aws-auth\\",\\"namespace\\":\\"kube-system\\"},\\"data\\":{\\"mapRoles\\":\\"[{\\\\\\"rolearn\\\\\\":\\\\\\"",
+              "[{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"ConfigMap\\",\\"metadata\\":{\\"name\\":\\"aws-auth\\",\\"namespace\\":\\"kube-system\\",\\"labels\\":{\\"aws.cdk.eks/prune-c8a944404d9719e46c10fc0c07d2abb7ab0d9376fd\\":\\"\\"}},\\"data\\":{\\"mapRoles\\":\\"[{\\\\\\"rolearn\\\\\\":\\\\\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "AdminRole38563C57",
+                  "ClusterMastersRole9AA35625",
                   "Arn",
                 ],
               },
               "\\\\\\",\\\\\\"username\\\\\\":\\\\\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "AdminRole38563C57",
+                  "ClusterMastersRole9AA35625",
                   "Arn",
                 ],
               },
@@ -265,6 +245,8 @@ Object {
             ],
           ],
         },
+        "Overwrite": true,
+        "PruneLabel": "aws.cdk.eks/prune-c8a944404d9719e46c10fc0c07d2abb7ab0d9376fd",
         "RoleArn": Object {
           "Fn::GetAtt": Array [
             "ClusterCreationRole360249B6",
@@ -485,6 +467,38 @@ Object {
         "Value": "aws:cdk:eks:kubectl-ready",
       },
       "Type": "AWS::SSM::Parameter",
+    },
+    "ClusterMastersRole9AA35625": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::",
+                      Object {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":root",
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
     },
     "ClusterNodegroupDefaultCapacityDA0920A3": Object {
       "Properties": Object {
@@ -1079,11 +1093,17 @@ Object {
     "awscdkawseksKubectlProviderNestedStackawscdkawseksKubectlProviderNestedStackResourceA7AEBA6B": Object {
       "Properties": Object {
         "Parameters": Object {
-          "referencetotestAssetParametersb7d8a9750f8bfded8ac76be100e3bee1c3d4824df006766110d023f42952f5c2S3BucketA38C922BRef": Object {
-            "Ref": "AssetParametersb7d8a9750f8bfded8ac76be100e3bee1c3d4824df006766110d023f42952f5c2S3Bucket9ABBD5A2",
+          "referencetotestAssetParameters752aa9e7fcf8477dc4910d637ca8e9259ba59e7f1a7d4a3d88ecb6c3c13813f8S3Bucket64BC5694Ref": Object {
+            "Ref": "AssetParameters752aa9e7fcf8477dc4910d637ca8e9259ba59e7f1a7d4a3d88ecb6c3c13813f8S3BucketA67326D3",
           },
-          "referencetotestAssetParametersb7d8a9750f8bfded8ac76be100e3bee1c3d4824df006766110d023f42952f5c2S3VersionKey659BCBE2Ref": Object {
-            "Ref": "AssetParametersb7d8a9750f8bfded8ac76be100e3bee1c3d4824df006766110d023f42952f5c2S3VersionKey40FF2C4A",
+          "referencetotestAssetParameters752aa9e7fcf8477dc4910d637ca8e9259ba59e7f1a7d4a3d88ecb6c3c13813f8S3VersionKey6D7A0797Ref": Object {
+            "Ref": "AssetParameters752aa9e7fcf8477dc4910d637ca8e9259ba59e7f1a7d4a3d88ecb6c3c13813f8S3VersionKey7F484692",
+          },
+          "referencetotestAssetParametersbafd50ae9f214e496ff8c72c6425f93dca3ccd590e20963706d5d610d9c75757S3BucketB46D7DFCRef": Object {
+            "Ref": "AssetParametersbafd50ae9f214e496ff8c72c6425f93dca3ccd590e20963706d5d610d9c75757S3Bucket008DBB35",
+          },
+          "referencetotestAssetParametersbafd50ae9f214e496ff8c72c6425f93dca3ccd590e20963706d5d610d9c75757S3VersionKeyF56E2940Ref": Object {
+            "Ref": "AssetParametersbafd50ae9f214e496ff8c72c6425f93dca3ccd590e20963706d5d610d9c75757S3VersionKey97C3E1A0",
           },
           "referencetotestAssetParametersc691172cdeefa2c91b5a2907f9d81118e47597634943344795f1a844192dd49cS3BucketA4341268Ref": Object {
             "Ref": "AssetParametersc691172cdeefa2c91b5a2907f9d81118e47597634943344795f1a844192dd49cS3BucketEAC9DD43",
@@ -1109,6 +1129,9 @@ Object {
               "Arn",
             ],
           },
+          "referencetotestVpc2D302CD6Ref": Object {
+            "Ref": "Vpc8378EB38",
+          },
           "referencetotestVpcPrivateSubnet1SubnetD6A658CERef": Object {
             "Ref": "VpcPrivateSubnet1Subnet536B997A",
           },
@@ -1130,7 +1153,7 @@ Object {
               },
               "/",
               Object {
-                "Ref": "AssetParameters8f6ddea19bd9a790b129fdd157cdf31c5172a316d29d3be7a559835d67ea5ed1S3BucketDE580665",
+                "Ref": "AssetParametersfedf79599f50975ac7166aaeba976652cabf9c06e4593ced26e82ee1f04e5024S3Bucket2CC2A865",
               },
               "/",
               Object {
@@ -1140,7 +1163,7 @@ Object {
                     "Fn::Split": Array [
                       "||",
                       Object {
-                        "Ref": "AssetParameters8f6ddea19bd9a790b129fdd157cdf31c5172a316d29d3be7a559835d67ea5ed1S3VersionKey6DA5E1B0",
+                        "Ref": "AssetParametersfedf79599f50975ac7166aaeba976652cabf9c06e4593ced26e82ee1f04e5024S3VersionKeyC250659C",
                       },
                     ],
                   },
@@ -1153,7 +1176,7 @@ Object {
                     "Fn::Split": Array [
                       "||",
                       Object {
-                        "Ref": "AssetParameters8f6ddea19bd9a790b129fdd157cdf31c5172a316d29d3be7a559835d67ea5ed1S3VersionKey6DA5E1B0",
+                        "Ref": "AssetParametersfedf79599f50975ac7166aaeba976652cabf9c06e4593ced26e82ee1f04e5024S3VersionKeyC250659C",
                       },
                     ],
                   },
