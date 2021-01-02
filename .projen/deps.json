@@ -21,7 +21,7 @@
     },
     {
       "name": "aws-cdk",
-      "version": "^1.77.0",
+      "version": "^1.81.0",
       "type": "build"
     },
     {
@@ -55,7 +55,7 @@
     },
     {
       "name": "projen",
-      "version": "^0.12.8",
+      "version": "^0.12.9",
       "type": "build"
     },
     {
@@ -78,32 +78,36 @@
     },
     {
       "name": "@aws-cdk/assert",
-      "version": "^1.77.0",
+      "version": "^1.81.0",
       "type": "runtime"
     },
     {
       "name": "@aws-cdk/aws-ec2",
-      "version": "^1.77.0",
+      "version": "^1.81.0",
       "type": "runtime"
     },
     {
       "name": "@aws-cdk/aws-eks",
-      "version": "^1.77.0",
+      "version": "^1.81.0",
       "type": "runtime"
     },
     {
       "name": "@aws-cdk/aws-iam",
-      "version": "^1.77.0",
+      "version": "^1.81.0",
       "type": "runtime"
     },
     {
       "name": "@aws-cdk/core",
-      "version": "^1.77.0",
+      "version": "^1.81.0",
       "type": "runtime"
     },
     {
       "name": "@aws-cdk/core",
-      "version": "^1.77.0",
+      "version": "^1.81.0",
+      "type": "runtime"
+    },
+    {
+      "name": "awscdk-81-patch",
       "type": "runtime"
     }
   ],
