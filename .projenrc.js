@@ -11,6 +11,7 @@ const project = new AwsCdkTypeScriptApp({
   authorEmail: 'pahudnet@gmail.com',
   repository: 'https://github.com/aws-samples/amazon-eks-refarch-cloudformation.git',
   dependabot: false,
+  defaultReleaseBranch: 'master',
   antitamper: false,
   cdkDependencies: [
     '@aws-cdk/core',
