@@ -11,7 +11,7 @@ export class MyStack extends cdk.Stack {
     // create the cluster and a default maanged nodegroup of 2 x m5.large instances
     const cluster = new eks.Cluster(this, 'Cluster', {
       vpc,
-      version: eks.KubernetesVersion.V1_18,
+      version: eks.KubernetesVersion.V1_19,
     });
 
     // conditionally create spot managed nodegroup
