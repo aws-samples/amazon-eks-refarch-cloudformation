@@ -1,5 +1,4 @@
-const { AwsCdkTypeScriptApp } = require('projen');
-const { Automation } = require('projen-automate-it');
+const { AwsCdkTypeScriptApp, DependenciesUpgradeMechanism } = require('projen');
 
 const AUTOMATION_TOKEN = 'PROJEN_GITHUB_TOKEN';
 
@@ -9,7 +8,16 @@ const project = new AwsCdkTypeScriptApp({
   authorName: 'Pahud Hsieh',
   authorEmail: 'pahudnet@gmail.com',
   repository: 'https://github.com/aws-samples/amazon-eks-refarch-cloudformation.git',
-  dependabot: false,
+  depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
+    workflowOptions: {
+      labels: ['auto-approve', 'auto-merge'],
+      secret: AUTOMATION_TOKEN,
+    },
+  }),
+  autoApproveOptions: {
+    secret: 'GITHUB_TOKEN',
+    allowedUsernames: ['pahud'],
+  },
   defaultReleaseBranch: 'master',
   antitamper: false,
   cdkDependencies: [
@@ -18,20 +26,7 @@ const project = new AwsCdkTypeScriptApp({
     '@aws-cdk/aws-eks',
     '@aws-cdk/aws-iam',
   ],
-  deps: ['projen-automate-it'],
 });
-
-project.addFields({
-  resolutions: {
-    netmask: '2.0.1',
-  },
-});
-
-const automation = new Automation(project, { automationToken: AUTOMATION_TOKEN });
-automation.autoApprove();
-automation.autoMerge();
-automation.projenYarnUpgrade();
-automation.projenYarnUpgrade('projenYarnUpgradeWithTest', { yarnTest: true });
 
 
 const common_exclude = ['cdk.out', 'cdk.context.json', 'images', 'yarn-error.log'];
