@@ -1183,9 +1183,9 @@
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
 "@types/node@*":
-  version "15.14.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-15.14.0.tgz#74dbf254fb375551a9d2a71faf6b9dbc2178dc53"
-  integrity sha512-um/+/ip3QZmwLfIkWZSNtQIJNVAqrJ92OkLMeuZrjZMTAJniI7fh8N8OICyDhAJ2mzgk/fmYFo72jRr5HyZ1EQ==
+  version "16.0.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.0.0.tgz#067a6c49dc7a5c2412a505628e26902ae967bf6f"
+  integrity sha512-TmCW5HoZ2o2/z2EYi109jLqIaPIi9y/lc2LmDCWzuCi35bcaQ+OtUh6nwBiFK7SOu25FAU5+YKdqFZUwtqGSdg==
 
 "@types/node@^10.17.0", "@types/node@^10.17.60":
   version "10.17.60"
@@ -2197,9 +2197,9 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
 constructs@^3.3.69:
-  version "3.3.94"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.94.tgz#f3192073a3b8e60192e133f0da3dd1fb8fbadde8"
-  integrity sha512-P2Sfaa+CHt6lVlIdSry4hj1cQsg71J7eXJm9zyPpZNi/FDeHu/vcOmon84v8effvBoF5e7ef2tfVCwwMXcu9Jw==
+  version "3.3.95"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.95.tgz#5544d17ce313e6be27c10f3ebf7c8c1e2a77be44"
+  integrity sha512-A2GqRJYq9+o7dChJYZMp3FLZbNRL83szQ9jWj3Nv5yzM8oISpdbealj/SSuZkvCe0XwHoQYBghVJH+TGeKpMaw==
 
 convert-source-map@^1.4.0, convert-source-map@^1.6.0, convert-source-map@^1.7.0:
   version "1.8.0"
