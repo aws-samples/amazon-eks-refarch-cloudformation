@@ -9,6 +9,7 @@ const project = new AwsCdkTypeScriptApp({
   authorEmail: 'pahudnet@gmail.com',
   repository: 'https://github.com/aws-samples/amazon-eks-refarch-cloudformation.git',
   depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
+    ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve', 'auto-merge'],
       secret: AUTOMATION_TOKEN,
