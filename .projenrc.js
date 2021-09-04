@@ -27,6 +27,7 @@ const project = new AwsCdkTypeScriptApp({
     '@aws-cdk/aws-eks',
     '@aws-cdk/aws-iam',
   ],
+  minNodeVersion: '12.20.0',
 });
 
 
