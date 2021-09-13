@@ -27,9 +27,12 @@ const project = new AwsCdkTypeScriptApp({
     '@aws-cdk/aws-eks',
     '@aws-cdk/aws-iam',
   ],
-  minNodeVersion: '12.20.0',
+  minNodeVersion: '14.17.0',
 });
 
+project.package.addField('resolutions', {
+  'pac-resolver': '5.0.0',
+});
 
 const common_exclude = ['cdk.out', 'cdk.context.json', 'images', 'yarn-error.log'];
 project.npmignore.exclude(...common_exclude);
