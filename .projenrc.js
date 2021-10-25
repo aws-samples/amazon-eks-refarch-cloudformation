@@ -4,6 +4,7 @@ const AUTOMATION_TOKEN = 'PROJEN_GITHUB_TOKEN';
 
 const project = new AwsCdkTypeScriptApp({
   cdkVersion: '1.81.0',
+  minNodeVersion: '12.20.0',
   name: 'amazon-eks-refarch',
   authorName: 'Pahud Hsieh',
   authorEmail: 'pahudnet@gmail.com',
