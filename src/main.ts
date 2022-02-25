@@ -1,9 +1,12 @@
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as eks from '@aws-cdk/aws-eks';
-import * as cdk from '@aws-cdk/core';
+import {
+  StackProps, Stack, CfnOutput, App,
+  aws_ec2 as ec2,
+  aws_eks as eks,
+} from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
-export class MyStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props: cdk.StackProps = {}) {
+export class MyStack extends Stack {
+  constructor(scope: Construct, id: string, props: StackProps = {}) {
     super(scope, id, props);
 
     const vpc = getOrCreateVpc(this);
@@ -47,7 +50,7 @@ export class MyStack extends cdk.Stack {
         },
       });
 
-      new cdk.CfnOutput(this, 'SARoleArn', { value: sa.role.roleArn });
+      new CfnOutput(this, 'SARoleArn', { value: sa.role.roleArn });
     };
 
     // conditionally create a fargate profile
@@ -60,7 +63,7 @@ export class MyStack extends cdk.Stack {
 
       profile.fargateProfileName;
 
-      new cdk.CfnOutput(this, 'FargareProfileName', { value: profile.fargateProfileName });
+      new CfnOutput(this, 'FargareProfileName', { value: profile.fargateProfileName });
     };
 
   }
@@ -72,7 +75,7 @@ const devEnv = {
   region: process.env.CDK_DEFAULT_REGION,
 };
 
-const app = new cdk.App();
+const app = new App();
 
 new MyStack(app, 'my-stack-dev', { env: devEnv });
 // new MyStack(app, 'my-stack-prod', { env: prodEnv });
@@ -80,9 +83,9 @@ new MyStack(app, 'my-stack-dev', { env: devEnv });
 app.synth();
 
 
-function getOrCreateVpc(scope: cdk.Construct): ec2.IVpc {
+function getOrCreateVpc(scope: Construct): ec2.IVpc {
   // use an existing vpc or create a new one
-  const stack = cdk.Stack.of(scope);
+  const stack = Stack.of(scope);
   const vpc = stack.node.tryGetContext('use_default_vpc') === '1' ?
     ec2.Vpc.fromLookup(stack, 'Vpc', { isDefault: true }) :
     stack.node.tryGetContext('use_vpc_id') ?
