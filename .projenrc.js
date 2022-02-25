@@ -1,9 +1,7 @@
 const { awscdk, DevEnvironmentDockerImage, Gitpod } = require('projen');
 
-const AUTOMATION_TOKEN = 'PROJEN_GITHUB_TOKEN';
-
 const project = new awscdk.AwsCdkTypeScriptApp({
-  cdkVersion: '1.81.0',
+  cdkVersion: '2.1.0',
   name: 'amazon-eks-refarch',
   authorName: 'Pahud Hsieh',
   authorEmail: 'pahudnet@gmail.com',
@@ -12,7 +10,6 @@ const project = new awscdk.AwsCdkTypeScriptApp({
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve', 'auto-merge'],
-      secret: AUTOMATION_TOKEN,
     },
   },
   autoApproveOptions: {
@@ -20,13 +17,6 @@ const project = new awscdk.AwsCdkTypeScriptApp({
     allowedUsernames: ['pahud'],
   },
   defaultReleaseBranch: 'master',
-  antitamper: false,
-  cdkDependencies: [
-    '@aws-cdk/core',
-    '@aws-cdk/aws-ec2',
-    '@aws-cdk/aws-eks',
-    '@aws-cdk/aws-iam',
-  ],
 });
 
 project.package.addField('resolutions', {
