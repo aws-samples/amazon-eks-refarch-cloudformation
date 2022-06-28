@@ -23,6 +23,7 @@ project.package.addField('resolutions', {
   'pac-resolver': '^5.0.0',
   'set-value': '^4.0.1',
   'ansi-regex': '^5.0.1',
+  'got': '^11.8.5',
 });
 
 const gitpodPrebuild = project.addTask('gitpod:prebuild', {
